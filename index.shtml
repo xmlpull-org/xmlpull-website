@@ -13,6 +13,111 @@
 <!--#include file="header.html" -->
 
 
+  <!-- FOOTER START -->
+  <table cellpadding="7" summary="sideline">
+    <tr>
+      <td valign="top" bgcolor="#999999">
+        <center>
+          <a href="index.html"><img src="images/xmlpull_grey.gif" alt="[XMLPULL.ORG]" border="0" hspace="4" vspace="4"
+          width="87" height="83" /></a><br />
+        </center>
+
+        <table cellpadding="2" summary="menu">
+          <tr>
+            <td><b class="inv" style="color: rgb(255,255,255);">Common<br />
+            XML Pull API</b></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href="index.html">Home<br /></a></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href="v1/doc/changes.html">Changes<br /></a></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href="v1/doc/faq.html">FAQ<br /></a></td>
+          </tr>
+
+          <tr>
+            <td><span style="color: #FFFFFF"><b>Learn API</b></span></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp;<span style="color: #FFFFFF"><a class="inv" style="color: #FFFFFF" href=
+            "v1/download/unpacked/doc/quick_intro.html">Introduction</a> to<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<a class="inv" style="color: #FFFFFF" href=
+            "v1/download/unpacked/doc/quick_intro.html">parsing</a> and<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<a class="inv" style="color: #FFFFFF" href=
+            "v1/download/unpacked/doc/quick_write.html">writing</a> XML</span></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href=
+            "v1/doc/api/org/xmlpull/v1/package-summary.html">Java API</a><br /></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href="v1/doc/features.html">Features</a><br /></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href=
+            "v1/doc/properties.html">Properties</a><br /></td>
+          </tr>
+
+          <tr>
+            <td><span style="color: #FFFFFF"><b>Use API</b></span></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href=
+            "https://github.com/xmlpull-org/xmlpull-api-v1/issues">Open issues</a></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href="impls.html">Download<br />
+            implementation</a></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href="v1/doc/addons.html">Addons</a></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href="tests.html">Run tests<br /></a></td>
+          </tr>
+
+          <tr>
+            <td><span style="color: #FFFFFF"><b>API source</b></span></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href=
+            "https://github.com/xmlpull-org/xmlpull-api-v1/">Browse</a></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href="v1/download/">Download</a></td>
+          </tr>
+
+          <tr>
+            <td><a class="inv" style="color: #FFFFFF" href="discussion.html">Discussion<br /></a></td>
+          </tr>
+        </table>
+
+        <center>
+          <br />
+        </center>
+      </td>
+
+
+
+     <td valign="top">
+
+<!-- HEADER END -->
+
   <img src="images/xmlpull_org_logo_handle.gif" align="right" width="182" height="128" alt="[XMLPULL.ORG LOGO]" />
 
   <h1 class="title">XML Pull Parsing</h1>
@@ -201,19 +306,18 @@
     <tr>
       <td align="left" valign="top" width="75%">
         <p><font style='font-size: 8pt; font-family: sans-serif'>maintained by <a href=
-        "http://www.extreme.indiana.edu/~aslom/">aleksander slominski</a></font><br />
-        <font style='font-size: 8pt; font-family: sans-serif'>last modified $Id: index.shtml,v 1.62 2005/03/20 02:37:45
-        aslom Exp $</font></p>
+        "https://aslom.net/">Aleksander Slominski</a></font><br />
+        <font style='font-size: 8pt; font-family: sans-serif'>last modified 2023-01-01</font></p>
       </td>
 
-      <td align="right" valign="top" width="25%"><font style='font-size: 8pt; font-family: sans-serif'><a href=
-      "http://www.extreme.indiana.edu"><img align="right" src="images/extreme_icon.gif" alt="Extreme! Lab Logo" height=
-      "32" width="32" border="0" /></a> this site is hosted<br />
-      in <a href="http://www.extreme.indiana.edu">Extreme! Lab</a></font></td>
     </tr>
   </table>
 
 
 <!--#include file="footer.html" -->
+      </td>
+    </tr>
+  </table>
+
 </body>
 </html>
