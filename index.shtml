@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+  <title>XML Pull Parsing</title>
+  <link rel="SHORTCUT ICON" href="http://www.xmlpull.org/favicon.ico" />
+</head>
+
+<body>
+<!--#include file="header.html" -->
+
+
+  <img src="images/xmlpull_org_logo_handle.gif" align="right" width="182" height="128" alt="[XMLPULL.ORG LOGO]" />
+
+  <h1 class="title">XML Pull Parsing</h1>
+
+  <h3 class="title" style="text-decoration: none">News and changes:</h3>
+
+  <ul>
+    <li><i>2004-11-02:</i> Ian Kaplan has <a href="http://www.bearcave.com/software/java/index.html">website with
+    examples of working with XmlPull API</a> including detailed overview of processing XML and building in-memory
+    trees</li>
+
+    <li><i>2004-07-02:</i> site overhaul with emphasis on general issues of XML Pull Parsing and resource for
+    discussing new ideas and concepts related to pull parsing, handy utility classes and samples, and last but not
+    least, addition of JSR 173 StAX (Streaming API for XML) links</li>
+
+    <li><i>2004-01-12:</i>&nbsp; <a href=
+    "http://www.extreme.indiana.edu/bugzilla/buglist.cgi?product=XmlPull.org">XmlPull API Issue tracker</a> (Bugzilla)
+    is available.</li>
+
+    <li><i>2004-01-12:</i>&nbsp; Updated unit tests (see <a href="v1/doc/changes.html">list of changes</a> for
+    details)</li>
+
+    <li><i>2003-08-28:</i>&nbsp; XML design patterns and Pull Parsers sessions at the <a href=
+    "http://www.ltu.org/xmlsymposium/">LTU XML Symposium</a> in Irvine (California): <a href=
+    "http://www.ltu.org/xmlsymposium/confsched.html">session 101 The Xml Design Process</a> and&nbsp; debut of new
+    versions of XML tools integrated with XPP3 in the "XML in Motion" area in <a href=
+    "http://www.ltu.org/xmlsymposium/techtrack.html#TP">session 208 XML Tools: The Next Generation</a>.</li>
+
+    <li><i>2003-07-23:</i> <a href="http://smfw.sourceforge.net/index.html">The Simple Messaging Framework</a> uses
+    XmlPull API to do document/literal data-binding that is works together with AXIS. For example check tutorial
+    section on <a href=
+    "http://smfw.sourceforge.net/Tutorial.html#Implement%20the%20MessageReader%20and%20MessageWriter%20Interfaces">implementing
+    the MessageReader and MessageWriter Interfaces</a> and sample code in <a href=
+    "http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/~checkout~/smfw/smfw/samples/CalendarApp/common/src/org/calendarapp/messageio/">
+    src/org/calendarapp/messageio</a>.</li>
+
+    <li><i>2003-07-08:</i> <a href="v1/doc/addons.html#dom2_builder">DOM2 builder addon</a> has now improved interface
+    to support building tree from any XML pull event substream</li>
+
+    <li><i>2003-05-18:</i> updated wrapper addon class XmlSerializerWrapper with new methods: fragment() to simplify
+    writing small XML fragments and event() to make easier to copy XML input (XmlPullParser) to output</li>
+
+    <li><i>2003-05-17:</i>new addons: <a href="v1/doc/addons.html#wrapper">Wrapper Addon</a> extends XmlPull API and
+    adds new convenience methods to pull parser and serializer and <a href=
+    "http://www.xmlpull.org/v1/doc/addons.html#util">Util Addon</a> that provide set of static utility methods</li>
+
+    <li><i>2003-04-23:</i> new addons: <a href="v1/doc/addons.html#dom2_builder">DOM2XmlPullBuilder</a> to allow
+    creating DOM2 trees using XmlPull parser and <a href=
+    "http://www.xmlpull.org/v1/doc/addons.html#parser_pool">XmlPullParserPool</a> to provide easy to use parser
+    pool</li>
+
+    <li><i>2003-04-23:</i> added new optional feature <a href=
+    "http://xmlpull.org/v1/doc/features.html#relaxed">RELAXED</a> (to allow requesting that parser be as lenient as
+    possible when parsing invalid XML) and optional property <a href=
+    "http://xmlpull.org/v1/doc/properties.html#location">LOCATION</a> to inform parser about location of input so error
+    and diagnostic messages are more helpful</li>
+
+    <li><i>2003-04-02</i>: the Beta 1 release of the <a href="http://www.jibx.org">JiBX</a> XML data binding framework
+    that uses XmlPull API is now available and described in <a href=
+    "http://www-106.ibm.com/developerworks/library/x-databd3/index.html">developerWorks article</a> that includes
+    a&nbsp; section on how a pull parser is much better for data binding than a push&nbsp; parser</li>
+
+    <li><i>2003-02-25</i>: minor 1.1.2.1 release to pack the latest additions to tests and documentation, please see
+    <a href="v1/doc/changes.html#XMLPULL_1_1_2_1">list of changes</a></li>
+
+    <li><i>2003-02-25</i>: new tutorial describing <a href="v1/download/unpacked/doc/quick_write.html">how to use
+    XmlSerializer</a> to generate XML output</li>
+
+    <li><i>2003-02-17</i>: introducing <a href="v1/doc/addons.html">addons</a> that provide reusable functionality
+    built on top XmlPull API such as SAX2 driver and XML RPC</li>
+
+    <li><i>2002-10-16</i>: kXML2, XPP3/MXP1 and XNI2XmlPull <a href="impls.shtml">pass the latest compatibility
+    tests</a></li>
+
+    <li><i>2002-10-16</i>: updated 1.1.2 version of XmlPull API (and compatibility tests) is available for download.
+    This version has following changes: improved handling for XMLDecl, improved J2ME compatibility,&nbsp; and improved
+    usability of XmlSerializer, for details please see <a href="v1/doc/changes.html#XMLPULL_1_1_2">list of
+    changes</a></li>
+
+    <li><i>2002-08-04</i>:&nbsp; XML.com published <a href="http://www.xml.com/pub/a/2002/09/25/xmlpull.html">response
+    article</a> to Elliotte Rusty Harold's recent <a href="http://www.xml.com/pub/a/2002/08/14/xmlpull.html">review of
+    XmlPull API on XML.com</a></li>
+  </ul>
+
+  <h3 class="title" style="text-decoration: none">What Is It?</h3>
+
+  <p>XmlPull project is dedicated to be a site for</p>
+
+  <ul>
+    <li>for general Pull parsing promotion/education (including StAX) and in particular to contain easy-to-reuse
+    samples and code fragments</li>
+
+    <li>a resource for discussing new ideas and concepts related to pull parsing</li>
+
+    <li>a java namespace (org.xmlpull.*) and project location of a free implementation of the event object API and
+    Factories, based on the StAX XMLStreamReade and old Common API for XML Pull Parsing</li>
+
+    <li>as java namespace and project location of StAX and XmlPull based utilities and samples such as:<br />
+    - providing an XML stream from a DOM tree<br />
+    - a DOM builder<br />
+    - SAX adapter<br />
+    - JUnit tests</li>
+
+    <li>as a maintenance resource for the existing XmlPull interface</li>
+  </ul>
+
+  <h3 class="title" style="text-decoration: none">Short Overview of APIs</h3>
+
+  <p>Read a short <a href="history/index.html">paper about Pull Parsing APIs</a> with sample code demonstrating each
+  API.</p>
+
+  <h3 class="title" style="text-decoration: none">Timeline (or Where did it come from?)</h3>
+
+  <p><b>before 2000</b>: XML pull parsers such as kXML1, XPP1, BEA, NekoPull, and other in Java (as well in other
+  languages notably .NET and PullDom in Python) were created and used but Java code was not portable between different
+  APIs</p>
+
+  <p><b>started around 2000</b>: grassroots effort by Stefan Haustein and Aleksander Slominski to create a Common API
+  for XML Pull Parsing (<strong>XmlPull</strong>) that aimed to define a simple and elegant pull parsing API that will
+  provide a standardized way to do pull XML parsing from J2ME to J2EE and was very successful</p>
+
+  <p><b>2002-2003: JSR 173</b> expert group was created to standardize XML pull parsing in Java world and included XPP,
+  kXML, and BEA pill parser authors</p>
+
+  <p><b>2004</b>: StAX RI is available and few other StAX implementations emerged</p>
+
+  <h3 class="title" style="text-decoration: none">Current resources</h3>
+
+  <p>Mailing lists where <a href="discussion.shtml">both user and developers</a> can ask general XML Pull Parsing
+  questions and post ideas for future</p>
+
+  <p><a href="http://groups.yahoo.com/group/stax_builders/">StAX builders</a> mailing list.</p>
+
+  <p>Download StAX RI source code and browse read-only CVS mirror of perforce.</p>
+
+  <p>List of <a href="impls.shtml">StAX and XmlPull APIs implementations</a>.</p>
+  <hr />
+
+  <p><b><i>MAINTENANCE SECTION:</i></b></p>
+
+  <h3 class="title" style="text-decoration: none">About XmlPull API</h3>
+
+  <p>It is a minimalist API: very easy to implement standalone or on top of existing parser. The API allows both fast
+  high level iteration (using next() method) and low level tokenizing (using nextToken() token) and is designed for
+  easy building on top of it SAX, XML pull parsers that uses iterators with event objects, or even DOM implementations.
+  To to support J2ME and real small implementation parsing of DOCDECL is optional (but DOCDECL can be reported if
+  requested).</p>
+
+  <p>The aim is to provide a similar but orthogonal pull parsing basis to widely successful push parsing <a href=
+  "http://sax.sourceforge.net/">SAX API</a>. The XmlPull API is in public domain in hope that it will be embraced by
+  Java developers (conformance tests are under LGPL license to minimize risk of incompatible implementations).</p>
+
+  <h3 class="title" style="text-decoration: none">How To Learn About It?</h3>
+
+  <p>Here you will find documentation describing concepts behind XMLPULL and gentle introduction with samples.</p>
+
+  <ul class="shortlist">
+    <li><b><a href="v1/download/unpacked/doc/quick_intro.html">Quick Introduction</a></b> or how to use XmlPull in your
+    applications</li>
+
+    <li><b><a href="v1/doc/api/org/xmlpull/v1/package-summary.html">Java API</a></b> documentation &nbsp;</li>
+  </ul>
+
+  <h3 class="title" style="text-decoration: none">How To Use It?</h3>
+
+  <p>XMLPULL API is available freely. You can <a href="v1/download/">download XmlPull API</a> as tarball or zip file.
+  We are also providing access to the latest API version via anonymous CVS.</p>
+
+  <p>However to use XMLPULL you will need <a href="impls.shtml#xmlpull">download an implementation of XmlPull
+  API</a>.</p>
+
+  <h3 class="title" style="text-decoration: none">How To Contact Us?</h3>
+
+  <p>There are available <a href="discussion.shtml">both user and developer mailing lists</a> to allow discussion of
+  XmlPull API, requesting new enhancements and report bugs.</p>
+
+  <p>We hope that you find XmlPull API useful in your applications (and let us know your comments),<br />
+  <br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initial authors: <em>Stefan Haustein</em> and <em>Aleksander Slominski</em></p>
+
+  <p>&nbsp;</p>
+  <hr />
+
+  <table width="100%" cellspacing="5" style="border-collapse: collapse" cellpadding="0" summary=
+  "where is website hosted/maintained">
+    <tr>
+      <td align="left" valign="top" width="75%">
+        <p><font style='font-size: 8pt; font-family: sans-serif'>maintained by <a href=
+        "http://www.extreme.indiana.edu/~aslom/">aleksander slominski</a></font><br />
+        <font style='font-size: 8pt; font-family: sans-serif'>last modified $Id: index.shtml,v 1.62 2005/03/20 02:37:45
+        aslom Exp $</font></p>
+      </td>
+
+      <td align="right" valign="top" width="25%"><font style='font-size: 8pt; font-family: sans-serif'><a href=
+      "http://www.extreme.indiana.edu"><img align="right" src="images/extreme_icon.gif" alt="Extreme! Lab Logo" height=
+      "32" width="32" border="0" /></a> this site is hosted<br />
+      in <a href="http://www.extreme.indiana.edu">Extreme! Lab</a></font></td>
+    </tr>
+  </table>
+
+
+<!--#include file="footer.html" -->
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="SHORTCUT ICON" href="http://www.xmlpull.org/favicon.ico" />
+
+  <title>Common XML Pull Parsing API</title>
+</head>
+
+<body><!--#include file="header.html" -->
+  <h1 class="title">API Conformance Tests</h1>
+
+  <p>To ensure interoperability and make sure that users can easily switch between multiple implementations of XMLPULL
+  V1 API we have provided set of tests that must be passed by every implementation. The Java tests are <a href=
+  "v1/download/">available for download</a> and uses JUnit test framework. Read documentation included in download
+  (either ZIP or TAR) on how to execute tests.</p>
+
+  <p>If you are implementing XMLPULL V1 API please make sure that your implementation has passed all tests before it is
+  distributed. This will make end user experience with XMLPULL to be consistent. In case of problems with tests and/or
+  proposing new tests please post to <a href="discussion.shtml">xmlpull-dev mailing list</a>.</p>
+
+
+
+  <p>&nbsp;</p>
+  <hr />
+
+  <table width="100%" cellspacing="5" style="border-collapse: collapse" cellpadding="0" summary=
+  "where is website hosted/maintained">
+    <tr>
+      <td align="left" valign="top" width="75%">
+        <p><font style='font-size: 8pt; font-family: sans-serif'>maintained by <a href=
+        "http://www.extreme.indiana.edu/~aslom/">aleksander slominski</a></font><br />
+        <font style='font-size: 8pt; font-family: sans-serif'>last modified $Id: index.shtml,v 1.62 2005/03/20 02:37:45
+        aslom Exp $</font></p>
+      </td>
+
+      <td align="right" valign="top" width="25%"><font style='font-size: 8pt; font-family: sans-serif'><a href=
+      "http://www.extreme.indiana.edu"><img align="right" src="images/extreme_icon.gif" alt="Extreme! Lab Logo" height=
+      "32" width="32" border="0" /></a> this site is hosted<br />
+      in <a href="http://www.extreme.indiana.edu">Extreme! Lab</a></font></td>
+    </tr>
+  </table>
+
+
+
+
+  <!--#include file="footer.html" -->
+</body>
+</html>
