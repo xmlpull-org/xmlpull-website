@@ -1,0 +1,75 @@
+<HTML>
+<HEAD>
+<TITLE>XMLPULL V1 API Changes
+</TITLE>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Aleksander Slominski [http://www.extreme.indiana.edu/~aslom]">
+</HEAD>
+<BODY BGCOLOR="white">
+
+<H1>Changes to XMLPULL V1 API</H1><P>
+
+<h3>2001-04 (XMLPULL_1_0_5)</h3>
+<ul>
+<li>
+changed features URI to point to actual documentation on www.xmlpull.org
+<li>
+automatic JUnit tests now covers whole API<li>
+clarified isWhitespace() can only be checked on TEXT, IGNORABLE_WHITESPACES,
+CDSECT<li>
+clarified what is attribute namespace for xmlns:ns='...' when
+FEATURE_REPORT_NAMESPACE_ATTRIBUTES is set<li>
+changed defineCharacterEntity() to defineEntityReplacementText() and described
+semantics of this function and its motivation in J2ME environments<li>
+clarified how nextToken() works: return un-normalized (no end-of-line
+normalization) parts of XML input<li>
+if additional feature i set then XML text of START_TAG and END_TAG token is
+available allowing to do full XML document roundtrip: reproduce on output
+exactly what was in input. However this works on level of UNICODE characters
+(UTF16 char in Java) and output will need to be converted into required encoding
+(like UTF8 or UTF16).<li>
+getNamespacesCount changed to getNamespaceCount for consistency<li>
+getAttributesCount changed to getAttributeCount for consistency</ul>
+
+<h3>2001-03-30 (XMLPULL_1_0_4)</h3>
+<ul>
+<li>
+added FEATURE_ prefix to all feature constants<li>
+changed function name getType() to getEventType()<li>
+clarified that getNamespacesCount() does not include default namespaces
+declarations (xmlns='...')<li>
+specified that attributes if has no namespace declared will have &quot;&quot; namespace
+(empty string)<li>
+clarified that when getTextCharacters&nbsp; returns null then holder MUST
+contain start and length will be set to -1]
+<li>added more comprehensive JUnit tests for API conformance
+</ul>
+
+<h3>2001-03-29 (XMLPULL_1_0_3)</h3>
+<ul>
+<li>
+changed getTextCharacters to use pass by reference two int parameters (char[]
+getTextCharacters (int [] holderForStartAndLength)<li>
+nextToken() is required to return actual input data with getText()&nbsp; (no
+end-of-line normalization) - this will allow to reconstruct input XML</ul>
+
+<h3>2001-03-28 (XMLPULL_1_0_2a)</h3>
+<ul>
+<li>
+fixed typos in getAttribute(s)* and getNamespace(s)* functions<li>
+numerous improvements to interface documentation<li>
+clarified PROCESS_DOCDECL and removed REPORT_DOCDECL
+<li>
+initial release of JUnit tests (very limited for now ...)</ul>
+
+<h3>2001-03-25 (XMLPULL_1_0_1)</h3>
+<ul>
+<li>first interim release of API and supporting files (incomplete)
+</ul>
+
+
+<HR>
+<address><a href="http://www.extreme.indiana.edu/~aslom/">Aleksander Slominski</a><address>
+</address>
+</BODY>
+</HTML>
