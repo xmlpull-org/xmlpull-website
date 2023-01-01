@@ -1,0 +1,79 @@
+2001-05-01
+* PullParser11 is no longer developed but new PullParser2 will replace it
+
+2001-04-16
+
+* bomb on DTD: doctype declarations (DTD) are no longer ignored. 
+      as parser does not understan them it is throwing exception to indicate it!
+* better context function: at line 8 and column 90 seen >... parser state
+* allow to set soft/hard limit on internl buffer size: 
+  added to tokenizer and parser functions that set low and high water warks
+  on buffer used to process input (only affecting setInput(Reader function)
+  setting hard limit guarantees that tokenizer will never exceed this buffer size 
+  (actually it keeps two buffers so total memory consumption is doubled)
+  to see tracing output enable TRACE_SIZING in XmlTokenizer and recompile all files
+* added new exception XmlTokenizerBufferOverflowException when hard limit is exceeded
+
+NOTES: beware that setting soft/hard limits has noticeable effect on parser 
+performance (due ot overhead of compacting internal buffer to stay 
+within soft limit!!!), example:
+
+H:\Forge\xsoap\build>java -cp PullParser11.jar samples.pullparser.XPPCount "..\T
+ext Colors.xml"  -s
+..\Text Colors.xml: 0.006075986078886311 s total: 10.475 s (207 elems, 0 attrs,
+0 spaces, 2090 chars)
+press Enter to close program ...
+
+H:\Forge\xsoap\build>java -cp PullParser11.jar samples.pullparser.XPPCount "..\T
+ext Colors.xml" -soft 100 -hard 350 -s
+..\Text Colors.xml: 0.006738399071925754 s total: 11.617 s (207 elems, 0 attrs,
+0 spaces, 2090 chars)
+press Enter to close program ...
+
+H:\Forge\xsoap\build>java -cp PullParser11.jar samples.pullparser.XPPCount "..\T
+ext Colors.xml" -soft 10 -hard 350 -s
+..\Text Colors.xml: 0.00709860788863109 s total: 12.238 s (207 elems, 0 attrs, 0
+ spaces, 2090 chars)
+press Enter to close program ...
+
+* BOM handling in XML Pull Parser (ignore of first char is \uFEFF, reject \uFFFE!!!)
+
+for detailed discussion of Unicode BOM visit:
+
+Unicode UTF encoding= http://czyborra.com/utf/
++ EOF and BOM avoidance 
+     The octets =FE and =FF never appear in UTF-8 output. That means that you can use =FE=FF (U+FEFF ZERO WIDTH NO-BREAK
+     SPACE) as an indicator for UTF-16 text and =FF=FE as an indicator for byte-swapped UTF-16 text from haphazard programs on
+     little-endian machines. And it also means hat means that C programs that haphazardly store the result of getchar() in a char instead of an int
+     will no longer mistake U+00FF LATIN SMALL LETTER Y WITH DIAERESIS as end of file because ÿ is now represented as
+     =C3=BF. The =FF octet was often mistaken as end of file because /usr/include/stdio.h #defines EOF as -1 which looks just like =FF in
+     8bit 2-complement binary integer representation. 
++ detectability 
+     You can detect that you are dealing with UTF-8 input with high probability if you see the UTF-8 signature =EF=BB=BF (ï»¿) or if you
+     see valid UTF-8 multibyte characters since it is very unlikely that they accidentally appear in Latin1 text. You usually don't place a Latin1
+     symbol after an accented capital letter or a whole row of them after an accented small letter.     
+
+http://msdn.microsoft.com/library/psdk/winbase/unicode_42jv.htm
+The preferred place to specify byte order is in a file header, but text files do
+not have headers. Therefore, Unicode has defined a character
+(0xFEFF) and a noncharacter (0xFFFE) as byte-order marks. 
+They are mirror byte-images of each other. 
+
+When an application finds 0xFFFE at the beginning of a text file, 
+it interprets it to mean the file is a byte-reversed Unicode file. 
+The application can either swap the order of the bytes or alert 
+the user that an error has occurred. 
+
+
+NOTE: every Java implementation must support;
+* US-ASCII	Seven-bit ASCII, a.k.a. ISO646-US, a.k.a. the Basic
+		Latin block of the Unicode character set
+* ISO-8859-1  	ISO Latin Alphabet No. 1, a.k.a. ISO-LATIN-1
+* UTF-8		Eight-bit Unicode Transformation Format
+* UTF-16BE	Sixteen-bit Unicode Transformation Format, big-endian byte order                   
+* UTF-16LE	Sixteen-bit Unicode Transformation Format, little-endian byte order
+* UTF-16	Sixteen-bit Unicode Transformation Format, byte order
+                specified by a mandatory initial byte-order mark (either
+                order accepted on input, big-endian used on output)
+
+

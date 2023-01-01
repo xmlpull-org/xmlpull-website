@@ -1,0 +1,531 @@
+<title>NekoPull | Usage Instructions</title>
+<link rel=stylesheet type=text/css href=../style.css>
+<style type='text/css'>
+.note { font-style: italic }
+</style>
+
+<h1>Usage Instructions</h1>
+<div class='navbar'>
+[<a href='../index.html'>Home</a>]
+[
+<a href='index.html'>Top</a>
+|
+Usage
+|
+<a href='compare.html'>Comparisons</a>
+|
+<a href='javadoc/index.html'>JavaDoc</a>
+|
+<a href='changes.html'>Changes</a>
+]
+</div>
+
+<h2>Table of Contents</h2>
+
+<p>
+<ul>
+ <li><a href='#what'>What is "Pull Parsing"?</a>
+ <li><a href='#using'>Using NekoPull</a>
+  <ul>
+   <li><a href='#using.packages'>Package Hierarchy</a>
+   <li><a href='#using.instantiate'>Instantiating Parser</a>
+   <li><a href='#using.initiate'>Initiating Parsing</a>
+   <li><a href='#using.iterate'>Iterating Events</a>
+   <li><a href='#using.sample'>Sample Code</a>
+  </ul>
+ <li><a href='#events'>Event Objects</a>
+  <ul>
+   <li><a href='#events.contents'>Object Contents</a>
+   <li><a href='#events.casting'>Casting Event Objects</a>
+  </ul>
+ <li><a href='#samples'>Samples</a>
+  <ul>
+   <li><a href='#samples.counter'>Counter</a>
+   <li><a href='#samples.tracer'>DocumentTracer</a>
+   <li><a href='#samples.writer'>Writer</a>
+  </ul>
+ <li><a href='#future'>Future Directions</a>
+</ul>
+
+<hr>
+
+<a name='what'></a>
+<h2>What is "Pull Parsing"?</h2>
+<p>
+So you've heard a lot about it lately but what exactly is "pull 
+parsing"? Simply, pull parsing is a programming interface to access 
+XML document information. The dominant APIs for writing XML 
+applications has been the <a href='http://www.w3.org/DOM/'>Document 
+Object Model</a> (DOM) and the 
+<a href='http://sax.sourceforge.net/'>Simple API for XML</a> 
+(SAX). However, pull parsing provides an alternative method for
+application developers when the DOM tree-based model and the SAX 
+event-push model are not appropriate. Using the pull parsing 
+paradigm, the application can actively control the parsing of the 
+XML document by traversing document nodes, one event at a time.
+<p>
+Currently, a number of XML pull-parsing APIs exist to as an 
+alternative to the DOM and SAX models. For example, the 
+<a href='http://www.xmlpull.org/'>XMLPull</a> API was created by 
+merging two parallel efforts. In addition,
+<a href='http://jcp.org/jsr/detail/173.jsp'>JSR 173</a> was
+formed to develop a pull-parsing API for the Java programming
+language. NekoPull was invented for two reasons: to fix the 
+inadequacies the author sees in other pull-parsing designs; 
+and to add native pull-parsing capability to Xerces2.
+
+<a name='using'></a>
+<h2>Using NekoPull</h2>
+<p>
+The XML pull-parsing API of NekoPull is very simple. The application
+instantiates a pull parser instance and requests document information
+events. The parser, in turn, parses a little bit of the XML document 
+and returns an object representing a piece of the document's 
+information. The application then queries the type of the event and
+casts the object to a specific event type in order to access the
+information relating to that event. The application continues this
+process of requesting document events until there are no more events
+or until the application decides to stop parsing.
+
+<a name='using.packages'></a>
+<h3>Package Hierarchy</h3>
+<p>
+The core of the NekoPull API is <code>XMLEvent</code> which can
+be found in the <code>org.cyberneko.pull</code> package. This
+class represents the base class for all document events returned
+by the NekoPull parser, defined by the <code>XMLPullParser</code>
+interface. The specific event objects are specified in the
+<code>org.cyberneko.pull.event</code> package. The complete 
+hierarchy is shown in the following diagram:
+<div align='center'>
+<img alt='package hierarchy' src='packages.gif'>
+</div>
+<p>
+<ul>
+ <li>Package <code>org.cyberneko.pull</code>
+  <ul>
+   <li>Class <code><a href='javadoc/org/cyberneko/pull/XMLEvent.html'>XMLEvent</a></code>
+   <li>Interface <code><a href='javadoc/org/cyberneko/pull/XMLEventIterator.html'>XMLEventIterator</a></code>
+   <li>Interface <code><a href='javadoc/org/cyberneko/pull/XMLPullParser.html'>XMLPullParser</a></code> <i>extends</i> <code>XMLEventIterator</code>
+  </ul>
+ <li>Package <code>org.cyberneko.pull.event</code>
+  <ul>
+   <li>Class <code><a href='javadoc/org/cyberneko/pull/event/BoundedEvent.html'>BoundedEvent</a></code> <i>extends</i> <code>XMLEvent</code>
+   <li>Class <code><a href='javadoc/org/cyberneko/pull/event/CDATAEvent.html'>CDATAEvent</a></code> <i>extends</i> <code>BoundedEvent</code>
+   <li>Class <code><a href='javadoc/org/cyberneko/pull/event/CharactersEvent.html'>CharactersEvent</a></code> <i>extends</i> <code>XMLEvent</code>
+   <li>Class <code><a href='javadoc/org/cyberneko/pull/event/CommentEvent.html'>CommentEvent</a></code> <i>extends</i> <code>XMLEvent</code>
+   <li>Class <code><a href='javadoc/org/cyberneko/pull/event/DoctypeDeclEvent.html'>DoctypeDeclEvent</a></code> <i>extends</i> <code>XMLEvent</code>
+   <li>Class <code><a href='javadoc/org/cyberneko/pull/event/DocumentEvent.html'>DocumentEvent</a></code> <i>extends</i> <code>BoundedEvent</code>
+   <li>Class <code><a href='javadoc/org/cyberneko/pull/event/ElementEvent.html'>ElementEvent</a></code> <i>extends</i> <code>BoundedEvent</code>
+   <li>Class <code><a href='javadoc/org/cyberneko/pull/event/GeneralEntityEvent.html'>GeneralEntityEvent</a></code> <i>extends</i> <code>BoundedEvent</code>
+   <li>Class <code><a href='javadoc/org/cyberneko/pull/event/PrefixMappingEvent.html'>PrefixMappingEvent</a></code> <i>extends</i> <code>BoundedEvent</code>
+   <li>Class <code><a href='javadoc/org/cyberneko/pull/event/ProcessingInstructionEvent.html'>ProcessingInstructionEvent</a></code> <i>extends</i> <code>XMLEvent</code>
+   <li>Class <code><a href='javadoc/org/cyberneko/pull/event/TextDeclEvent.html'>TextDeclEvent</a></code> <i>extends</i> <code>XMLEvent</code>
+  </ul>
+</ul>
+<p>
+Even though it appears that NekoPull contains a lot of classes,
+the <code>XMLEvent</code> class and its descendents are merely
+object structures with a few public fields. Programmers only 
+need to concern themselves with those classes that are of direct 
+importance &mdash; typically the <code>ElementEvent</code> and 
+<code>CharactersEvent</code> classes. But before accessing the
+document information, you must first create an XML pull parser.
+
+<a name='using.instantiate'></a>
+<h3>Instantiating Parser</h3>
+<p>
+Currently, there are no "factory" methods for creating a NekoPull
+parser instance. (Perhaps one will be added in the future as
+the need arises.) Therefore, you must create a new instance of
+the NekoPull implementation that you want to use. Currently, 
+NekoPull comes with only one implementation which is based on 
+Xerces2. The class is called <code>Xerces2</code> and can be
+found in the <code>org.cyberneko.pull.parsers</code> package.
+<p>
+The following code shows how to instantiate the NekoPull
+implementation based on Xerces2.
+<pre class='code'>
+<span class='code-comment'>// import org.cyberneko.pull.XMLPullParser;
+// import org.cyberneko.pull.parsers.Xerces2;</span>
+
+XMLPullParser parser <span class='code-punct'>=</span> <span class='code-keyword'>new</span> Xerces2<span class='code-punct'>();</span>
+</pre>
+<p>
+Calling the <code>Xerces2</code> constructor with no parameters
+will create a NekoPull pull-parser instance using Xerces2's
+standard parser configuration. However, the <code>Xerces2</code> 
+class can also be used with any XNI parser configuration that 
+implements the <code>XMLPullParserConfiguration</code> interface.
+The following example shows the Xerces2 pull-parser using the
+NekoHTML parser (version 0.6.6 or higher).
+<pre class='code'>
+<span class='code-comment'>// import org.apache.xerces.xni.parser.XMLPullParserConfiguration;
+// import org.cyberneko.html.HTMLConfiguration;
+// import org.cyberneko.pull.XMLPullParser;
+// import org.cyberneko.pull.parsers.Xerces2;</span>
+
+XMLPullParserConfiguration config <span class='code-punct'>=</span> <span class='code-keyword'>new</span> HTMLConfiguration<span class='code-punct'>();</span>
+XMLPullParser parser <span class='code-punct'>=</span> <span class='code-keyword'>new</span> Xerces2<span class='code-punct'>(</span>config<span class='code-punct'>);</span>
+</pre>
+<p>
+<strong>Note:</strong> NekoPull is an API built on XNI but it
+does <em>not</em> have to be directly bound to the Xerces2
+implementation of XNI. The preferred method would be to 
+implement a "native" XML parser written specifically to the 
+NekoPull API. However, this version of NekoPull only provides 
+this implementation. 
+
+<a name='using.initiate'></a>
+<h3>Initiating Parsing</h3>
+<p>
+After the parser is created, the application can initiate
+parsing and iterate document events. In order to start
+parsing, create an XNI <code>XMLInputSource</code> object
+and call the <code>setInputSource</code> method as shown
+below.
+<pre class='code'>
+<span class='code-comment'>// import org.apache.xerces.xni.parser.XMLInputSource;</span>
+
+XMLInputSource source <span class='code-punct'>=</span> <span class='code-keyword'>new</span> XMLInputSource<span class='code-punct'>(</span><span class='code-keyword'>null</span><span class='code-punct'>,</span> <span class='code-string'>"data/pull/test03.xml"</span><span class='code-punct'>,</span> <span class='code-keyword'>null</span><span class='code-punct'>);</span>
+parser<span class='code-punct'>.</span>setInputSource<span class='code-punct'>(</span>source<span class='code-punct'>);</span>
+</pre>
+<p>
+And that's it! You're now ready to iterate over the document
+events.
+
+<a name='using.iterate'></a>
+<h3>Iterating Events</h3>
+<p>
+The <code>XMLEventIterator</code> interface defines the way 
+in which the application iterates over document information.
+Currently, the <code>XMLEventIterator</code> interface only 
+contains a single, low-level method to query document events 
+as shown below. 
+<pre class='code'>
+<span class='code-comment'>// import java.io.IOException;
+// import org.apache.xerces.xni.XNIException;
+// import org.cyberneko.pull.XMLEvent;
+
+/**
+ * Returns the next event in the document or null if there are
+ * no more events. This method will return one and only one event
+ * if it is available; it will never return an event chain (i.e.
+ * an event with a non-null <code>next</code> field).
+ */</span>
+<span class='code-keyword'>public</span> XMLEvent nextEvent<span class='code-punct'>()</span> <span class='code-keyword'>throws</span> XNIException<span class='code-punct'>,</span> IOException<span class='code-punct'>;</span>
+</pre>
+<p>
+The <code>XMLPullParser</code> interface extends the
+<code>XMLEventIterator</code> interface to allow implementation 
+optimizations between the document parsing and event propagation 
+code as well as for convenience. Therefore, the application can 
+iterate document events directly from the parser instance after 
+calling the <code>setInputSource</code> method.
+
+<a name='using.sample'></a>
+<h3>Sample Code</h3>
+<p>
+Let's put all of the pieces together and take a look at a 
+sample program using NekoPull. The following code parses an 
+XML document and outputs a format similar to 
+<a href='http://www.jclark.com/sp/sgmlsout.htm'>NSGMLS</a>. 
+While simplistic, this code will highlight the basics of using
+the NekoPull API.
+<p>
+<pre class='code'>
+<span class='code-comment'>// import org.apache.xerces.xni.parser.XMLInputSource;
+// import org.cyberneko.pull.XMLEvent;
+// import org.cyberneko.pull.XMLPullParser;
+// import org.cyberneko.pull.event.CharactersEvent;
+// import org.cyberneko.pull.event.ElementEvent;
+// import org.cyberneko.pull.parsers.Xerces2;
+
+// create parser and set input source</span>
+XMLPullParser parser <span class='code-punct'>=</span> <span class='code-keyword'>new</span> Xerces2<span class='code-punct'>();</span>
+XMLInputSource source <span class='code-punct'>=</span> <span class='code-keyword'>new</span> XMLInputSource<span class='code-punct'>(</span><span class='code-keyword'>null</span><span class='code-punct'>,</span> <span class='code-string'>"data/pull/test03.xml"</span><span class='code-punct'>,</span> <span class='code-keyword'>null</span><span class='code-punct'>);</span>
+parser<span class='code-punct'>.</span>setInputSource<span class='code-punct'>(</span>source<span class='code-punct'>);</span>
+
+<span class='code-comment'>// iterate document events</span>
+XMLEvent event<span class='code-punct'>;</span>
+<span class='code-keyword'>while</span> <span class='code-punct'>((</span>event <span class='code-punct'>=</span> parser<span class='code-punct'>.</span>nextEvent<span class='code-punct'>()) !=</span> <span class='code-keyword'>null</span><span class='code-punct'>) {</span>
+    <span class='code-keyword'>if</span> <span class='code-punct'>(</span>event<span class='code-punct'>.</span>type <span class='code-punct'>==</span> XMLEvent<span class='code-punct'>.</span>ELEMENT<span class='code-punct'>) {</span>
+        ElementEvent elementEvent <span class='code-punct'>= (</span>ElementEvent<span class='code-punct'>)</span>event<span class='code-punct'>;</span>
+        <span class='code-keyword'>if</span> <span class='code-punct'>(</span>elementEvent<span class='code-punct'>.</span>start<span class='code-punct'>) {</span>
+            System<span class='code-punct'>.</span>out<span class='code-punct'>.</span>println<span class='code-punct'>(</span><span class='code-string'>"("</span><span class='code-punct'>+</span>elementEvent<span class='code-punct'>.</span>element<span class='code-punct'>.</span>rawname<span class='code-punct'>);
+        }</span>
+        <span class='code-keyword'>else</span> <span class='code-punct'>{</span>
+            System<span class='code-punct'>.</span>out<span class='code-punct'>.</span>println<span class='code-punct'>(</span><span class='code-string'>")"</span><span class='code-punct'>+</span>elementEvent<span class='code-punct'>.</span>element<span class='code-punct'>.</span>rawname<span class='code-punct'>);
+        }
+    }</span>
+    <span class='code-keyword'>else if</span> <span class='code-punct'>(</span>event<span class='code-punct'>.</span>type <span class='code-punct'>==</span> XMLEvent<span class='code-punct'>.</span>CHARACTERS<span class='code-punct'>) {</span>
+        CharactersEvent charsEvent <span class='code-punct'>= (</span>CharactersEvent<span class='code-punct'>)</span>event<span class='code-punct'>;</span>
+        System<span class='code-punct'>.</span>out<span class='code-punct'>.</span>println<span class='code-punct'>(</span><span class='code-string'>"\""</span><span class='code-punct'>+</span>charsEvent<span class='code-punct'>.</span>text<span class='code-punct'>);
+    }
+}</span>
+
+<span class='code-comment'>// free resources</span>
+parser<span class='code-punct'>.</span>cleanup<span class='code-punct'>();</span>
+</pre>
+<p>
+<strong>Note:</strong>
+The source code for this example is provided in the class
+called <code>TestPullParser</code> that can be found in the
+<code>src/pull/sample/</code> directory.
+<p>
+The sample code can be broken down into three parts:
+<ol>
+ <li>creating parser and initiating parsing;
+ <li>iterating document events; and
+ <li>freeing resources.
+</ol>
+<p>
+The first step has already been explained so let's take a
+look at step two. As already stated, the parser interface 
+extends the event iterator interface so the application can 
+iterate document events by calling the <code>nextEvent</code>
+method directly on the <code>XMLPullParser</code> instance. The 
+parser will continue to return <code>XMLEvent</code> objects 
+from this method until the entire document has been parsed. 
+Therefore, the primary code in an application using NekoPull 
+will look like the following:
+<pre class='code'>
+XMLEvent event<span class='code-punct'>;</span>
+<span class='code-keyword'>while</span> <span class='code-punct'>((</span>event <span class='code-punct'>=</span> parser<span class='code-punct'>.</span>nextEvent<span class='code-punct'>()) !=</span> <span class='code-keyword'>null</span><span class='code-punct'>) {</span>
+    <span class='code-comment'>// do something...</span>
+<span class='code-punct'>}</span>
+</pre>
+<p>
+The actual data contained in the event object depends on its 
+type. But we will explain the event hierarchy in more detail 
+in the section titled <a href='#events'>Event Objects</a>.
+For now, just keep in mind that a polymorphic event object
+is returned by the parser each time <code>nextEvent</code> 
+is called.
+<p>
+The final step, freeing resources, allows the parser to close
+any remaining input streams and release additional resources.
+Very often, applications using the pull-parser approach to
+parse XML documents will parse a little bit of the document,
+execute some logic, and stop before the end of the
+document is reached. Therefore, it's a good idea to always
+call the <code>cleanup</code> method when finished (e.g. in 
+a <code>finally</code> block):
+<pre class='code'>
+XMLPullParser parser <span class='code-punct'>=</span> <span class='code-keyword'>new</span> Xerces2<span class='code-punct'>();</span>
+<span class='code-keyword'>try</span> <span class='code-punct'>{</span>
+    <span class='code-comment'>// initiate parsing and iterate events</span>
+<span class='code-punct'>}</span>
+<span class='code-keyword'>finally</span> <span class='code-punct'>{</span>
+    parser<span class='code-punct'>.</span>cleanup<span class='code-punct'>();
+}</span>
+</pre>
+<p>
+Executing this code produces the following output: <em>(The 
+command line should be written on a single line. It is split 
+among multiple lines for readability.)</em>
+<pre class='cmdline'>
+<span class='cmdline-prompt'>&gt;</span> <span class='cmdline-cmd'>java -cp nekopull.jar;nekopullSamples.jar;xmlParserAPIs.jar;xercesImpl.jar 
+        sample.TestPullParser</span>
+(root
+"This is
+(i
+"really
+)i
+" cool!
+)root</pre>
+
+<a name='events'></a>
+<h2>Event Objects</h2>
+<p>
+The event object is a structure of publicly accessible fields 
+that hold the event's information. Every event object derives 
+from the base class
+<code><a href='javadoc/org/cyberneko/pull/XMLEvent.html'>XMLEvent</a></code> 
+which only contains information common to all events. The
+<code>type</code> field specifies the event's type and will 
+match one of the following constants defined in the 
+<code>XMLEvent</code> class:
+<ul>
+ <li>XMLEvent.DOCUMENT
+ <li>XMLEvent.ELEMENT
+ <li>XMLEvent.CHARACTERS
+ <li>XMLEvent.PREFIX_MAPPING
+ <li>XMLEvent.GENERAL_ENTITY
+ <li>XMLEvent.COMMENT
+ <li>XMLEvent.PROCESSING_INSTRUCTION
+ <li>XMLEvent.CDATA
+ <li>XMLEvent.TEXT_DECL
+ <li>XMLEvent.DOCTYPE_DECL
+</ul>
+
+<a name='events.contents'></a>
+<h3>Object Contents</h3>
+<p>
+Each event type has a corresponding event object defined in the 
+<code>org.cyberneko.pull.event</code> package. Each of these
+objects holds additional information specific to the event. 
+The two most important event objects are the 
+<code>ElementEvent</code> object that corresponds to the 
+<code>XMLEvent.ELEMENT</code> type and which contains the
+following fields:
+<ul>
+ <li><code>boolean start</code> (inherited from <code>BoundedEvent</code>)
+ <li><code>boolean empty</code>
+ <li><code>QName element</code>
+ <li><code>XMLAttributes attributes</code>
+</ul>
+<p>
+and the <code>CharactersEvent</code> object that corresponds
+to <code>XMLEvent.CHARACTERS</code> contains:
+<ul>
+ <li><code>XMLString text</code>
+ <li><code>boolean ignorable</code>
+</ul>
+<p>
+<strong>Note:</strong>
+For performance reasons, characters events may be returned in 
+different events from sequential calls to <code>nextEvent</code>.
+This is similar to the way that the SAX <code>characters</code>
+method of the <code>ContentHandler</code> is defined. However,
+it is assumed that the <code>XMLEventIterator</code> interface
+will be expanded over time to include more convenient methods
+to iterate the document, or a utility class will be included
+to do the same thing.
+
+<a name='events.casting'></a>
+<h3>Casting Event Object</h3>
+<p>
+Regardless of the event type, though, the application needs to
+cast the object returned by the parser to the appropriate
+class. In the following code snippet, element events are cast 
+to an <code>ElementEvent</code> object before accessing the 
+element information. The element event, like other types of 
+events, is <em>bounded</em> &mdash; this means that it has a 
+start and an end event. All of these events extend the 
+<code>BoundedEvent</code> class has a <code>start</code> field 
+to determine which boundary the event type represents. For
+example:
+<pre class='code'>
+    <span class='code-keyword'>if</span> <span class='code-punct'>(</span>event<span class='code-punct'>.</span>type <span class='code-punct'>==</span> XMLEvent<span class='code-punct'>.</span>ELEMENT<span class='code-punct'>) {</span>
+        ElementEvent elementEvent <span class='code-punct'>= (</span>ElementEvent<span class='code-punct'>)</span>event<span class='code-punct'>;</span>
+        <span class='code-keyword'>if</span> <span class='code-punct'>(</span>elementEvent<span class='code-punct'>.</span>start<span class='code-punct'>) {</span>
+            System<span class='code-punct'>.</span>out<span class='code-punct'>.</span>println<span class='code-punct'>(</span><span class='code-string'>"("</span><span class='code-punct'>+</span>elementEvent<span class='code-punct'>.</span>element<span class='code-punct'>.</span>rawname<span class='code-punct'>);
+        }</span>
+        <span class='code-keyword'>else</span> <span class='code-punct'>{</span>
+            System<span class='code-punct'>.</span>out<span class='code-punct'>.</span>println<span class='code-punct'>(</span><span class='code-string'>")"</span><span class='code-punct'>+</span>elementEvent<span class='code-punct'>.</span>element<span class='code-punct'>.</span>rawname<span class='code-punct'>);
+        }
+    }</span>
+</pre>
+<p>
+Accessing event information is relatively straightforward
+and even people new to 
+<a href='http://xml.apache.org/xerces2-j/xni.html'>XNI</a>
+will find it easy to learn as it has many similarities with 
+the SAX API. For complete information regarding the event
+objects in NekoPull, though, please refer to the 
+<a href='javadoc/index.html'>JavaDoc</a>.
+
+<a name='samples'></a>
+<h2>Samples</h2>
+<p>
+Additional sample applications are provided to illustrate the
+use of the NekoPull parser. The <code>Counter</code>, 
+<code>DocumentTracer</code>, and <code>Writer</code> samples
+(analagous to the samples included with Xerces2) can be found
+in the <code>src/pull/sample/</code> directory of this package.
+All samples take document URIs as command line arguments.
+
+<a name='samples.counter'></a>
+<h3>Counter</h3>
+<p>
+Parsing the "data/pull/test03.xml" file with the <code>Counter</code>
+class produces the following output: <em>(The command line should
+be written on a single line. It is split among multiple lines
+for readability.)</em>
+<pre class='cmdline'>
+<span class='cmdline-prompt'>&gt;</span> <span class='cmdline-cmd'>java -cp nekopull.jar;xmlParserAPIs.jar;xercesImpl.jar 
+       sample.Counter data/pull/test03.xml</span>
+data/pull/test03.xml: 0 ms (2 elems, 0 attrs, 0 spaces, 20 chars)
+</pre>
+
+<a name='samples.tracer'></a>
+<h3>DocumentTracer</h3>
+<p>
+Parsing the "data/pull/test03.xml" file with the <code>DocumentTracer</code>
+class produces the following output: <em>(The command line should
+be written on a single line. It is split among multiple lines
+for readability.)</em>
+<pre class='cmdline'>
+<span class='cmdline-prompt'>&gt;</span> <span class='cmdline-cmd'>java -cp nekopull.jar;xmlParserAPIs.jar;xercesImpl.jar 
+       sample.DocumentTracer data/pull/test03.xml</span>
+event.type=DOCUMENT (org.cyberneko.pull.event.DocumentEvent)
+     .start=true
+     .locator=org.apache.xerces.impl.XMLEntityManager$EntityScanner@20dcd9
+     .encoding="UTF-8"
+ event.type=COMMENT (org.cyberneko.pull.event.CommentEvent)
+      .text=" simple XML document "
+ event.type=ELEMENT (org.cyberneko.pull.event.ElementEvent)
+      .start=true
+      .element=localpart="root",rawname="root"
+      .start=true
+      .empty=false
+  event.type=CHARACTERS (org.cyberneko.pull.event.CharactersEvent)
+       .text="This is "
+       .ignorable=false
+  event.type=ELEMENT (org.cyberneko.pull.event.ElementEvent)
+       .start=true
+       .element=localpart="i",rawname="i"
+       .start=true
+       .empty=false
+   event.type=CHARACTERS (org.cyberneko.pull.event.CharactersEvent)
+        .text="really"
+        .ignorable=false
+  event.type=ELEMENT (org.cyberneko.pull.event.ElementEvent)
+       .start=false
+       .element=localpart="i",rawname="i"
+       .start=false
+       .empty=false
+  event.type=CHARACTERS (org.cyberneko.pull.event.CharactersEvent)
+       .text=" cool!"
+       .ignorable=false
+ event.type=ELEMENT (org.cyberneko.pull.event.ElementEvent)
+      .start=false
+      .element=localpart="root",rawname="root"
+      .start=false
+      .empty=false
+event.type=DOCUMENT (org.cyberneko.pull.event.DocumentEvent)
+     .start=false</pre>
+
+<a name='samples.writer'></a>
+<h3>Writer</h3>
+<p>
+Parsing the "data/pull/test03.xml" file with the <code>Writer</code>
+class produces the following output: <em>(The command line should
+be written on a single line. It is split among multiple lines
+for readability.)</em>
+<pre class='cmdline'>
+<span class='cmdline-prompt'>&gt;</span> <span class='cmdline-cmd'>java -cp nekopull.jar;xmlParserAPIs.jar;xercesImpl.jar 
+       sample.Writer data/pull/test03.xml</span>
+&lt;!-- simple XML document --&gt;
+&lt;root&gt;This is &lt;i&gt;really&lt;/i&gt; cool!&lt;/root&gt;
+</pre>
+
+<a name='future'></a>
+<h2>Future Directions</h2>
+<p>
+The current design and implementation of NekoPull is my "first
+guess" at designing an XML pull-parsing API built on the Xerces
+Native Interface. I want to continue refining the programming 
+interface in the hope of making an API that is the easiest 
+and the most useful to XML application developers. As such,
+further experimentation and API changes should be expected as 
+NekoPull progresses. 
+<p>
+I am very interested in user feedback. If you are interested in 
+the design of NekoPull or have any suggestions for improving it, 
+please <a href='mailto:andyc@apache.org'>let me know</a>. 
+
+<div class='copyright'>
+(C) Copyright 2002-2003, Andy Clark. All rights reserved.
+</div>

@@ -1,0 +1,123 @@
+Subject:
+[Fwd: [REMINDER] CFP: First International Workshop on High Performance XML Processing]
+From:
+Aleksander Slominski <aslom@cs.indiana.edu>
+Date:
+Wed, 03 Mar 2004 17:43:20 -0500
+To:
+Stefan Haustein <stefan.haustein@udo.edu>
+
+hi Stefan,
+
+do you want to give it a try and write something for it?
+
+i think we could get something published about XmlPull, kXML2, XPP3?
+
+(...)
+
+  * XML parsing (ultra-fast parser architecture, modular parsers, memory and execution performance analysis, highly configurable parsing, Schema specialized parser generation,...)
+  * XML processing models (e.g. Push vs Pull processors)
+(...)
+
+
+however deadline is March 15.
+
+i will be in Berlin Mar8-14 for GGF10 so we could even work in local timezone
+
+i think it is worth a try.
+
+what do you think?
+
+alek
+
+
+-------- Original Message --------
+Subject:     [REMINDER] CFP: First International Workshop on High Performance XML Processing
+Date:     Wed, 03 Mar 2004 16:30:42 -0500
+From:     Lionel Villard <villardml@free.fr>
+Reply-To:     general@xml.apache.org
+To:     undisclosed-recipients:;
+
+
+
+IMPORTANT NOTICE: The submission must include the *full* article, up to 6 pages.
+
+Call for Papers: First International Workshop on High Performance XML Processing
+
+May 18 Sheraton Hotel, New-York, NY USA
+(Satellite workshop of WWW2004 International Conference)
+
+http://wam.inrialpes.fr/www-workshop2004/index.html
+
+General thematics and orientation
+
+XML plays an important role in document engineering, but it has also spread to many other domains, including databases and web architectures. XML is now used far beyond the XHTML framework and becomes progressively omnipresent at all the levels of content delivery, from the transport layer (SOAP messaging), through the database layer ("native" XML databases, XML Schemas) to the document processing layer (XSLT, XHTML, etc...). As the technologies involved in this infrastructure are still young, we observe that more work is required in order to accomplish a seamless integration of the fundamental components and to increase performances of XML processing.
+
+In particular, it would be valuable to avoid the cost of redundant marshaling/unmarshaling/validation processes (e.g. using pre-parsed XML documents) along the communication channels. This task is going to be challenging as shown by the controversial proposals for an XML binary transport format, either considered as "evil" by the document community ("I want to read my document in plain text! ") or as absolutely required by network specialists ("XML is too bulky!").
+
+In addition to this integration issue, the processing of huge XML documents, found in areas like life sciences, automotive industry, defense or aerospace, is difficult because of the linear time and space complexity (in best cases!) of current basic algorithms. There is growing need to deal with such documents and efficient solutions still need to be worked out.
+
+This workshop will consider innovative approaches, concepts, methods, experiments, theories and technologies that allow high-performance processing of small, medium and huge XML documents, possibly over distributed environments.
+
+Join us in NewYork to explore the underlying technologies and infrastructures needed to achieve this strategic goal !
+
+Non exhaustive Topic List
+
+Any innovative and rigorous approaches, theoretical tools, engineering methods, practical implementation analysis, experimental reports related to the following topic list are of interest for this workshop.
+
+  * XML distributed processing protocol/transfer (execution models, architectures, properties, performance evaluation,...)
+  * Native XML protocol
+  * Binary Infoset Serialization (compression/decompression techniques, storage/transmission properties,...)
+  * XML parsing (ultra-fast parser architecture, modular parsers, memory and execution performance analysis, highly configurable parsing, Schema specialized parser generation,...)
+  * XML processing models (e.g. Push vs Pull processors)
+  * XML streaming and infinite document processing
+  * XML updates
+  * Incremental processing
+  * Lazy evaluation based processors
+  * XML indexing methods
+  * High performance oriented Static Analysis
+  * XML schemas transformation for improving performances
+  * XML Document partitioning
+  * Huge document processing (and validation)
+  * Composition of XML document (WSDL, BPEL, XSP, Web services choregraphy,...)
+  * Efficient XML routing
+
+Paper submission information
+
+Authors are invited to submit original, unpublished research papers that are not being considered in another forum. At least one author is required to attend the workshop and present the paper. Submissions must be PDF compliant, no longer than six pages (out of figures and/or additional materials), and must include the paper title, abstract of 100-250 words, names of authors, their affiliation, email and postal address. In addition, the author responsible for correspondence should include his/her telephone number. Submissions will be sent to villard@us.ibm.com
+
+Informal proceedings will be distributed to participants during the workshop. Publication in the conference proceedings could be considered depending on the volume and quality of submitted materials. Submissions will be evaluated and classified through the usual peer review process, based on the technical and scientific originality, soundness and excellence. A minimum of three reviews by paper will be sent back to authors.
+Submissions due     March 15, 2004
+Notification for acceptance     April 15, 2004
+Final paper due     May 3, 2004
+Workshop date     May 18, 2004
+
+Program Committee
+
+Serge Abiteboul     INRIA-Futurs & LRI (France)
+Sharon Adler     IBM Watson Research Lab. (USA)
+Suzan Davidson     University of Pennsylvania (USA)
+Franck Duluc     Airbus (France)
+Nabil Layaïda     INRIA Rhône-Alpes (France)
+David Megginson     Megginson Technologies Ltd (USA)
+Markus L. Noga     Karlsruhe University (Germany)
+Vincent Quint     INRIA Rhône-Alpes (France)
+Kristoffer H. Rose     IBM Watson Research Lab. (USA)
+Michael I. Swartzbach     University of Aarhus (Denmark)
+
+Organizing Committee
+Daniel Veillard     daniel@veillard.com     Red Hat
+Lionel Villard     villard@us.ibm.com     IBM Watson Research Lab.
+Jean-Yves Vion-Dury     Jean-Yves.Vion-Dury@inrialpes.fr     INRIA & Xerox Research Centre Europe (XRCE)
+
+
+
+---------------------------------------------------------------------
+To unsubscribe, e-mail: general-unsubscribe@xml.apache.org
+For additional commands, e-mail: general-help@xml.apache.org
+
+
+
+-- 
+The best way to predict the future is to invent it - Alan Kay
+

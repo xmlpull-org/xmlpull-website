@@ -1,0 +1,531 @@
+<html><head>
+	
+        <title>XML.com: An Introduction to StAX</title><script language="javascript" src="stax_files/common.js"></script></head>
+<body>
+
+<a href="http://www.xml.com/"><img src="stax_files/xml-logo130.jpg" alt="XML.com" width="130" height="57" border="0" hspace="0" vspace="0"></a> 
+
+<br clear="all">
+ <font face="verdana,arial,helvetica" size="1">Published on <b><a href="http://xml.com/">XML.com</a></b> <a href="http://www.xml.com/pub/a/2003/09/17/stax.html">http://www.xml.com/pub/a/2003/09/17/stax.html</a><br>
+<a href="http://www.xml.com/pub/a/admin/printhelp.html">See this</a> if you're having trouble printing code examples</font>
+<p>
+ </p>
+<font face="verdana,arial,helvetica">
+<font size="3"><b>An Introduction to StAX</b></font><br>
+<font size="1"><b>By</b> Elliotte Rusty Harold</font></font>
+<!-- CS_PAGE_BREAK -->
+<!--  sidebar begins  -->
+<!--  don't move sidebars  -->
+<!--  sidebar ends  -->
+
+<p>Most current XML APIs fall into one of two broad classes: event-based
+APIs like SAX and XNI or tree-based APIs like DOM and JDOM. Most
+programmers find the tree-based APIs to be easier to use; but such APIs
+are less efficient, especially with respect to memory usage. An in-memory
+tree tends to be several times larger than the document it models. Thus
+tree APIs are normally not practical for documents larger than a few
+megabytes in size or in memory constrained environments such as J2ME. In
+these situations, a streaming API such as SAX or XNI is normally
+preferred. A streaming API uses much less memory than a tree API since it
+doesn't have to hold the entire document in memory simultaneously. It can
+process the document in small pieces. Furthermore, streaming APIs are
+fast. They can start generating output from the input almost immediately,
+without waiting for the entire document to be read. They don't have to
+build excessively complicated tree data structures they'll just pull apart
+again into smaller pieces. However, the common streaming APIs like SAX are
+all <i>push</i> APIs. They feed the content of the document to the
+application as soon as they see it, whether the application is ready to
+receive that data or not. SAX and XNI are fast and efficient, but the
+patterns they require programmers to adopt are unfamiliar and
+uncomfortable to many developers.</p>
+
+<p>Pull APIs are a more comfortable alternative for streaming processing
+of XML. A pull API is based around the more familiar iterator design
+pattern rather than the less well-known observer design pattern. In a pull
+API, the client program asks the parser for the next piece of information
+rather than the parser telling the client program when the next datum is
+available. In a pull API the client program drives the parser. In a push
+API the parser drives the client.</p>
+
+<p>Just a tad more than a year ago, I wrote an <a href="http://www.xml.com/pub/a/2002/08/14/xmlpull.html">article for XML.com</a> discussing
+what until now has been the primary pull API, XMLPULL. This article
+identified a number of problems with XMLPULL. The last two paragraphs of
+that article summed up:</p>
+
+<blockquote> These problems are not casual bugs. They are deliberate
+design decisions, based on a desire to reduce the footprint of XMLPULL to
+the minimum possible for J2ME environments. None of these problems are
+likely to be fixed in the future. The trade-offs made in the name of size
+may be acceptable if you're working in J2ME. They are completely
+unacceptable in a desktop or server environment. Thus XMLPULL seems
+destined to remain a niche API for developers seeking efficiency at all
+costs.<br><br> Nonetheless, there are some interesting ideas here. Most
+importantly, the problems I've identified stem from implementation issues,
+not from anything fundamental to a pull-based model for XML processing. A
+future pull-API that learned from XMLPULL's mistakes could easily become a
+real alternative to SAX and DOM.</blockquote>
+
+<p>Now it's a year later, and I am very pleased to report that the next
+generation API is here. BEA Systems, working in conjunction with Sun,
+XMLPULL developers Stefan Haustein and Aleksandr Slominski, XML
+heavyweight James Clark, and others in the Java Community Process are on
+the verge of releasing StAX, the Streaming API for XML. StAX is a pull
+parsing API for XML which avoids most of the pitfalls I noted in
+XMLPULL. XMLPULL was a nice proof of concept. StAX is suitable for real
+work.</p>
+
+<p>Like SAX, StAX is a parser independent, pure Java API based on
+interfaces that can be implemented by multiple parsers. Currently there is
+only one implementation, the reference implementation bundled with the
+draft specification. You can download it <a href="http://jcp.org/en/jsr/detail?id=173">here</a>. Several more are
+likely to be developed as soon as the spec is complete.</p>
+
+<!--  article_sidebar2.view begins  -->
+<center>
+<hr width="70%" size="1" noshade="noshade">
+<table width="70%" border="0" cellspacing="0" cellpadding="0" align="center">
+<tbody><tr>
+<td valign="top" width="50%" align="center">
+
+<a href="http://www.oreilly.com/catalog/javaxml2/index.html?CMP=IL7015"><img src="stax_files/javaxml2.gif" alt="Java &amp; XML, 2nd Edition" border="0" hspace="20"></a>
+</td>
+<td valign="top" width="50%"><p class="headline">Related Reading</p>
+<p class="medlist"><span class="title"><a href="http://www.oreilly.com/catalog/javaxml2/index.html?CMP=IL7015">Java &amp; XML, 2nd Edition</a></span><strong><br>
+
+Solutions to Real-World Problems<br>
+
+By <a href="http://www.oreillynet.com/cs/catalog/view/au/152?x-t=book.view&amp;CMP=IL7015">Brett McLaughlin</a></strong>
+</p>
+<div class="secondary">
+<!--  builds links to list in sidebar  -->
+ <a href="http://www.oreilly.com/catalog/javaxml2/toc.html?CMP=IL7015">Table of Contents</a><br> 
+  <a href="http://www.oreilly.com/catalog/javaxml2/inx.html?CMP=IL7015">Index</a><br> 
+ 
+ <a href="http://www.oreilly.com/catalog/javaxml2/chapter/index.html?CMP=IL7015">Sample Chapter</a><br> 
+ 
+
+
+
+
+
+<br>
+<b><a href="http://safari.oreilly.com/0596001975">Read Online--Safari</a></b><br>
+<span class="tiny">Search this book on Safari:</span>
+<form action="http://safari.oreilly.com/JVXSL.asp" method="post">
+<input type="hidden" name="s" value="1"><input type="hidden" name="b" value="1">
+<input type="hidden" name="t" value="1"><input type="hidden" name="f" value="1">
+<input type="hidden" name="c" value="1"><input type="hidden" name="l" value="1">
+<input type="hidden" name="view" value="section">
+<input tabindex="1" name="se_text" type="text" value="" size="15"> <input name="go" type="image" title="Execute the search" src="stax_files/safari_btn_go.gif" width="23" height="17" border="0" align="center" alt="Go"><br>
+<select name="se_isbn"><option value="0-596-00197-5">Only This Book</option><option value="">All of Safari</option></select><br>
+<input type="checkbox" name="code" value="1"><span class="tiny">Code Fragments only</span>
+</form>						  
+
+</div>
+</td>
+</tr>
+</tbody></table>
+<hr width="70%" size="1" noshade="noshade">
+</center>
+<!--  article_sidebar2.view ends  -->
+
+<p>StAX shares with SAX the ability to read arbitrarily large
+documents. However, in StAX the application is in control rather than the
+parser. The application tells the parser when it wants to receive the next
+data chunk rather than the parser telling the client when the next chunk
+of data is ready. Furthermore, StAX exceeds SAX by allowing programs to
+both read existing XML documents and create new ones. Unlike SAX, StAX is
+a bidirectional API.</p>
+
+<h3>Reading Documents with StAX</h3>
+
+<p>XMLStreamReader is the key interface in StAX. This interface represents
+a cursor that's moved across an XML document from beginning to end. At any
+given time, this cursor points at one thing: a text node, a start-tag, a
+comment, the beginning of the document, etc. The cursor always moves
+forward, never backward, and normally only moves one item at a time. You
+invoke methods such as getName and getText on the XMLStreamReader to
+retrieve information about the item the cursor is currently positioned
+at.</p>
+
+<p>A typical StAX program begins by using the XMLInputFactory class to
+load an implementation dependent instance of XMLStreamReader:</p>
+
+<pre><code>URL u = new URL("http://www.cafeconleche.org/");
+InputStream in = u.openStream();
+XMLInputFactory factory = XMLInputFactory.newInstance();
+XMLStreamReader parser = factory.createXMLStreamReader(in);</code></pre>
+
+<p>You can also create an XMLStreamReader from a
+<code>java.io.Reader</code> or a
+<code>javax.xml.transform.Source</code>. You can't create, surprisingly,
+one from a URL, either a <code>java.net.URL</code> object or a string
+containing a URL.</p>
+
+<p>If anything goes wrong, an <code>XMLStreamException</code>, a checked
+exception, is thrown.</p>
+
+<p>Now it's time to actually read the document. The next method in
+<code>XMLStreamReader</code> advances the cursor to the next item. Various
+getter methods to extract data from the current item. Some of the most
+important of these getters include</p>
+
+<pre><code>public QName    getName()
+public String   getLocalName()
+public String   getNamespaceURI()
+public String   getText()
+public String   getElementText()
+public int      getEventType()
+public Location getLocation()
+public int      getAttributeCount()
+public QName    getAttributeName(int index)
+public String   getAttributeValue(String namespaceURI, String localName)</code></pre>
+
+<p>For example, here's a simple bit of code that iterates through an XML
+document and prints out the names of the different elements it
+encounters:</p>
+
+<pre><code>while (true) {
+    int event = parser.next();
+    if (event == XMLStreamConstants.END_DOCUMENT) {
+       parser.close();
+       break;
+    }
+    if (event == XMLStreamConstants.START_ELEMENT) {
+        System.out.println(parser.getLocalName());
+    }
+}</code></pre>
+
+<p>Here's the beginning of the output when I ran this across a simple
+well-formed HTML file:</p>
+
+<p><code>html<br>
+  head<br>
+  title<br>
+  meta<br>
+  meta<br>
+  link<br>
+  meta<br>
+  script<br>
+  body<br>
+  div<br>
+  a<br>
+  a<br>
+  ...</code></p>
+
+<p>Not all of the getter methods work all the time. For instance, if the
+cursor is positioned on an end-tag, then you can get the name and
+namespace but not the attributes or the element text. If the cursor is
+positioned on a text node, then you can get the text but not the name,
+namespace, prefix, or attributes. Text nodes just don't have these
+things. Calling an inapplicable method normally returns null. To find out
+what kind of node the parser is currently positioned on, you call the
+getEventType method. This returns one of these seventeen int
+constants:</p>
+
+<ul>
+  <li><code>XMLStreamConstants.START_DOCUMENT</code></li>
+  <li><code>XMLStreamConstants.END_DOCUMENT</code></li>
+  <li><code>XMLStreamConstants.START_ELEMENT</code></li>
+  <li><code>XMLStreamConstants.END_ELEMENT</code></li>
+  <li><code>XMLStreamConstants.ATTRIBUTE</code></li>
+  <li><code>XMLStreamConstants.CHARACTERS</code></li>
+  <li><code>XMLStreamConstants.CDATA</code></li>
+  <li><code>XMLStreamConstants.SPACE</code></li>
+  <li><code>XMLStreamConstants.COMMENT</code></li>
+  <li><code>XMLStreamConstants.DTD</code></li>
+  <li><code>XMLStreamConstants.START_ENTITY</code></li>
+  <li><code>XMLStreamConstants.END_ENTITY</code></li>
+  <li><code>XMLStreamConstants.ENTITY_DECLARATION</code></li>
+  <li><code>XMLStreamConstants.ENTITY_REFERENCE</code></li>
+  <li><code>XMLStreamConstants.NAMESPACE</code></li>
+  <li><code>XMLStreamConstants.NOTATION_DECLARATION</code></li>
+  <li><code>XMLStreamConstants.PROCESSING_INSTRUCTION</code></li>
+</ul>
+
+<p>For a slightly more realistic example, consider an outliner program
+that reads through an XHTML document and prints out the contents of all
+the heading elements: h1, h2, h3, and so forth. A for loop calls the next
+method until the end of the document is seen. Each event is tested for its
+type. If the event is a start-tag and its name indicates it's a heading
+such as h1, then the <code>inHeader</code> int flag is incremented. If the
+event is a header end-tag, then the <code>inHeader</code> int flag is
+decremented. If the event is a characters event and inHeader is greater
+than 0, then the content of the characters event is printed. All other
+events are ignored.</p>
+
+<pre><code>import javax.xml.stream.*;
+import java.net.URL;
+import java.io.*;
+
+public class XHTMLOutliner {
+
+  public static void main(String[] args) {
+
+    if (args.length == 0) {
+      System.err.println("Usage: java XHTMLOutliner url" );
+      return;
+    }
+    String input = args[0];
+
+    try {
+      URL u = new URL(input);
+      InputStream in = u.openStream();
+      XMLInputFactory factory = XMLInputFactory.newInstance();
+      XMLStreamReader parser = factory.createXMLStreamReader(in);
+        
+      int inHeader = 0;
+      for (int event = parser.next();  
+       event != XMLStreamConstants.END_DOCUMENT;
+       event = parser.next()) {
+        switch (event) {
+          case XMLStreamConstants.START_ELEMENT:
+            if (isHeader(parser.getLocalName())) {
+              inHeader++;
+            }
+            break;
+          case XMLStreamConstants.END_ELEMENT:
+            if (isHeader(parser.getLocalName())) {
+              inHeader--;
+              if (inHeader == 0) System.out.println();
+            }
+            break;
+          case XMLStreamConstants.CHARACTERS:
+            if (inHeader &gt; 0)  System.out.print(parser.getText());
+            break;
+          case XMLStreamConstants.CDATA:
+            if (inHeader &gt; 0)  System.out.print(parser.getText());
+            break;
+        } // end switch
+      } // end while
+      parser.close();
+    }
+    catch (XMLStreamException ex) {
+       System.out.println(ex);
+    }
+    catch (IOException ex) {
+      System.out.println("IOException while parsing " + input);
+    }
+
+  }
+
+   /**
+    * Determine if this is an XHTML heading element or not
+    * @param  name tag name
+    * @return boolean true if this is h1, h2, h3, h4, h5, or h6; 
+    *                 false otherwise
+    */
+    private static boolean isHeader(String name) {
+      if (name.equals("h1")) return true;
+      if (name.equals("h2")) return true;
+      if (name.equals("h3")) return true;
+      if (name.equals("h4")) return true;
+      if (name.equals("h5")) return true;
+      if (name.equals("h6")) return true;
+      return false;
+    }
+
+}</code></pre>
+
+<p>The loop with a switch statement is a very common pattern in
+StAX. There are a few ways to filter the event stream; of course, you
+could use a stack of if-else statements instead of the switch, but almost
+all StAX programs will feature an event loop something like this one. This
+is probably my only major criticism of StAX. Integer type codes and big
+switch statements are relics of procedural thinking. Object oriented
+programs should be based around classes, inheritance hierarchies, and
+polymorphism instead. The next method should return an
+<code>XMLEvent</code> object that has subclasses like
+<code>StartElement</code>, <code>Characters</code>, and
+<code>StartDocument</code> instead. NekoPull is an API that does this the
+right way. The main reason to use integer type codes instead of classes is
+to avoid Java's very slow reflection API and instanceof operator. In my
+opinion, however, what really needs to be fixed is the speed of
+reflection, not the APIs that depend on it.</p>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tbody><tr><td><p class="secondary">
+
+
+<!-- CS_PAGE_INDEX -->
+</p></td><td><p class="secondary" align="right"> <a href="http://www.xml.com/lpt/a/2003/09/17/%3C%21--CS_NEXT_REF--%3E">  
+</a></p></td></tr></tbody></table>
+
+
+
+
+<!-- CS_PAGE_BREAK -->
+<p>
+by Elliotte Rusty Harold
+
+ 
+
+
+<!-- CS_PAGE_INDEX -->
+</p>
+
+
+
+
+<p>This simple example perhaps doesn't demonstrate the full power of
+StAX. Since the client application controls the process, it's easy to
+write separate methods for different elements. These methods can have
+detailed knowledge of the internal structure of the type of element they
+handle. For example, you could write one method that handles headers, one
+that handles img elements, one that handles tables, one that handles meta
+tags, and so forth. For example, you might process an html element that
+contains head and body child elements like this:</p>
+
+<pre><code>public void processHtml(XmlPullParser parser) {
+  while (true) {
+    int event = parser.next();
+    if (event == XMLStreamConstants.START_ELEMENT) {
+      if (parser.getLocalName().equals("head")) processHead(parser);
+      else if (parser.getLocalName().equals("body")) processBody(parser)
+    }
+    else if (event == XMLStreamConstants.END_ELEMENT) {// &lt;/html&gt;
+      return;
+    }
+  }
+}</code></pre>
+
+<p>Here I'm making a lot of assumptions about exactly which tags appear
+where when. This isn't unusual in XML processing . Most programs are
+written with particular vocabularies in mind. You wouldn't expect an XHTML
+outliner to know what to do with a DocBook document, much less an SVG
+picture, for example. However, it is best to test and verify your
+expectations about data formats. Normally, this would be done through
+validation. You can turn on validation by setting the factory's
+<code>javax.xml.stream.isValidating</code> property to true before
+instantiating the parser like this:</p>
+
+<pre><code>factory.setProperty("javax.xml.stream.isValidating", Boolean.TRUE);</code></pre>
+
+<p>You would then register an <code>XMLReporter</code> with the
+<code>XMLInputFactory</code> to receive notices of the validity
+errors. For example, using an anonymous inner class,</p>
+
+<pre><code>factory.setXMLReporter(new XMLReporter() {
+  public void report(String message, String errorType,
+    Object relatedInformation, Location location) {
+      System.err.println("Problem in " + location.getLocationURI());
+      System.err.println("at line " + location.getLineNumber()
+        + ", column " + location.getColumnNumber());
+      System.err.println(message);
+  }
+});</code></pre>
+
+<p>If you want validity errors to be fatal, throw an
+<code>XMLStreamException</code> from the report method rather than just
+printing the error message. However, StAX parsers are not required to be
+able to validate and the reference implementation can't, so this doesn't
+yet work.</p>
+
+<p>StAX does offer an alternative for simple cases. If you expect a
+particular item to be present in the document, you can require it using a
+type and an optional name and namespace. For example, if I think that the
+cursor is positioned at an XHTML &lt;head&gt; start-tag, I'd require it
+thusly:</p>
+
+<pre><code>parser.require(XMLStreamConstants.START_ELEMENT,
+               "http://www.w3.org/1999/xhtml",
+               "head");</code></pre>
+
+<p>If my expectation proves wrong, then the require method throws an
+XMLStreamException, a checked exception. You can pass null for either the
+namespace or the element name to indicate that all namespaces and names
+are acceptable. Putting this all together, the general pattern might
+be something like:</p>
+
+<pre><code>try {
+  parser.next();
+  parser.require(XMLStreamConstants.START_ELEMENT,
+                 "http://www.w3.org/1999/xhtml",
+                 "head");
+  processHead(parser);
+}
+catch (XMLStreamException ex) {
+  // Oops! The head was missing!
+}</code></pre>
+
+<h3>Output</h3>
+
+<p>StAX is not limited to reading XML documents. It can also create
+them. For output, instead of an <code>XMLStreamReader</code> you use,
+naturally enough, an <code>XMLStreamWriter</code>. This interface provides
+methods to write elements, attributes, comments, text, and all the other
+parts of an XML document. An <code>XMLStreamWriter</code> is created by an
+<code>XMLOutputFactory</code> like this:</p>
+
+<pre><code>OutputStream out = new FileOutputStream("data.xml");
+XMLOutputFactory factory = XMLOutputFactory.newInstance();
+XMLStreamWriter writer = factory.createXMLStreamWriter(out);</code></pre>
+
+<p>You write data onto the stream by using various write<i>FOO</i>
+methods: <code>writeStartDocument, writeStartElement, writeEndElement,
+writeCharacters, writeComment, writeCDATA</code>, etc. For example, these
+lines of code write a simple hello world document:</p>
+
+<pre><code>writer.writeStartDocument("ISO-8859-1", "1.0");
+writer.writeStartElement("greeting");
+writer.writeAttribute("id", "g1");
+writer.writeCharacters("Hello StAX");
+writer.writeEndDocument();</code></pre>
+
+<p>When you've finished creating the document, you want to flush and close
+the writer. This does not close the underlying output stream, so you'll
+need to close that too:</p>
+
+<pre><code>writer.flush();
+writer.close();
+out.close();</code></pre>
+
+<p><code>XMLStreamWriter</code> helps maintain some well-formedness
+constraints. For instance, <code>endDocument</code> closes all unclosed
+start-tags, and <code>writeCharacters</code> performs any necessary
+escaping of reserved characters like &amp; and &lt;. However, the checking
+is minimal. <code>XMLStreamWriter</code> allows documents with multiple
+roots, documents with more than one XML declaration, element names that
+contain whitespace, characters that don't exist in the output character
+set, and a lot more. Implementations are allowed but not required to check
+these things. The reference implementation does not check them. Separate
+verification and testing of the output is necessary. Creating XML
+documents with <code>XMLStreamWriter</code> is faster and more more
+efficient than serializing a DOM or XOM tree, but it's not nearly as
+robust.</p>
+
+<h3>Summing Up</h3>
+
+<p>This article has just skimmed along the surface of StAX; the API has
+more to offer than there is space here to describe. Like SAX, StAX enables
+pipelines that chain the output of one process to the input of the
+next. It can filter the documents it parses to modify or log the
+documents. It can support XML views of non-XML data. It can marshal data
+structures and objects into XML documents and it can unmarshal the
+documents back into objects.</p>
+
+<p>When is StAX not appropriate? Basically whenever a streaming API
+doesn't work. Like SAX, StAX still requires you to build data structures
+as the document is parsed in order to hold onto information for any length
+of time. In the worst case, these data structures can become as large and
+complex as the original document. In these cases, a tree-based API such as
+DOM or XOM may be more appropriate. Such an API definitely provides more
+convenient random access to the tree than does StAX (or any other
+streaming API). StAX works well when you need to process a large document
+a small piece at a time moving from beginning to end, that is, when you
+can essentially slide a peephole over the complete document. It works less
+well when you need to access widely separated parts of the document at the
+same time in unpredictable orders. However, many of the toughest XML
+processing problems come from exactly the domain where StAX does work
+well.</p>
+
+<p>StAX is a fast, potentially extremely fast, straight-forward,
+memory-thrifty way to loading data from an XML document the structure of
+which is well known in advance. State management is much simpler in StAX
+than in SAX, so if you find that the SAX logic is just getting way too
+complex to follow or debug, then StAX is well worth exploring. A few
+features such as validation, schema support, and entity resolution are
+either not available or are not functional in the current reference
+implementation, but these should soon be available in independent
+implementations. StAX will be a very useful addition to any Java
+developer's XML toolkit.</p>
+<p><font face="verdana,arial,helvetica" size="1"><b>XML.com</b> Copyright © 1998-2004 O'Reilly Media, Inc.</font></p></body></html>

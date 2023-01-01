@@ -1,0 +1,230 @@
+<HTML>
+<HEAD>
+<TITLE>Pull Parser 2 Changes
+</TITLE>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Aleksander Slominski [aslom@extreme.indiana.edu]">
+</HEAD>
+<BODY BGCOLOR="white">
+
+<H1>Changes to Pull Parser 2 (XPP2)</H2><P>
+
+<h3><a name="XPP_2_1_11"></a>2004- (XPP_2_1_11)</h2>
+
+<ul>
+<li>final maintenance release?</ul>
+
+<P>
+
+<h3><a name="XPP_2_1_10"></a>2003-11-15 (XPP_2_1_10)</h2>
+
+<ul>
+<li>[2003/9/4] fixed CDATA bug reported by Timo Thomas: Tokenizer class was
+making assumption that pc[] is always equal in size to buf[] but this did not
+hold in case when appending chunks of CDATA content (and not one character by
+one character ...) refactored to encapsulate all System.arrayCopy calls with
+extra checks to deal with this situation<li>added check to addDeclaredNamespaces to prevent adding of conflicting
+namespace declarations for the same prefix in the XML node
+<li>added equals() and hashCode() to implementation of Tag/StartTag/Node
+and added unit tests for it
+<li>fixed bug in CDATA handling in Tokenizer reported by Nikhil C. Khedkar and
+added Junit test for it
+</ul>
+
+<h3>2003-03-07 (XPP_2_1_9)</h2>
+
+<ul>
+<li>added standard JAR output that has no JAXP11 or SAX2 driver as requested by Ben Walding
+who wanted to be able to use JAXP11 parser and XPP2 and not worry about conflicts in CLASSPATH ..
+<li>fixed bug in XmlNode.removeAttributeBy* that was showing if the attribute
+was first removed and then added - slot at position <b>n</b> in attribute array
+was incorrectly pointing to the same location as slot <b>n-1</b> ...
+<li>changed readName to be more XML 1.0 and 1.1 compatible to allow full range of possible name characters
+and not rely on Java Character.isLower/uppercase ...
+<li><b>NOTE:</b> <em style="font-style: normal; font-weight: 700">backward incompatible change</em>:
+fixed typo in method XmlStartTag.removeAtttributes -> removeAttributes name reported by Yogesh
+<li>added to XmlStartTag two new methods: removeAttributeByName(String uri,
+String localName) and removeAttributeByRawName(String rawName)<li>compiled and tested against latest Xerces 2 from CVS (bug with duplicated xmlns seems to be fixed in X2 CVS)
+<li>improved X2 cumulative reader to correctly support un-shrinkable buffer
+</ul>
+
+<h3>2002-04-03 (XPP_2_1_8)</h2>
+
+<ul>
+<li>fixed a bug in tokenizer: it was trying always to fill buffer even though one byte
+was still available - now it will use buffer to the end and then read new chunk from Reader
+<li>updated XPP2 implementation to compile with patched latest Xerces2.0.1<li>
+added build and run scripts (finally ...)</ul>
+
+<h3>2001-12-10 (XPP_2_1_7)</h2>
+
+<ul>
+<li>fixed SAX2 driver to correctly report prefixes and better handle
+invalid input for parsing
+<li>improved Xerces 2 driver to use Augmentations (working with BETA3 of Xerces2)
+</ul>
+
+<h3>2001-11-21 (XPP_2_1_6_ALPHA)</h2>
+
+<ul>
+<li>fixed bug in default implementation of PullParser that prevented
+it from reading list of declared namespaces when END_TAG is current event
+<li>added SAX2 driver that translates pull events into SAX2 push callbacks
+<li>added JAXP11 driver (based on code from Xerces 2 except for minimal changes)
+</ul>
+
+<h3>2001-11-20 (XPP_2_1_5_ALPHA)</h2>
+
+<ul>
+<li> split XmlPullParser interface into proper XmlPullParser
+and separate "feature" interfaces
+XmlPullParserBufferControl and XmlPullParserEventPosition
+that clearly mark optional interfaces.
+<br><b>NOTE:</b> for XmlPullParser pp
+use <code>if(pp instanceof XmlPullParserBufferControl)</code>
+to check if an optional interface is implemented by pull parser
+</ul>
+
+<h3>2001-10-18 (VER_2_1_4_ALPHA)</h2>
+
+<ul>
+<li>X2 driver is no integrated with latest Xerces 2 XNI
+and the problem with EOL normalization is gone however there is
+another problem related to attribute value normalization - reported
+to Xerces 2 mailing list.
+<li>added more tests and removed some namespace bugs
+</ul>
+
+<h3>2001-10-18 (VER_2_1_3_ALPHA)</h2>
+
+<ul>
+<li>X2 driver is becoming quite stable and passes almost all tests
+except two reported bugs in Xerces 2 and lack of support for
+low level parsing (control of input buffer and event position):
+<ol>
+<li> [major] handling of end-of-line normalization is incosistent with XML
+spec ... (commented out checks in testNormalizeLine() from ParserTest for
+now)
+<li> [minor] apparently Xerces allows duplicate attribute with namespaces to
+be declared (commented one line checking it in testAttribUniq from
+ParserTest for now)
+</ol>
+<li>it is also very easy to switch between X2 driver and default XPP2 driver
+implementation  or even control it by system property (similarly to JAXP).
+when both drivers are on CLASSPATH normally first on CLASSPATH will be
+used but the selection can be forced  with system property by writing:
+<code>XmlPullParserFactory.newInstance(System.getProperty(XmlPullParserFactory.DEFAULT_PROPERTY_NAME));</code>
+
+</ul>
+
+
+<h3>2001-10-10 (VER_2_1_2_ALPHA)</h2>
+
+<ul>
+<li>a first milestone towards support of other parser engines
+in XPP2 and SAX2 driver. initial X2 driver can run simple count
+sample but does not pass internal XPP2 unit tests (yet!)
+</ul>
+
+<h3>2001-08-20 (XPP_VER_2_0_2 is the same as VER_2_0_1_BETA8)</h2>
+
+<p><strong>Stable 2.0.2 version released and frozen!</strong>
+Summary of changes since initial 2.x version:<ul>
+<li>reduced memory footprint of node tree by 50% (both Node and PullNode),
+<li>increased performance tree node build by 20%
+<li>improved and optimized output (Formatter and Recorder)
+<li>much more of JUnit tests
+<li>added PalmOS Midlet sample
+<li>small changes and improvement in API
+<li>fixed few bugs ...
+</ul>
+
+<h3>2001-08-20 (VER_2_0_1_BETA8)</h2>
+
+<ul>
+<li>fixed bug that prevented to add first attribute
+to StartTag (ensureCapacity called with 2*size where size == 0 ... )
+reported by Dennis Sosnoski.
+bug was introduced when fine tuning memory footprint in BETA6...
+<li>XmlPullNode.getPullParser() will now
+correctly parse unfinished children before returning parser,
+add JUnit tests...
+<li>changed XmlPullParser.getCurrentEvent() to getEventType()
+<li>switch to use in build.xml tar/gzip instead of zip
+(much smaller output archive!)
+</ul>
+
+<h3>2001-08-19 (VER_2_0_1_BETA7)</h2>
+
+<ul>
+<li>changed Node implementation to use
+smaller Vector of initial size 4 and increment of 4
+<li>pull parser is no longer reporting "" content
+</ul>
+
+<h3>2001-08-18 (VER2_0_1_BETA6)</h2>
+
+<ul>
+<li>reduced by half tree node memory
+footprint by avoiding placeholder attributes
+(XmlNode and XmlPullNode)
+<li>rearranged XPP2 implementation into separate packages:
+node, tag, pullnode, tokenizer, pullparser,
+format
+<li>fixed duplicate calls to readNodeWithoutChildren(...)
+in PullNode (when constructing and just after that)
+<li>added XmlStartTag.isAttributeNamespaceDeclaration()
+to allow to avoid duplicating namespace declaration attributes
+in Recorder/Formatter output when pull parser is returning
+all attributes setNamespaceAttributesReporting(true)
+</ul>
+
+<h3>2001-08-16 (VER_2_0_1_BETA5)</h2>
+
+<ul>
+<li>Recorder will no longer print default namespace declaration
+on top level element as it is default in XML anyway
+(so no xmlns="" output)
+<li>empty nodes will be output by Recorder as empty elements (ex. &lt;empty/>)
+<li>escaping \t and \n in attributes
+to preserve attributes values against normalization
+<li>during parsing when constructing Node and PullNode
+empty strings ("") will not be added as children
+(they are not needed and we can save some memory)
+</ul>
+
+<h3>2001-08-16 (VER_2_0_1_BETA4)</h2>
+
+<ul>
+<li>fixed bug reported by Dennis Sosnoski in implementation of Node
+that incorrectly reported getChildAt(0) when removeChildrenAt(0) was called before
+</ul>
+
+<h3>2001-08-15 (VER_2_0_1_BETA3)</h2>
+
+<ul>
+<li>added Palm OS MIDP built target for generating PRC, updated J2ME doc
+with sample screen dumps
+</ul>
+
+<h3>2001-08-14 (VER_2_0_1_BETA2)</h2>
+
+<ul>
+<li>fixed bug reported by Dennis Sosnoski that caused Formatter
+to recursively escape XML
+</ul>
+
+<h3>2001-08-12 (VER_2_0_1_BETA)</h2>
+
+<ul>
+<li>worked out J2ME build quirks and got XppCountMidlet to run - finally...
+<li>finished PullNode implementation
+</ul>
+
+<p>&nbsp;<p>[<a href="../README.html">Back To Pull Parser 2 Documentation</a>]<p>&nbsp;
+
+<HR>
+<address><a href="aslom@extreme.indiana.edu">Aleksander Slominski</a><address>
+</address>
+</BODY>
+</HTML>

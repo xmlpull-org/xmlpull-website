@@ -1,0 +1,574 @@
+.GroupHeaderid1siteid0{
+Background-Color : #336699 ;
+Height : 20 ;
+Text-Align : Left ;
+}
+.GroupHeaderLinkid1siteid0{
+Color : #FFFFFF ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 9pt ;
+Font-Weight : Bold ;
+}
+.GroupHeaderTextid1siteid0{
+Color : #FFFFFF ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 9pt ;
+Font-Weight : Bold ;
+}
+.RegionHeaderid1siteid0{
+Background-Color : #336699 ;
+Height : 20 ;
+Text-Align : Left ;
+}
+.RegionHeaderTextid1siteid0{
+Color : #FFFFFF ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 9pt ;
+Font-Weight : Bold ;
+}
+.Bodyid1siteid0{
+Background-Color : #FFFFFF ;
+}
+.Elogger_Trackableid1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.applicationtypeid1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.authorid1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.createdateid1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.creatorid1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.defaultattributeid1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.descriptionid1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.documentsizeid1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.expiredateid1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.help_urlid1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.initialpagenameid1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.inplacedisplayid1siteid0{
+Color : #336699 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.itemfunctionid1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.keywordsid1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.perspectivesid1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.portletidid1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.provideridid1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.providernameid1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.titleid1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+Font-Weight : Bold ;
+}
+.titleorimageid1siteid0{
+Color : #336699 ;
+Text-Decoration : Underline ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 9pt ;
+Font-Weight : Bold ;
+}
+.wwsbr_category_id1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.wwsbr_expirationperiod_id1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.wwsbr_itemtype_id1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.wwsbr_page_id1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.wwsbr_pagegroup_id1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.wwsbr_portletname_id1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.wwsbr_updatedate_id1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.wwsbr_updator_id1siteid0{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.LeftCurve{
+Background-Attachment : scroll ;
+Background-Image : url(http://otn.oracle.com/portalimages/FFFFFFl.gif) ;
+Background-Position : left top ;
+Background-Repeat : no-repeat ;
+}
+.PortletBodyColor{
+}
+.PortletHeaderColor{
+Background-Color : #999999 ;
+}
+.PortletHeaderLink{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.PortletHeaderStyle{
+}
+.PortletHeaderText{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 10pt ;
+Font-Weight : Bold ;
+}
+.PortletHeading1{
+Color : #333333 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 9pt ;
+Font-Weight : Bold ;
+}
+.PortletHeading2{
+Color : #666666 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+Font-Weight : Bold ;
+}
+.PortletHeading3{
+Color : #333333 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 7pt ;
+Font-Weight : Bold ;
+}
+.PortletHeading4{
+Color : #333333 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 7pt ;
+Font-Weight : Bold ;
+}
+.PortletSubHeaderColor{
+Background-Color : #CCCCCC ;
+}
+.PortletSubHeaderLink{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 9pt ;
+}
+.PortletSubHeaderText{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 9pt ;
+}
+.PortletText1{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.PortletText2{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.PortletText3{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 7pt ;
+}
+.PortletText4{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 7pt ;
+}
+.RightCurve{
+Background-Attachment : scroll ;
+Background-Image : url(http://otn.oracle.com/portalimages/FFFFFFr.gif) ;
+Background-Position : right top ;
+Background-Repeat : no-repeat ;
+}
+.LeftSubTabid1siteid0{
+Background-Attachment : scroll ;
+Background-Color : #336699 ;
+Background-Image : url(http://otn.oracle.com/portalimages/FFFFFFsl.gif) ;
+Background-Position : left top ;
+Background-Repeat : no-repeat ;
+}
+.LeftTabBgSlantid1siteid0{
+Background-Attachment : scroll ;
+Background-Color : #CCCC99 ;
+Background-Image : url(http://otn.oracle.com/portalimages/FFFFFFtl.gif) ;
+Background-Position : left top ;
+Background-Repeat : no-repeat ;
+}
+.LeftTabForeSlantid1siteid0{
+Background-Attachment : scroll ;
+Background-Color : #336699 ;
+Background-Image : url(http://otn.oracle.com/portalimages/FFFFFFtl.gif) ;
+Background-Position : left top ;
+Background-Repeat : no-repeat ;
+}
+.RightSubTabid1siteid0{
+Background-Attachment : scroll ;
+Background-Color : #336699 ;
+Background-Image : url(http://otn.oracle.com/portalimages/FFFFFFsr.gif) ;
+Background-Position : right top ;
+Background-Repeat : no-repeat ;
+}
+.RightTabBgCurveid1siteid0{
+Background-Attachment : scroll ;
+Background-Color : #CCCC99 ;
+Background-Image : url(http://otn.oracle.com/portalimages/FFFFFFtr.gif) ;
+Background-Position : right top ;
+Background-Repeat : no-repeat ;
+}
+.RightTabForeCurveid1siteid0{
+Background-Attachment : scroll ;
+Background-Color : #336699 ;
+Background-Image : url(http://otn.oracle.com/portalimages/FFFFFFtr.gif) ;
+Background-Position : right top ;
+Background-Repeat : no-repeat ;
+}
+.SubTabBgTextid1siteid0{
+Color : #CCCC99 ;
+Text-Decoration : none ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 11pt ;
+Font-Weight : Bold ;
+}
+.TabBackgroundColorid1siteid0{
+Background-Color : #CCCC99 ;
+}
+.TabBackgroundTextid1siteid0{
+Color : #003366 ;
+Text-Decoration : none ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 10pt ;
+}
+.TabForegroundColorid1siteid0{
+Background-Color : #336699 ;
+}
+.TabForegroundTextid1siteid0{
+Color : #FFFFFF ;
+Text-Decoration : none ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 10pt ;
+Font-Weight : Bold ;
+}
+.RegionNoBorder{}
+.RegionBorder { border:#999999  1px solid; }
+.RegionHeaderColor { background-color:; border:#999999 0px solid }
+.PageColor { background-color:#FFFFFF}
+.GroupHeaderid271569siteid33{
+Background-Color : #336699 ;
+Height : 20 ;
+Text-Align : Left ;
+}
+.GroupHeaderLinkid271569siteid33{
+Color : #FFFFFF ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 9pt ;
+Font-Weight : Bold ;
+}
+.GroupHeaderTextid271569siteid33{
+Color : #FFFFFF ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 9pt ;
+Font-Weight : Bold ;
+}
+.RegionHeaderid271569siteid33{
+Background-Color : #336699 ;
+Height : 20 ;
+Text-Align : Left ;
+}
+.RegionHeaderTextid271569siteid33{
+Color : #FFFFFF ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 9pt ;
+Font-Weight : Bold ;
+}
+.Bodyid271569siteid33{
+Background-Color : #E6E7E8 ;
+}
+.Elogger_Trackableid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.applicationtypeid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.authorid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.createdateid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.creatorid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.defaultattributeid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.descriptionid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.documentsizeid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.expiredateid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.help_urlid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.initialpagenameid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.inplacedisplayid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.itemfunctionid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.keywordsid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.perspectivesid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.portletidid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.provideridid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.providernameid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.titleid271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+Font-Weight : Bold ;
+}
+.titleorimageid271569siteid33{
+Color : #000000 ;
+Text-Decoration : Underline ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.wwsbr_category_id271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.wwsbr_expirationperiod_id271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.wwsbr_itemtype_id271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.wwsbr_page_id271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.wwsbr_pagegroup_id271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.wwsbr_portletname_id271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.wwsbr_updatedate_id271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.wwsbr_updator_id271569siteid33{
+Color : #000000 ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 8pt ;
+}
+.LeftSubTabid271569siteid33{
+Background-Attachment : scroll ;
+Background-Color : #336699 ;
+Background-Image : url(http://otn.oracle.com/portalimages/E6E7E8sl.gif) ;
+Background-Position : left top ;
+Background-Repeat : no-repeat ;
+}
+.LeftTabBgSlantid271569siteid33{
+Background-Attachment : scroll ;
+Background-Color : #CCCC99 ;
+Background-Image : url(http://otn.oracle.com/portalimages/E6E7E8tl.gif) ;
+Background-Position : left top ;
+Background-Repeat : no-repeat ;
+}
+.LeftTabForeSlantid271569siteid33{
+Background-Attachment : scroll ;
+Background-Color : #336699 ;
+Background-Image : url(http://otn.oracle.com/portalimages/E6E7E8tl.gif) ;
+Background-Position : left top ;
+Background-Repeat : no-repeat ;
+}
+.RightSubTabid271569siteid33{
+Background-Attachment : scroll ;
+Background-Color : #336699 ;
+Background-Image : url(http://otn.oracle.com/portalimages/E6E7E8sr.gif) ;
+Background-Position : right top ;
+Background-Repeat : no-repeat ;
+}
+.RightTabBgCurveid271569siteid33{
+Background-Attachment : scroll ;
+Background-Color : #CCCC99 ;
+Background-Image : url(http://otn.oracle.com/portalimages/E6E7E8tr.gif) ;
+Background-Position : right top ;
+Background-Repeat : no-repeat ;
+}
+.RightTabForeCurveid271569siteid33{
+Background-Attachment : scroll ;
+Background-Color : #336699 ;
+Background-Image : url(http://otn.oracle.com/portalimages/E6E7E8tr.gif) ;
+Background-Position : right top ;
+Background-Repeat : no-repeat ;
+}
+.SubTabBgTextid271569siteid33{
+Color : #CCCC99 ;
+Text-Decoration : none ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 11pt ;
+Font-Weight : Bold ;
+}
+.TabBackgroundColorid271569siteid33{
+Background-Color : #CCCC99 ;
+}
+.TabBackgroundTextid271569siteid33{
+Color : #003366 ;
+Text-Decoration : none ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 10pt ;
+}
+.TabForegroundColorid271569siteid33{
+Background-Color : #336699 ;
+}
+.TabForegroundTextid271569siteid33{
+Color : #FFFFFF ;
+Text-Decoration : none ;
+Font-Family : Arial, Helvetica ;
+Font-Size : 10pt ;
+Font-Weight : Bold ;
+}

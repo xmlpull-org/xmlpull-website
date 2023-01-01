@@ -1,0 +1,9 @@
+MIDlet-Jar-Size: 48419
+MIDlet-1: XppCount, , midlet.XppCountMidlet
+MIDlet-Jar-URL: count_midlet.jar
+MicroEdition-Configuration: CLDC-1.0
+MIDlet-Version: 1.0
+MIDlet-Name: XppCount
+MIDlet-Description: Xml Pull Parser Sample.
+MIDlet-Vendor: Aleksander Slominski
+MicroEdition-Profile: MIDP-1.0

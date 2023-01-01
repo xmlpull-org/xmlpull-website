@@ -1,0 +1,550 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><title>Pull Parsing XML</title>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="Content-Language" content="en-us"><!--link rel="stylesheet" href="/images/styles.css" -->
+
+<style type="text/css" media="all">@import "http://dev2dev.bea.com/homepage/fonts.css";</style>
+<script language="javascript" src="pullparsing.jsp_files/mainlib.js"></script>
+
+<meta name="decorator" content="dev2dev">
+<meta name="breadcrumb" content="stax">
+<meta name="notPrintable" content="true">
+<meta name="noCommentsEmail" content="true"></head> 
+
+
+
+
+
+
+
+
+<body bgcolor="#ffffff">                 
+<div class="hide"><a href="#wrap" title="Skip navigation" accesskey="2">Skip navigation</a>.</div>
+<div id="header">
+<form name="gs" method="get" action="http://google.bea.com/search">
+	<div class="unb" tabindex="1">
+		<img src="pullparsing.jsp_files/slogan.gif" class="slogan" alt="By Developers, For Developers">
+		
+		<div class="buttons">
+			<a href="http://commerce.bea.com/"><img src="pullparsing.jsp_files/button_download.gif" alt="Download" width="80" height="20" border="0"></a>
+			<a href="http://edocs.bea.com/"><img src="pullparsing.jsp_files/button_documentation.gif" alt="Documentation" width="108" height="20" border="0"></a>
+			<a href="http://support.bea.com/"><img src="pullparsing.jsp_files/button_support.gif" alt="Support" width="74" height="20" border="0"></a>
+			 <a href="http://dev2dev.bea.com/administration/login.jsp?dest=http%3A%2F%2Fdev2dev.bea.com%3A80%2Ftechnologies%2Fstax%2Fpullparsing.jsp"><img src="pullparsing.jsp_files/button_login.gif" alt="Log In" width="55" height="20" border="0"></a>
+                        
+                        
+			<a href="http://dev2dev.bea.com/administration/registration.jsp?dest=http%3A%2F%2Fdev2dev.bea.com%3A80%2Ftechnologies%2Fstax%2Fpullparsing.jsp"><img src="pullparsing.jsp_files/button_register.gif" alt="Register" width="79" height="20" border="0"></a>
+                        
+		</div>
+	</div>
+	
+	<div class="headergraphics">
+		<a href="http://dev2dev.bea.com/"><img src="pullparsing.jsp_files/header_d2d.gif" alt="BEA dev2dev" width="596" height="57" border="0" class="graphicdev2dev"></a>
+		<a href="http://www.bea.com/"><img src="pullparsing.jsp_files/head_bea.gif" alt="BEA.com" width="204" height="57" border="0" class="graphicbea"></a>
+	</div>
+	
+	<div class="redline"><img src="pullparsing.jsp_files/line_red.gif" width="800" alt="" height="6" border="0"></div>
+	<div class="graybar">
+		<div class="topnav">
+			<a href="http://dev2dev.bea.com/index.jsp">Home</a>
+			 | 
+			<a href="http://dev2dev.bea.com/products/all.jsp">Dev Centers</a>
+			 | 
+			<a href="http://dev2dev.bea.com/code/">Code Library</a>
+			 | 
+			<a href="http://newsgroups2.bea.com/cgi-bin/dnewsweb">Newsgroups</a>
+			 | 
+			<a href="http://dev2dev.bea.com/subscriptions/">Subscriptions</a>
+		</div>
+		
+		<div class="searchbox">
+                    <input type="text" name="q" value="" class="formclass" size="25">
+                    <input type="image" name="bntg" img="" src="pullparsing.jsp_files/button_search.gif" style="padding-left: 3px;">
+		</div>
+	</div>
+	<div class="twodots">
+        </div>
+           <input type="hidden" name="ie" value="latin1">
+           <input type="hidden" name="site" value="bea">
+           <input type="hidden" name="output" value="xml_no_dtd">
+           <input type="hidden" name="client" value="bea">
+           <input type="hidden" name="lr" value="">
+           <input type="hidden" name="proxystylesheet" value="http://dev2dev.bea.com/images/dev2dev.xsl">
+           <input type="hidden" name="oe" value="latin1">
+           <input type="hidden" name="restrict" value="lang_en">
+     </form>
+</div>		
+<div id="wrap">
+
+
+
+         
+	
+    <div class="breadcrumb">
+
+<a href="http://dev2dev.bea.com/index.jsp">dev2dev Home</a> &gt; <a href="http://dev2dev.bea.com/products/all.jsp">Dev Centers</a> &gt; StAX<br>
+</div>
+    
+  	
+
+    <div id="summary">
+		<img src="pullparsing.jsp_files/h1_stax.gif" alt="StAX">
+		<div class="title_line"></div>
+		</div>
+		<div id="content">
+<h3>Pull Parsing XML</h3><br>
+<i>By Chris Fry</i>
+<br><br>
+This API grew out of the need to read and write XML in an efficient
+manner in the context of XML Binding and Web Services. At the time this
+API was created there was no standard way to read and write XML in a
+symmetrical way.<br><br>
+This example shows you how to parse XML into a simple set of value
+objects. First consider the set of XML documents that would be
+described by the following pseudo-grammar.<br><br>
+
+
+<code>
+
+       &lt;document xmlns=&#8221;ns://standardOrder&#8221;&gt;<br><br>
+
+          <nobr>&lt;customer id=&#8221;int&#8221;&gt;&lt;name&gt;string&lt;/name&gt;&lt;company&gt;string&lt;/company&gt;&lt;/customer&gt;*</nobr><br><br>
+         
+&lt;order&gt;&lt;customerIdRef&gt;int&lt;/customerIdRef&gt;&lt;part&gt;string&lt;/part&gt;&lt;ship-date&gt;date&lt;/ship-date&gt;&lt;/order&gt;*<br><br>
+
+       &lt;/document&gt;
+
+</code>
+<br><br>
+The StAX API allows you to write a simple recursive descent parser that
+processes this file type. First you would design the objects that will
+hold the data.<br><br>
+
+<code>
+// OrderDocument.java<br>
+package examples.order;<br>
+import java.util.*;<br>
+public class OrderDocument {<br>
+  public ArrayList orders = new ArrayList();<br>
+  public ArrayList customers = new ArrayList();<br>
+  public OrderDocument(){}<br>
+  public void addOrder(Order o) {<br>
+    orders.add(o);<br>
+  }<br>
+  public void addCustomer(Customer c) {<br>
+  customers.add(c);<br>
+  }<br>
+  public String toString() {<br>
+    StringBuffer b = new StringBuffer();<br>
+    b.append("Order[\n");<br>
+    Iterator i = customers.iterator();<br>
+    while(i.hasNext()) b.append("\t"+i.next()+"\n");<br>
+    i = orders.iterator();<br>
+    while(i.hasNext()) b.append("\t"+i.next()+"\n");<br>
+    b.append("]Order\n");<br>
+    return b.toString();<br>
+  }<br>
+}<br><br>
+</code>
+This class holds the order document that will be processed.<br><br>
+
+<code>
+// Order.java<br>
+package examples.order;<br>
+public class Order {<br>
+  private int idRef;<br>
+  private String part;<br>
+  private String date;<br>
+  public Order(int idRef, String part, String shipDate){<br>
+    this.idRef = idRef;<br>
+    this.part = part;<br>
+    this.date = shipDate;<br>
+  }<br>
+  public String toString() {<br>
+    return "["+idRef+"]["+part+"]["+date+"]";<br>
+  }<br>
+}<br>
+// Customer.java<br>
+package examples.order;<br>
+public class Customer {<br>
+  private int id;<br>
+  private String name;<br>
+  private String company;<br>
+  public Customer(int id,<br>
+            String name,<br>
+            String company) {<br>
+    this.id = id;<br>
+    this.name = name;<br>
+    this.company = company;<br>
+  }<br>
+  public String toString() {<br>
+    return "["+id+"]["+name+"]["+company+"]";<br>
+  }<br>
+}<br><br>
+</code>
+
+The above classes hold orders &amp; customers.  The following instance document can be parsed easily with StAX.<br><br>
+
+<code>
+&lt;o:document xmlns:o="ns://standardOrder"&gt;<br>
+  &lt;o:customer o:id="1"&gt;<br>
+    &lt;o:name&gt;Dave Smith&lt;/o:name&gt;<br>
+    &lt;o:company&gt;myParts.com&lt;/o:company&gt;<br>
+  &lt;/o:customer&gt;<br>
+  &lt;o:customer o:id="2"&gt;<br>
+    &lt;o:name&gt;Patty Smith&lt;/o:name&gt;<br>
+    &lt;o:company&gt;myParts.com&lt;/o:company&gt;<br>
+  &lt;/o:customer&gt;<br>
+  &lt;o:order&gt;<br>
+    &lt;o:customerIdRef&gt;1&lt;/o:customerIdRef&gt;<br>
+    &lt;o:part&gt;red bike&lt;/o:part&gt;<br>
+    &lt;o:ship-date&gt;10/30/2003&lt;/o:ship-date&gt;<br>
+  &lt;/o:order&gt;<br>
+  &lt;o:order&gt;<br>
+    &lt;o:customerIdRef&gt;2&lt;/o:customerIdRef&gt;<br>
+    &lt;o:part&gt;blue bike&lt;/o:part&gt;<br>
+    &lt;o:ship-date&gt;10/30/2003&lt;/o:ship-date&gt;<br>
+  &lt;/o:order&gt;<br>
+  &lt;o:order&gt;<br>
+    &lt;o:customerIdRef&gt;2&lt;/o:customerIdRef&gt;<br>
+    &lt;o:part&gt;green bike&lt;/o:part&gt;<br>
+    &lt;o:ship-date&gt;11/15/2003&lt;/o:ship-date&gt;<br>
+  &lt;/o:order&gt;<br>
+&lt;/o:document&gt;<br><br>
+</code>
+
+The class to parse this document is OrderProcessor class:<br><br>
+<code>
+//OrderProcessor.java<br>
+package examples.order;<br>
+import javax.xml.stream.*;<br>
+public class OrderProcessor {<br>
+  private final String ns = "ns://standardOrder"; <br>
+  public OrderProcessor(){}<br>
+  public void toStartTag(XMLStreamReader r) <br>
+    throws XMLStreamException<br>
+  {<br>
+    while(!r.isStartElement()&amp;&amp; r.hasNext())<br>
+      r.next();<br>
+  }<br>
+  public OrderDocument parseDocument(XMLStreamReader r) <br>
+    throws XMLStreamException <br>
+  {<br>
+    OrderDocument doc = new OrderDocument();<br>
+    toStartTag(r);<br>
+    if ("document".equals(r.getLocalName()) &amp;&amp;<br>
+      ns.equals(r.getNamespaceURI())) {<br>
+    r.next();<br>
+    toStartTag(r);<br>
+    while ("customer".equals(r.getLocalName()) &amp;&amp;<br>
+          ns.equals(r.getNamespaceURI())) {<br>
+      doc.addCustomer(parseCustomer(r));<br>
+      r.next();<br>
+      toStartTag(r);<br>
+    } <br>
+    while("order".equals(r.getLocalName()) &amp;&amp;<br>
+          ns.equals(r.getNamespaceURI())) {<br>
+      doc.addOrder(parseOrder(r));<br>
+      r.next();<br>
+      toStartTag(r);<br>
+    }<br>
+  }<br>
+  return doc;<br>
+  }<br>
+  public Customer parseCustomer(XMLStreamReader r) <br>
+    throws XMLStreamException <br>
+  {<br>
+    int id=-1;<br>
+    String name="defaultName";<br>
+    String company="defaultCompany";<br>
+    id  = Integer.parseInt(r.getAttributeValue(ns,"id"));<br>
+    r.next(); toStartTag(r);<br>
+    if ("name".equals(r.getLocalName())) {<br>
+      r.next();<br>
+      name = r.getText();<br>
+      r.next(); toStartTag(r);<br>
+    }<br>
+    if ("company".equals(r.getLocalName())) {<br>
+      r.next();<br>
+      company = r.getText();<br>
+    }<br>
+    return new Customer(id,name,company);<br>
+  }<br>
+  public Order parseOrder(XMLStreamReader r)<br>
+    throws XMLStreamException<br>
+  {<br>
+    int idRef=-1;<br>
+    String part="defaultPart";<br>
+    String shipDate="1/1/03";<br>
+    r.next(); toStartTag(r);<br>
+    if ("customerIdRef".equals(r.getLocalName())) {<br>
+      r.next();<br>
+      idRef  = Integer.parseInt(r.getText());<br>
+      r.next(); toStartTag(r);<br>
+    }<br>
+    if ("part".equals(r.getLocalName())) {<br>
+      r.next();<br>
+      part = r.getText();<br>
+      r.next(); toStartTag(r);<br>
+    }<br>
+    if ("ship-date".equals(r.getLocalName())) {<br>
+      r.next();<br>
+      shipDate = r.getText();<br>
+    }<br>
+    return new Order(idRef,part,shipDate);<br>
+  }<br>
+  public static void main(String args[]) <br>
+    throws Exception<br>
+  {<br>
+    OrderProcessor processor = new OrderProcessor();<br>
+    XMLStreamReader r = XMLInputFactory.newInstance().createXMLStreamReader(<br>
+              new java.io.FileInputStream(args[0])<br>
+              );<br>
+    OrderDocument doc = processor.parseDocument(r);<br>
+    System.out.println(doc);<br>
+  }<br>
+}<br><br>
+</code>
+The main of this simple class creates an XMLStreamReader and loads an
+order document from a file. The factory uses the default implementation
+of the XMLInputFactory to find an instance of XMLStreamReader. This is
+passed to the parse* methods which return objects that are represented
+in the XML. The main thing to note is that you can pass around an
+instance of the XMLStreamReader to the different methods and let them
+figure out what to do (pull more events) or simply return.<br><br>
+
+Coming Soon:<br><br>
+
+How to write XML serialization interfaces<br>
+Simple parsing example<br>
+Data binding example<br>
+Using events<br>
+
+</div> 
+    
+	
+	
+
+</div>
+<div id="footer">
+	<a href="http://www.bea.com/contact/index.shtml">Contact BEA</a>   
+	<a href="http://dev2dev.bea.com/sitemap/index.jsp">Site Map</a>   
+	<a href="http://dev2dev.bea.com/index.xml">RSS</a>   
+	<a href="http://dev2dev.bea.com/surveys/">Feedback</a>   
+	<a href="http://www.bea.com/framework.jsp?CNT=privacy.htm&amp;FP=/content/legal/">Privacy</a>   
+	© 2004 BEA Systems   
+	<a href="http://dev2dev.bea.com.cn/"><img src="pullparsing.jsp_files/intl_cn.gif" alt="dev2dev China"></a>   
+	<a href="http://www.beasys.co.jp/dev2dev/"><img src="pullparsing.jsp_files/intl_jp.gif" alt="dev2dev Japan"></a>
+	
+	<div class="twodots"><img src="pullparsing.jsp_files/_.gif" width="300" height="4" alt=""></div>
+	<div class="redline"><img src="pullparsing.jsp_files/_.htm" width="200" height="4" alt=""></div>
+</div>
+
+
+<!-- START OF Data Collection Server TAG -->
+
+<!-- Copyright 2002 NetIQ Corporation -->
+
+<!-- V2.1 -->
+
+<script language="JavaScript">
+
+<!--
+
+var dcs_imgarray = new Array;
+
+var dcs_ptr = 0;
+
+var dCurrent = new Date();
+
+var DCS=new Object();
+
+var WT=new Object();
+
+var DCSext=new Object();
+
+
+
+var dcsADDR = "63.96.161.95";
+
+var dcsID = "";
+
+
+
+if (dcsID == ""){
+
+	var TagPath = dcsADDR;
+
+} else {
+
+	var TagPath = dcsADDR+"/"+dcsID;
+
+}
+
+
+
+function dcs_var(){
+
+	WT.tz = dCurrent.getTimezoneOffset();
+
+	WT.ul = navigator.appName=="Netscape" ? navigator.language : navigator.userLanguage;
+
+//	WT.cd = screen.colorDepth;
+
+//	WT.sr = screen.width+"x"+screen.height;
+
+	WT.jo = navigator.javaEnabled() ? "Yes" : "No";
+
+	WT.ti   = document.title;
+
+	DCS.dcsdat = dCurrent.getTime();
+
+	if ((window.document.referrer != "") && (window.document.referrer != "-")){
+
+		if (!(navigator.appName == "Microsoft Internet Explorer" && parseInt(navigator.appVersion) < 4) ){
+
+			DCS.dcsref = window.document.referrer;
+
+		}
+
+	}
+
+
+
+	DCS.dcsuri = window.location.pathname;
+
+	DCS.dcsqry = window.location.search;
+
+	DCS.dcssip = window.location.hostname;
+
+
+
+}
+
+
+
+function A(N,V){
+
+	return "&"+N+"="+escape(V);
+
+}
+
+
+
+function dcs_createImage(dcs_src)
+
+{
+
+	if (document.images){
+
+		dcs_imgarray[dcs_ptr] = new Image;
+
+		dcs_imgarray[dcs_ptr].src = dcs_src;
+
+		dcs_ptr++;
+
+	}
+
+}
+
+
+
+function dcsMeta(){
+
+	var MRV="";
+
+	var F=false;
+
+	var myDocumentElements;
+
+	if (document.all){
+
+		F = true;
+
+		myDocumentElements=document.all.tags("meta");
+
+	}
+
+	if (!F && document.documentElement){
+
+		F = true;
+
+		myDocumentElements=document.getElementsByTagName("meta");
+
+	}
+
+	if (F){
+
+		for (var i=1; i<=myDocumentElements.length;i++){
+
+			myMeta=myDocumentElements.item(i-1);
+
+			if (myMeta.name.indexOf('WT.')==0){
+
+				WT[myMeta.name.substring(3)]=myMeta.content;
+
+			}
+
+			if (myMeta.name.indexOf('DCSext.')==0){
+
+				DCSext[myMeta.name.substring(7)]=myMeta.content;
+
+			}
+
+		}
+
+	}
+
+}
+
+
+
+function dcs_TAG(TagImage){
+
+	var P ="http"+(window.location.protocol.indexOf('https:')==0?'s':'')+"://"+TagImage+"/dcs.gif?";
+
+	for (N in DCS){P+=A( N, DCS[N]);}
+
+	for (N in WT){P+=A( "WT."+N, WT[N]);}
+
+	for (N in DCSext){P+=A( N, DCSext[N]);}
+
+
+
+	dcs_createImage(P);
+
+}
+
+// This is a sample of the function that would be called if you needed to re-run the script.
+
+//function dcs_ReRun(URI,QRY){
+
+//	DCS.dcsuri = URI;
+
+//	DCS.dcsqry = QRY;
+
+//	dcs_TAG();
+
+//}
+
+
+
+dcsMeta();
+
+dcs_var();
+
+dcs_TAG(TagPath);
+
+//-->
+
+</script>
+
+
+
+<noscript>
+
+<IMG BORDER="0" NAME="DCSIMG" WIDTH="1" HEIGHT="1" SRC="http://63.96.161.95/njs.gif?dcsuri=/nojavascript">
+
+</noscript>
+
+</body></html>

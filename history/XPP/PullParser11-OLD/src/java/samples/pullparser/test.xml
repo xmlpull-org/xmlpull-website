@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<SOAP:Envelope xmlns:SOAP="urn:schemas-soap" 
+xmlns:xsd="http://w3.org/ns/data"
+xmlns:xsi="http://w3.org/ns/instances"
+>
+<SOAP:Body>
+<m:PlaceOrder xmlns:m="Some-Namespace-URI">
+<DaysToDelivery xsd:type="xsi:integer">7</DaysToDelivery>
+<orderSpec>
+
+<!--DOCTYPE  alek PUBLIC "alek"-->
+
+  <foo>  
+<bar name='value' xmlns="http://bar/associaton" xmlns:m="http://bar/member/">
+  
+  <foo1></foo1><foo2 name='value'> <foo3/> </foo2>   
+  <foo4 xmlns=""><foo5>dsds</foo5><foo7/></foo4>
+<bary/>
+<m:test xmlns='Some-Namespace-URI' xmlns:n='Some-Namespace-URI'
+a='a' b='b' n:b='b' n:a='x'
+/>
+
+<n:bar 
+xmlns:n="http://host/namespace.xsd" 
+m:name="Bar" 
+n:test="ye&lt;s" 
+name='value' >more content &amp;&lt;&gt;&quot;&apos;X&#65;X&#x20;X 
+<!--comm - ent - --> is here
+<![CDATA[<greeting>Hello World!</greeting>] ]] ]]> stranger</n:bar>
+
+</bar>
+
+<!--m:bar><![CDATA[TEST]]></m:bar>
+<m:bar><![CDATA[A]]><![CDATA[]]><![CDATA[L]]><![CDATA[E]]>K<![CDATA[S]]></m:bar-->
+
+</foo>
+
+<m:moo/>
+
+</orderSpec>
+</m:PlaceOrder>
+</SOAP:Body>
+</SOAP:Envelope>
+
+

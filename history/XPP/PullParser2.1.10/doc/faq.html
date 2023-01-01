@@ -1,0 +1,67 @@
+<HTML>
+<HEAD>
+<TITLE>Pull Parser 2 FAQ
+</TITLE>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Aleksander Slominski [aslom@extreme.indiana.edu]">
+</HEAD>
+<BODY BGCOLOR="white">
+
+<H1>Pull Parser 2 FAQ</H2><P>
+
+<h2>How to access the latest source code?</h2>
+
+<p>
+The latest packaged releases are available at http://www.extreme.indiana.edu/soap/
+and the latest source (if you want to be on the cutting edge) can now
+be obtained now from anonymous CVS at:
+
+<pre>
+cvs -d :pserver:anonymous@cvs.extreme.indiana.edu:/l/extreme/cvspub login
+CVS password: cvsanon
+
+cvs -d :pserver:anonymous@cvs.extreme.indiana.edu:/l/extreme/cvspub co xsoap-java/PullParser
+</pre>
+
+<h2>Why XPP blocks when reading from input stream such as socket?</h2>
+
+<p><strong>NOTE:</strong>pleasue use XPP version 2.1.8 or higher
+- in previous version there is ogg-by-one buffering bug.
+
+<p>XPP is a streaming parser however it depends on Reader to provide data in timely manner.
+The current JDK implementattion of InputStreamReader will try to read 8KB into internal buffer
+<strong>unless</strong> InputStream.available() function returns 0
+(this behavior can not be overriden).
+
+<p>Therefore it is necessary to use a wrapper around InputStream to make sure that
+InputStreamReader will return as soon as data is available, for example:
+
+<pre>
+public class NoBufferingInputStream
+        extends FilterInputStream {
+
+        public NoBufferingInputStream(InputStream in) {
+            super(in);
+        }
+
+        public int available() { return 0; };
+
+}
+</pre>
+
+<p>then one would use following construct to create Reader:
+
+<pre>
+InputStream socketInput = ...;
+xpp.setInput(new InputStreamReader(
+  new NoBufferingInputStream(socketInput)));
+</pre>
+
+<p>[<a href="../README.html">Back To Pull Parser 2 Documentation</a>]<p>&nbsp;
+
+
+<HR>
+<address><a href="aslom@extreme.indiana.edu">Aleksander Slominski</a><address>
+</BODY>
+</HTML>
+

@@ -1,0 +1,94 @@
+<title>NekoPull</title>
+<link rel=stylesheet type=text/css href=../style.css>
+<style type=text/css>
+ .x { color: red; font-weight: bold }
+</style>
+
+<h1>CyberNeko Pull Parser <sub>0.2.3</sub></h1>
+<div class=navbar>
+[<a href='../index.html'>Home</a>]
+[
+Top
+|
+<a href='usage.html'>Usage</a>
+|
+<a href='compare.html'>Comparisons</a>
+|
+<a href='javadoc/index.html'>JavaDoc</a>
+|
+<a href='changes.html'>Changes</a>
+]
+</div>
+
+<h2>About</h2>
+<p>
+NekoPull is an XML document parsing API that extends the 
+<a href='http://xml.apache.org/xerces2-j/xni.html'>Xerces
+Native Interface</a> (XNI) to provide pull parsing 
+functionality. The pull parsing 
+paradigm is different from tree-based APIs like the 
+<a href='http://www.w3.org/DOM/'>Document Object
+Model</a> (DOM) and event stream APIs like the
+<a href='http://sax.sourceforge.net/'>Simple API for
+XML</a> (SAX) in that the application controls the
+parsing of documents. NekoPull is similar to 
+<code>lex</code> in that the application requests, or
+<em>pulls</em>, the document information one piece at 
+a time instead of having document information 
+<em>pushed</em> to the application.
+<p>
+This implementation of NekoPull is driven 
+by the Xerces2 parser. As such, there are inherent limits 
+based on the Xerces2 parser. However, the API itself does
+not have have these limits &mdash; other parsers can be
+written that implement the NekoPull API directly for
+optimal performance.
+
+<h2>License Agreement</h2>
+<p>
+NekoPull is distributed under an Apache-style 
+license. For specific license details, please refer to the 
+<a href='../../LICENSE'>LICENSE</a> file. 
+
+<h2>Download</h2>
+<p>
+NekoPull includes complete Java source code 
+and documentation. You can download the latest version from the 
+following location:
+<ul>
+ <li>NekoPull 
+     [<a href='http://www.apache.org/~andyc/neko/nekopull-latest.zip'>zip</a>]
+     [<a href='http://www.apache.org/~andyc/neko/nekopull-latest.tar.gz'>tgz</a>]
+</ul>
+
+<h2>Requirements and Limitations</h2>
+<p>
+This version of NekoPull requires the following:
+<ul>
+<li><a href='http://java.sun.com/products/'>Java 1.1</a> (or 
+    higher)
+<li><a href='http://xml.apache.org/dist/xerces-j/'>Xerces 2.0.0</a>
+    (or higher)
+</ul>
+<p>
+This version has the following limitations:
+<ul>
+<li>The NekoPull API and implementation should be considered
+    <span class='x'>experimental</span> at this time. The
+    current API is a "first guess" at a convenient and useful
+    XML pull parsing API built on top of XNI. It is hoped
+    that NekoPull will spark a dialog among Xerces2 developers
+    about how to best add XML pull parsing functionality
+    natively into Xerces2.
+</ul>
+<p>
+For a more complete list of items to be done, please refer to
+the <a href='../../TODO_pull'>Todo Items</a>.
+
+<h2>Contact Information</h2>
+<p>
+Andy Clark &lt;<a href='mailto:andyc@apache.org'>andyc@apache.org</a>&gt;
+
+<div class='copyright'>
+(C) Copyright 2002-2003, Andy Clark. All rights reserved.
+</div>

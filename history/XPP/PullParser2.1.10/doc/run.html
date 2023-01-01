@@ -1,0 +1,96 @@
+<HTML>
+<HEAD>
+<TITLE>Running Pull Parser 2.0
+</TITLE>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Aleksander Slominski [aslom@extreme.indiana.edu]">
+</HEAD>
+<BODY BGCOLOR="white">
+
+<H1>Running Pull Parser 2.0</H2><P>
+
+<p>For description of how to run J2ME samples see
+<a href="j2me.html">separate document</a>.
+
+<p>
+<p>First make sure to add JUnit 3.7 to CLASSPATH
+and add to CLASSPATH Pull Parser 2 JAR and
+directory with compiled samples and tests.
+Optionally add Xerces 2 jar file to use
+XPP2 implementation that is based on Xerces XNI.
+To implement fully XPP2 interfaces it was
+necessary to patch Xerces 2 and both patch and
+jar file of modified Xerces are available in
+lib\xerces2_patched so jar file can be added to
+use Xerces 2 based implementation of XPP2.
+
+<p>The CLASSPATH to use may look like this:
+
+<pre>
+set CLASSPATH=build\samples;build\tests;build\lib\PullParser_VERSION.jar;lib\junit\junit37.jar;lib\xerces2_patched\xercesImpl_2_0_1_event_position_patch.jar
+</pre>
+
+<H2>Running automatic tests</H2>
+
+
+<p>To verify that XPP2 is working
+automatic JUnit tests must be executed first:
+
+<pre>
+ant junit
+</pre>
+
+<p>If ant is not available use following command instead:
+
+<pre>
+java AllTests
+</pre>
+
+<p>Expected output should say OK reporting number of tests run, ex:
+<pre>
+........
+Time: 0.431
+
+OK (8 tests)
+</pre>
+
+<H2>Running samples</H2>
+<p>
+<img src="dump_swing_xpp_tree_node.jpg" align="right" alt="[XppNodeTree running]">
+
+
+<H3>Count</H3>
+
+<p>This is simple sample that demonstrates how to use XML Pull Parser
+and with different options. In the most basic setup it dumpls file
+content and provides some statistics about it. It can be also used
+to measure speed of parsing.
+
+<pre>
+java standard.XppCountMain -help
+</pre>
+
+<p>Example invocations:
+
+<pre>
+java standard.XppCountMain build.xml
+java standard.XppCountMain build.xml -s 1000
+java standard.XppCountMain build.xml -s 1000 -H
+</pre>
+
+<H3>SWING Node Tree</H3>
+
+This sample demonstrates use of XmlNode to construct and display
+XML element tree in SWING JTree widget. JDK 1.2 or better is required.
+
+<pre>
+java swing.XppNodeTree build.xml
+</pre>
+
+<br clear="all">
+<p>[<a href="../README.html">Back To Pull Parser 2 Documentation</a>]<p>&nbsp;
+
+<HR>
+<address><a href="aslom@extreme.indiana.edu">Aleksander Slominski</a><address>
+</BODY>
+</HTML>

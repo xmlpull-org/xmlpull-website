@@ -1,0 +1,6 @@
+* Philip Shepherd
+	helped in finding buffer by one bug in tokenizer and that is very important
+	when XML must be parsed as it comes in so XPP doe snot hang waiting for one byte
+	when event is already available
+	patch to update XPP2 X2PullParser to the latest Xerces 2.0.1 XNI API
+	

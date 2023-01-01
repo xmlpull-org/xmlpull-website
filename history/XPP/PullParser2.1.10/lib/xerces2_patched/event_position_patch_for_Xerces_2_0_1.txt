@@ -1,0 +1,268 @@
+Index: src/org/apache/xerces/impl/XMLDocumentFragmentScannerImpl.java
+===================================================================
+RCS file: /home/cvspublic/xml-xerces/java/src/org/apache/xerces/impl/XMLDocumentFragmentScannerImpl.java,v
+retrieving revision 1.10
+diff -b -w -u -r1.10 XMLDocumentFragmentScannerImpl.java
+--- src/org/apache/xerces/impl/XMLDocumentFragmentScannerImpl.java	29 Jan 2002 03:44:36 -0000	1.10
++++ src/org/apache/xerces/impl/XMLDocumentFragmentScannerImpl.java	3 Apr 2002 06:01:57 -0000
+@@ -294,6 +294,26 @@
+     /** Default constructor. */
+     public XMLDocumentFragmentScannerImpl() {} // <init>()
+ 
++    // ALEK augmentation names to record start tag and end tag event position in input
++    public final String POS_ABSOLUTE_START =  "http://gjt.org/xpp/pos-absolute-start"; //ALEK
++    public final String POS_ABSOLUTE_END =  "http://gjt.org/xpp/pos-absolute-end"; //ALEK
++    protected Augmentations fAugmentations = new AugmentationsImpl(); //ALEK
++
++    private void recordPosAbsoluteStart(String functionName, int off) {
++        int posAbsoluteStart = fEntityScanner.getCurrentEntityAbsoluteOffset() + off; //ALEK
++        if (DEBUG_CONTENT_SCANNING) System.out.println(
++                ">>> "+functionName+" recorded position absolute start="+posAbsoluteStart);
++        fAugmentations.putItem(POS_ABSOLUTE_START, new Integer(posAbsoluteStart)); //ALEK
++    }
++
++    private void recordPosAbsoluteEnd(String functionName, int off) {
++        int posAbsoluteEnd = fEntityScanner.getCurrentEntityAbsoluteOffset() + off; //ALEK
++        if (DEBUG_CONTENT_SCANNING) System.out.println(
++                ">>> "+functionName+" recorded position absolute end="+posAbsoluteEnd);
++        fAugmentations.putItem(POS_ABSOLUTE_END, new Integer(posAbsoluteEnd)); //ALEK
++    }
++
++
+     //
+     // XMLDocumentScanner methods
+     //
+@@ -547,7 +567,7 @@
+         // flush possible pending output buffer - see scanContent
+         if (fInScanContent && fStringBuffer.length != 0
+             && fDocumentHandler != null) {
+-            fDocumentHandler.characters(fStringBuffer, null);
++            fDocumentHandler.characters(fStringBuffer, null); //ALEK
+             fStringBuffer.length = 0; // make sure we know it's been flushed
+         }
+ 
+@@ -698,6 +718,9 @@
+         throws IOException, XNIException {
+         if (DEBUG_CONTENT_SCANNING) System.out.println(">>> scanStartElement()");
+ 
++        //ALEK record absolute position of start tag including '<'
++        recordPosAbsoluteStart("scanStartElement()", -1); //ALEK
++
+         // name
+         if (fNamespaces) {
+             fEntityScanner.scanQName(fElementQName);
+@@ -742,14 +765,17 @@
+ 
+         } while (true);
+ 
++        //ALEK record absolute position of end tag past final '>'
++        recordPosAbsoluteEnd("scanStartElement()", 0); //ALEK
++
+         // call handler
+         if (fDocumentHandler != null) {
+             if (empty) {
+-                fDocumentHandler.emptyElement(fElementQName, fAttributes, null);
++                fDocumentHandler.emptyElement(fElementQName, fAttributes, fAugmentations);
+                 handleEndElement(fElementQName, true);
+             }
+             else {
+-                fDocumentHandler.startElement(fElementQName, fAttributes, null);
++                fDocumentHandler.startElement(fElementQName, fAttributes, fAugmentations);
+             }
+         }
+ 
+@@ -965,6 +991,9 @@
+     protected int scanEndElement() throws IOException, XNIException {
+         if (DEBUG_CONTENT_SCANNING) System.out.println(">>> scanEndElement()");
+ 
++        //ALEK record absolute position of end tag including '</'
++        recordPosAbsoluteStart("scanEndElement()", -2); //ALEK
++
+         // name
+         if (fNamespaces) {
+             if (!fEntityScanner.scanQName(fElementQName)) {
+@@ -984,6 +1013,9 @@
+         }
+         fMarkupDepth--;
+ 
++        //ALEK record absolute position of end tag past final '>'
++        recordPosAbsoluteEnd("scanEndElement()", 0); //ALEK
++
+         // handle end element
+         int depth = handleEndElement(fElementQName, false);
+         if (DEBUG_CONTENT_SCANNING) System.out.println("<<< scanEndElement(): "+depth);
+@@ -1093,7 +1125,8 @@
+             
+             fSingleChar[0] = c;
+             fString.setValues(fSingleChar, 0, 1);
+-            fDocumentHandler.characters(fString, null);
++            //fDocumentHandler.characters(fString, null);
++            fDocumentHandler.characters(fString, fAugmentations); //ALEK CHECK
+             
+             if (fNotifyBuiltInRefs) {
+                 fDocumentHandler.endGeneralEntity(entity, null);
+@@ -1142,7 +1175,7 @@
+         
+         // call handler
+         if (fDocumentHandler != null && !isEmpty) {
+-            fDocumentHandler.endElement(element, null);
++            fDocumentHandler.endElement(element, fAugmentations);
+         }
+ 
+         return fMarkupDepth;
+@@ -1403,7 +1436,7 @@
+                                             if (scanSurrogates(fStringBuffer)) {
+                                                 // call handler
+                                                 if (fDocumentHandler != null) {
+-                                                    fDocumentHandler.characters(fStringBuffer, null);
++                                                    fDocumentHandler.characters(fStringBuffer, fAugmentations); //ALEK CHECK
+                                                 }
+                                             }
+                                         }
+Index: src/org/apache/xerces/impl/XMLEntityManager.java
+===================================================================
+RCS file: /home/cvspublic/xml-xerces/java/src/org/apache/xerces/impl/XMLEntityManager.java,v
+retrieving revision 1.25
+diff -b -w -u -r1.25 XMLEntityManager.java
+--- src/org/apache/xerces/impl/XMLEntityManager.java	31 Jan 2002 15:17:56 -0000	1.25
++++ src/org/apache/xerces/impl/XMLEntityManager.java	3 Apr 2002 06:02:06 -0000
+@@ -1727,7 +1727,10 @@
+         /** Count of characters in buffer. */
+         public int count;
+ 
+-        // to allow the reader/nputStream to behave efficiently:
++        /** Absolute offset since origin of buffer  */
++        public int offsetZero; //ALEK
++
++        // to allow the reader/inputStream to behave efficiently:
+         public boolean mayReadChunks;
+ 
+         //
+@@ -3154,6 +3157,49 @@
+             return -1;
+         } // getColumnNumber():int
+ 
++        /**
++         * Return the position of parser in current entity since its beginning.
++         * This position is in number of UTF16 characters since beginning of
++         * reading that entity.
++         *
++         * @return The position in UTF16 characters or -1 if none is available.
++         */
++        public int getCurrentEntityAbsoluteOffset() { //ALEK
++            //return fCurrentEntity != null ? fCurrentEntity.columnNumber : -1;
++            if (fCurrentEntity != null) {
++                //if (fCurrentEntity.systemId != null ) {
++                //    return fCurrentEntity.position + fCurrentEntity.offsetZero;
++                //}
++                //if (fCurrentEntity.entityLocation != null &&
++                //        fCurrentEntity.entityLocation.getExpandedSystemId() != null ) {
++                if (fCurrentEntity.isExternal()) {
++                    return fCurrentEntity.position + fCurrentEntity.offsetZero;
++                }
++                else {
++                    // search for the first external entity on the stack
++                    int size = fEntityStack.size();
++                    for (int i=size-1; i>0 ; i--) {
++                        //ScannedEntity firstExternalEntity = (ScannedEntity)fEntityStack.elementAt(i);
++                        ScannedEntity firstExternalEntity = (ScannedEntity)fEntityStack.elementAt(i);
++
++                        //if (firstExternalEntity.systemId != null) {
++                        //    return fCurrentEntity.position + firstExternalEntity.offsetZero;
++                        //}
++                        //if (externalEntity.entityLocation != null &&
++                        //        externalEntity.entityLocation.getExpandedSystemId() != null) {
++                        if (firstExternalEntity.isExternal()) {
++                            //return firstExternalEntity.columnNumber;
++                            return fCurrentEntity.position + firstExternalEntity.offsetZero;
++                        }
++
++                    }
++                }
++            }
++
++            return -1;
++        } // getCurrentEntityAbsoluteOffset():int
++
++
+         //
+         // Private methods
+         //
+@@ -3179,6 +3225,8 @@
+                 print();
+                 System.out.println();
+             }
++            // update absolute offset for this entity
++            fCurrentEntity.offsetZero += fCurrentEntity.position - offset;
+ 
+             // read characters
+             int length = fCurrentEntity.ch.length - offset;
+Index: src/org/apache/xerces/impl/XMLNamespaceBinder.java
+===================================================================
+RCS file: /home/cvspublic/xml-xerces/java/src/org/apache/xerces/impl/XMLNamespaceBinder.java,v
+retrieving revision 1.13
+diff -b -w -u -r1.13 XMLNamespaceBinder.java
+--- src/org/apache/xerces/impl/XMLNamespaceBinder.java	23 Jan 2002 15:31:21 -0000	1.13
++++ src/org/apache/xerces/impl/XMLNamespaceBinder.java	3 Apr 2002 06:02:09 -0000
+@@ -744,6 +744,7 @@
+                 // check for duplicates
+                 prefix = localpart != fXmlnsSymbol ? localpart : fEmptySymbol;
+                 String uri = attributes.getValue(i);
++                if(uri == null) throw new XNIException("internal error: attribute uri can not be null");
+                 uri = fSymbolTable.addSymbol(uri);
+ 
+                 // http://www.w3.org/TR/1999/REC-xml-names-19990114/#dt-prefix
+Index: src/org/apache/xerces/impl/XMLScanner.java
+===================================================================
+RCS file: /home/cvspublic/xml-xerces/java/src/org/apache/xerces/impl/XMLScanner.java,v
+retrieving revision 1.12
+diff -b -w -u -r1.12 XMLScanner.java
+Index: src/org/apache/xerces/impl/xs/util/SimpleLocator.java
+===================================================================
+RCS file: /home/cvspublic/xml-xerces/java/src/org/apache/xerces/impl/xs/util/SimpleLocator.java,v
+retrieving revision 1.1
+diff -b -w -u -r1.1 SimpleLocator.java
+--- src/org/apache/xerces/impl/xs/util/SimpleLocator.java	18 Feb 2002 22:30:26 -0000	1.1
++++ src/org/apache/xerces/impl/xs/util/SimpleLocator.java	3 Apr 2002 06:02:14 -0000
+@@ -108,5 +108,10 @@
+ 
+     public String getBaseSystemId() {
+         return null;
++    }
++
++    /** Returns the parser position counting sizne beginning of entity input. */
++    public int getCurrentEntityAbsoluteOffset() {
++	return 0;
+     }
+ }
+Index: src/org/apache/xerces/util/ErrorHandlerWrapper.java
+===================================================================
+RCS file: /home/cvspublic/xml-xerces/java/src/org/apache/xerces/util/ErrorHandlerWrapper.java,v
+retrieving revision 1.5
+diff -b -w -u -r1.5 ErrorHandlerWrapper.java
+--- src/org/apache/xerces/util/ErrorHandlerWrapper.java	29 Jan 2002 01:15:18 -0000	1.5
++++ src/org/apache/xerces/util/ErrorHandlerWrapper.java	3 Apr 2002 06:02:14 -0000
+@@ -250,6 +250,7 @@
+             public String getLiteralSystemId() { return null; }
+             public int getColumnNumber() { return fColumnNumber; }
+             public int getLineNumber() { return fLineNumber; }
++            public int getCurrentEntityAbsoluteOffset() { return -1; }
+         };
+         return new XMLParseException(location, exception.getMessage(),
+                                      exception.getException());
+Index: src/org/apache/xerces/xni/XMLLocator.java
+===================================================================
+RCS file: /home/cvspublic/xml-xerces/java/src/org/apache/xerces/xni/XMLLocator.java,v
+retrieving revision 1.4
+diff -b -w -u -r1.4 XMLLocator.java
+--- src/org/apache/xerces/xni/XMLLocator.java	29 Jan 2002 01:15:19 -0000	1.4
++++ src/org/apache/xerces/xni/XMLLocator.java	3 Apr 2002 06:02:15 -0000
+@@ -77,5 +77,8 @@
+ 
+     /** Returns the column number. */
+     public int getColumnNumber();
++
++    /** Returns the parser position counting sizne beginning of entity input. */
++    public int getCurrentEntityAbsoluteOffset();
+ 
+ } // interface XMLLocator

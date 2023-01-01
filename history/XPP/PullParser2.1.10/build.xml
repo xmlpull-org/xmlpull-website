@@ -1,0 +1,786 @@
+<project name="XPP2" default="compile" basedir=".">
+
+  <!-- to build J2ME make modify  those properties to fit your environment -->
+
+  <!--property name="j2mewtk.home" value="c:/j2mewtk" /-->
+  <!--property name="midp4palm.home" value="c:\palm\OLD-midp4palm" /-->
+  <property name="j2mewtk.home" value="c:/util/j2mewtk" />
+  <!--property name="midp4palm.home" value="D:\palm\OLD-midp4palm" /-->
+  <property name="midp4palm.home" value="c:/util/midp4palm1.0" />
+
+
+  <property name="target" value="1.1" />
+  <!-- set global properties for this build -->
+
+  <property name="name" value="XML Pull Parser"/>
+  <property name="year" value="2003"/>
+  <property name="version" value="2.1.10"/>
+  <property name="copyright"
+    value="Copyright (c) ${year} IU Extreme! Lab  http://www.extreme.indiana.edu/ All Rights Reserved."/>
+
+  <property name="debug" value="on"/>
+  <property name="deprecation" value="off"/>
+
+  <property name="doc" value="doc"/>
+  <property name="src" value="src/java"/>
+  <property name="src_intf" value="${src}/intf"/>
+  <property name="src_impl_factory" value="${src}/impl/factory"/>
+  <property name="src_impl_small" value="${src}/impl/small"/>
+  <property name="src_impl_tag" value="${src}/impl/tag"/>
+  <property name="src_impl_pp" value="${src}/impl/pullparser"/>
+  <property name="src_impl_node" value="${src}/impl/node"/>
+  <property name="src_impl_format" value="${src}/impl/format"/>
+  <property name="src_x2impl" value="${src}/x2"/>
+  <property name="src_x2impl_factory" value="${src_x2impl}/factory"/>
+  <property name="src_x2impl_pp" value="${src_x2impl}/pullparser"/>
+  <property name="src_apis" value="${src}/apis"/>
+  <property name="src_api_jaxp11" value="${src_apis}/jaxp11"/>
+  <property name="src_api_sax2" value="${src_apis}/sax2"/>
+  <property name="src_drivers" value="${src}/drivers"/>
+  <property name="src_driver_jaxp11" value="${src_drivers}/jaxp11"/>
+  <property name="src_driver_sax2" value="${src_drivers}/sax2"/>
+  <property name="src_tests" value="${src}/tests"/>
+  <property name="src_samples" value="${src}/samples"/>
+  <property name="src_samples.midlet" value="${src}/samples/midlet"/>
+  <property name="src_etc" value="src/etc"/>
+
+  <property name="build" value="build"/>
+  <property name="build_dist" value="${build}/dist"/>
+  <property name="build_lib" value="${build}/lib"/>
+  <property name="build_intf" value="${build}/intf"/>
+  <property name="build_impl_factory" value="${build}/impl/factory"/>
+  <property name="build_impl_tag" value="${build}/impl/tag"/>
+  <property name="build_impl_pp" value="${build}/impl/pullparser"/>
+  <property name="build_impl_node" value="${build}/impl/node"/>
+  <property name="build_impl_format" value="${build}/impl/format"/>
+  <property name="build_impl_small" value="${build}/impl/small"/>
+  <property name="build_x2impl" value="${build}/x2impl"/>
+  <property name="build_x2impl_factory" value="${build_x2impl}/factory"/>
+  <property name="build_x2impl_pp" value="${build_x2impl}/pullparser"/>
+  <property name="build_apis" value="${build}/apis"/>
+  <property name="build_api_jaxp11" value="${build_apis}/jaxp11"/>
+  <property name="build_api_sax2" value="${build_apis}/sax2"/>
+  <property name="build_drivers" value="${build}/drivers"/>
+  <property name="build_driver_jaxp11" value="${build_drivers}/jaxp11"/>
+  <property name="build_driver_sax2" value="${build_drivers}/sax2"/>
+  <property name="build_j2me" value="${build}/j2me"/>
+  <property name="build_tests" value="${build}/tests"/>
+  <property name="src_impl_tiny" value="${build}/tiny/src"/>
+  <property name="build_impl_tiny" value="${build}/tiny/classes"/>
+  <property name="build_tiny_tests" value="${build}/tiny/tests"/>
+  <property name="build_samples" value="${build}/samples"/>
+  <property name="build_apidoc" value="${doc}/api"/>
+  <property name="build_javadoc" value="${doc}/api_impl"/>
+  <property name="apidoc_packages" value="org.gjt.xpp"/>
+  <property name="javadoc_packages" value="org.gjt.xpp.*"/>
+  <property name="dist" value="${build}/dist/PullParser${version}"/>
+  <!--property name="dist_zip" value="${build}/dist/PullParser${version}.zip"/-->
+  <property name="dist_tar" value="${build}/dist/PullParser${version}.tar"/>
+  <property name="dist_tgz" value="${build}/dist/PullParser${version}.tgz"/>
+  <property name="jar_intf" value="${build_lib}/PullParser-intf-${version}.jar"/>
+  <property name="jar"  value="${build_lib}/PullParser-${version}.jar"/>
+  <property name="jar_standard"    value="${build_lib}/PullParser-standard-${version}.jar"/>
+  <property name="jar_small"    value="${build_lib}/PullParser-small-${version}.jar"/>
+  <property name="jar_tiny"     value="${build_lib}/PullParser-tiny-${version}.jar"/>
+  <property name="jar_x2" value="${build_lib}/PullParser-x2-${version}.jar"/>
+
+
+  <patternset id="small.impl.source.files">
+    <include name="**/*.java"/>
+    <include name="**/*SmallImpl.java"/>
+    <exclude name="**/*FullImpl.java"/>
+    <exclude name="**/*Node*.java"/>
+    <exclude name="**/*Formatter*.java"/>
+    <exclude name="**/*Recorder*.java"/>
+  </patternset>
+
+  <patternset id="full.impl.source.files">
+    <include name="**/*.java"/>
+    <include name="**/*FullImpl.java"/>
+    <exclude name="**/*SmallImpl.java"/>
+  </patternset>
+
+  <patternset id="samples.source.files">
+     <include name="**/*.java"/>
+     <exclude name="**/midlet/**"/>
+     <exclude name="**/soap/**"/>
+  </patternset>
+
+  <patternset id="all.source.files">
+        <exclude name="**/*-"/>
+        <exclude name="**/*.mcp"/>
+        <exclude name="**/*_Data/**"/>
+  </patternset>
+
+  <!-- =================================================================== -->
+  <!-- Preparing build environment                                         -->
+  <!-- =================================================================== -->
+  <target name="clean">
+    <delete dir="${build_lib}"/>
+    <delete dir="${build_intf}"/>
+    <delete dir="${build_impl_tag}"/>
+    <delete dir="${build_impl_pp}"/>
+    <delete dir="${build_impl_node}"/>
+    <delete dir="${build_impl_factory}"/>
+    <delete dir="${build_impl_format}"/>
+    <delete dir="${build_impl_small}"/>
+    <delete dir="${build_impl_tiny}"/>
+    <delete dir="${build_tiny_tests}"/>
+    <delete dir="${build}/impl"/>
+    <delete dir="${build_x2impl}"/>
+    <delete dir="${build_apis}"/>
+    <delete dir="${build_drivers}"/>
+    <delete dir="${build_j2me}"/>
+    <delete dir="${build_tests}"/>
+    <delete dir="${build_samples}"/>
+    <delete dir="${build_apidoc}"/>
+    <delete dir="${build_javadoc}"/>
+    <delete dir="${dist}"/>
+    <!--delete file="${dist_zip}"/-->
+    <delete file="${dist_tar}"/>
+  </target>
+
+  <target name="prepare">
+    <mkdir dir="${build}"/>
+    <mkdir dir="${build_dist}"/>
+    <mkdir dir="${build_lib}"/>
+    <mkdir dir="${build_apidoc}"/>
+    <mkdir dir="${build_javadoc}"/>
+    <available property="junit.present" classname="junit.framework.TestCase" />
+    <available property="j2mewtk_present" file="${j2mewtk.home}" />
+    <available property="x2_present" classname="org.apache.xerces.xni.parser.XMLPullParserConfiguration" />
+    <uptodate property="intf_jar_notRequired" targetfile="${jar_intf}">
+      <srcfiles dir="${src_intf}" includes="**/*.java"/>
+    </uptodate>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Compilation tasks                                                   -->
+  <!-- =================================================================== -->
+
+  <target name="all" depends="clean,compile"/>
+
+  <target name="compile" depends="intf,intf_jar,impl,x2impl,tests,samples"/>
+
+
+  <target name="intf" depends="prepare">
+    <mkdir dir="${build_intf}"/>
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}" srcdir="${src_intf}" destdir="${build_intf}"/>
+    <touch file="${build_intf}/PullParser${version}_VERSION"/>
+  </target>
+
+  <target name="intf_jar" unless="intf_jar_notRequired" depends="intf">
+    <jar jarfile="${jar_intf}" basedir="${build_intf}"/>
+  </target>
+
+  <target name="impl_tag" depends="intf">
+    <mkdir dir="${build_impl_tag}"/>
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}" srcdir="${src_impl_tag}"
+      destdir="${build_impl_tag}"
+      classpath="${build_intf}">
+
+      <patternset refid="all.source.files"/>
+    </javac>
+  </target>
+
+  <target name="impl_node" depends="intf">
+    <mkdir dir="${build_impl_node}"/>
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}" srcdir="${src_impl_node}"
+      destdir="${build_impl_node}"
+      classpath="${build_intf}:${build_impl_tag}">
+
+      <patternset refid="all.source.files"/>
+    </javac>
+  </target>
+
+  <target name="impl_format" depends="intf">
+    <mkdir dir="${build_impl_format}"/>
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}" srcdir="${src_impl_format}"
+      destdir="${build_impl_format}"
+      classpath="${build_intf}">
+
+      <patternset refid="all.source.files"/>
+    </javac>
+  </target>
+
+  <target name="impl_pp" depends="impl_tag,intf">
+    <mkdir dir="${build_impl_pp}"/>
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}" srcdir="${src_impl_pp}"
+      destdir="${build_impl_pp}"
+      classpath="${build_intf}:${build_impl_tag}">
+
+      <patternset refid="all.source.files"/>
+    </javac>
+  </target>
+
+  <target name="impl" depends="intf,impl_tag,impl_pp,impl_node,impl_format,drivers">
+    <mkdir dir="${build_impl_factory}/META-INF/services"/>
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}" srcdir="${src_impl_factory}"
+      destdir="${build_impl_factory}"
+      classpath="${build_intf}:${build_impl_tag}:${build_impl_pp}:${build_impl_node}:${build_impl_format}">
+        <patternset refid="all.source.files"/>
+    </javac>
+    <copy todir="${build_impl_factory}/META-INF/services">
+      <fileset dir="${src_impl_factory}/META-INF/services/"/>
+    </copy>
+    <jar jarfile="${jar_standard}">
+      <fileset dir="${build_intf}"/>
+      <fileset dir="${build_impl_factory}"/>
+      <fileset dir="${build_impl_tag}"/>
+      <fileset dir="${build_impl_pp}"/>
+      <fileset dir="${build_impl_node}"/>
+      <fileset dir="${build_impl_format}"/>
+    </jar>
+    <jar jarfile="${jar}">
+      <fileset dir="${build_intf}"/>
+      <fileset dir="${build_impl_factory}"/>
+      <fileset dir="${build_impl_tag}"/>
+      <fileset dir="${build_impl_pp}"/>
+      <fileset dir="${build_impl_node}"/>
+      <fileset dir="${build_impl_format}"/>
+      <fileset dir="${build_driver_sax2}"/>
+      <fileset dir="${build_driver_jaxp11}"/>
+      <fileset dir="${build_api_sax2}"/>
+      <fileset dir="${build_api_jaxp11}"/>
+    </jar>
+  </target>
+
+  <target name="impl_small" depends="intf,impl_tag,impl_pp">
+    <mkdir dir="${build_impl_small}"/>
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}" srcdir="${src_impl_small}"
+      destdir="${build_impl_small}"
+      classpath="${build_intf}:${build_impl_tag}:${build_impl_pp}">
+      <patternset refid="all.source.files"/>
+    </javac>
+    <mkdir dir="${build_impl_small}/META-INF/services"/>
+    <copy todir="${build_impl_small}/META-INF/services">
+      <fileset dir="${src_impl_small}/META-INF/services/"/>
+    </copy>
+    <jar jarfile="${jar_small}">
+      <fileset dir="${build_intf}"/>
+      <fileset dir="${build_impl_small}"/>
+      <fileset dir="${build_impl_tag}"/>
+      <fileset dir="${build_impl_pp}"/>
+    </jar>
+  </target>
+
+
+  <target name="check_x2" unless="x2_present" depends="prepare">
+    <echo message="Warning: Xerces2 XNI Pull Parser dependencies were not resolved."/>
+  </target>
+
+  <target name="x2impl_pp" if="x2_present" depends="intf,check_x2">
+    <mkdir dir="${build_x2impl_pp}"/>
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}" srcdir="${src_x2impl_pp}"
+      destdir="${build_x2impl_pp}"
+      classpath="${build_intf}">
+    </javac>
+  </target>
+
+  <target name="x2impl" if="x2_present" depends="x2impl_pp,drivers">
+    <mkdir dir="${build_x2impl_factory}"/>
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}"
+      srcdir="${src_x2impl_factory}"
+      destdir="${build_x2impl_factory}"
+      classpath="${build_intf}:${build_impl_tag}:${build_x2impl_pp}:${build_impl_node}:${build_impl_format}">
+    </javac>
+    <mkdir dir="${build_x2impl_factory}/META-INF/services"/>
+    <copy todir="${build_x2impl_factory}/META-INF/services">
+      <fileset dir="${src_x2impl_factory}/META-INF/services/"/>
+    </copy>
+    <jar jarfile="${jar_x2}">
+      <fileset dir="${build_intf}"/>
+      <fileset dir="${build_x2impl_factory}"/>
+      <fileset dir="${build_x2impl_pp}"/>
+      <fileset dir="${build_impl_tag}"/>
+      <fileset dir="${build_impl_node}"/>
+      <fileset dir="${build_impl_format}"/>
+      <fileset dir="${build_driver_sax2}"/>
+      <fileset dir="${build_driver_jaxp11}"/>
+      <fileset dir="${build_api_sax2}"/>
+      <fileset dir="${build_api_jaxp11}"/>
+    </jar>
+  </target>
+
+  <target name="samples" depends="intf">
+    <mkdir dir="${build_samples}"/>
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}"
+      srcdir="${src_samples}" destdir="${build_samples}"
+      classpath="${build_intf}"
+    >
+      <patternset refid="samples.source.files"/>
+    </javac>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- APIs and DRIVERs                                                    -->
+  <!-- =================================================================== -->
+
+  <target name="api_sax2" depends="prepare">
+    <mkdir dir="${build_api_sax2}"/>
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}"
+      srcdir="${src_api_sax2}" destdir="${build_api_sax2}"
+    >
+    </javac>
+  </target>
+
+  <target name="driver_sax2" depends="api_sax2,intf">
+    <mkdir dir="${build_driver_sax2}"/>
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}"
+      srcdir="${src_driver_sax2}" destdir="${build_driver_sax2}"
+      classpath="${build_api_sax2}:${build_intf}"
+    >
+    </javac>
+  </target>
+
+  <target name="api_jaxp11" depends="api_sax2">
+    <mkdir dir="${build_api_jaxp11}"/>
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}"
+      srcdir="${src_api_jaxp11}" destdir="${build_api_jaxp11}"
+      classpath="${build_api_sax2}"
+    >
+
+    </javac>
+  </target>
+
+  <target name="driver_jaxp11" depends="api_sax2,driver_sax2,api_jaxp11,intf">
+    <mkdir dir="${build_driver_jaxp11}"/>
+    <mkdir dir="${build_driver_jaxp11}/META-INF/services"/>
+    <!--copy todir="${build_driver_jaxp11}/META-INF/services">
+      <fileset dir="${src_driver_jaxp11}/META-INF/services/"/>
+    </copy-->
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}"
+      srcdir="${src_driver_jaxp11}" destdir="${build_driver_jaxp11}"
+      classpath="${build_api_sax2}:${build_driver_sax2}:${build_api_jaxp11}:${build_intf}"
+    >
+    </javac>
+  </target>
+
+  <target name="apis" depends="api_sax2,api_jaxp11"/>
+  <target name="drivers" depends="driver_sax2,driver_jaxp11"/>
+
+  <!-- =================================================================== -->
+  <!-- J2ME reated ...                                                     -->
+  <!-- =================================================================== -->
+  <target name="j2me" depends="midlets,palm"/>
+
+  <target name="midlets" if="midlets_present"
+     depends="check_j2mewtk,count_midlet" />
+
+  <target name="check_j2mewtk" unless="j2mewtk_present" depends="prepare">
+    <echo message="Warning: J2MEWTH dependencies were not resolved."/>
+  </target>
+
+  <target name="midlets_init">
+    <!-- For J2ME use http://www.stampysoft.com/ant/   -->
+    <taskdef name="preverify" classname="com.stampysoft.ant.j2me.PreverifyTask" />
+    <taskdef name="updatejad" classname="com.stampysoft.ant.j2me.UpdateJARSizeTask" />
+    <taskdef name="makePRC"   classname="com.stampysoft.ant.j2me.JARToPRCTask" />
+  </target>
+
+  <!-- creates simple sample with minimum build size of XPP -->
+  <target name="count_midlet" if="j2mewtk_present" depends="impl_small,midlets_init,samples">
+
+    <delete dir="${build_j2me}/count_midlet" />
+    <mkdir dir="${build_j2me}/count_midlet"/>
+
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}"
+      srcdir="${src_samples}" destdir="${build_j2me}/count_midlet"
+      bootclasspath="${j2mewtk.home}/lib/midpapi.zip"
+      classpath="${build_intf}"
+    >
+      <patternset>
+        <include name="**/midlet/*.java"/>
+      </patternset>
+
+    </javac>
+
+    <copy todir="${build_j2me}/count_midlet">
+      <fileset dir="${build_intf}"/>
+      <fileset dir="${build_impl_small}"/>
+      <fileset dir="${build_impl_pp}"/>
+      <fileset dir="${build_impl_tag}"/>
+      <fileset dir="${build_samples}">
+         <include name="**/count/*.class"/>
+      </fileset>
+
+         <!--exclude name="**/*SmallImpl.class"/-->
+
+    </copy>
+
+    <delete dir="${build_j2me}/count_midlet_verified" />
+    <mkdir dir="${build_j2me}/count_midlet_verified"/>
+    <preverify unverified="${build_j2me}/count_midlet"
+       verified="${build_j2me}/count_midlet_verified" />
+    <!--copy todir="${build_j2me}/count_midlet_verified">
+       <fileset dir="${build_j2me}/count_midlet/" />
+    </copy-->
+    <delete file="${build_j2me}/count_midlet.jar" />
+    <jar jarfile="${build_j2me}/count_midlet.jar"
+        basedir="${build_j2me}/count_midlet_verified" />
+    <copy  todir="${build_j2me}" file="${src_samples.midlet}/count_midlet.jad"/>
+    <updatejad jad="${build_j2me}/count_midlet.jad" />
+  </target>
+
+  <!-- thi is special verion of XPP2 that is equivalent to impl_small but smaller -->
+  <target name="impl_tiny" depends="prepare">
+    <mkdir dir="${build_impl_tiny}"/>
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}"
+      srcdir="${src_impl_tiny}"
+      destdir="${build_impl_tiny}"
+      >
+      <patternset refid="all.source.files"/>
+    </javac>
+    <jar jarfile="${jar_tiny}">
+      <fileset dir="${build_impl_tiny}"/>
+    </jar>
+  </target>
+
+  <!-- creates simple sample with tiny build size of XPP (the same API but no interfaces) -->
+  <target name="count_midlet_tiny" if="j2mewtk_present" depends="impl_tiny,midlets_init,samples">
+
+    <delete dir="${build_j2me}/count_midlet_tiny" />
+    <mkdir dir="${build_j2me}/count_midlet_tiny"/>
+
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}"
+      srcdir="${src_samples}" destdir="${build_j2me}/count_midlet_tiny"
+      bootclasspath="${j2mewtk.home}/lib/midpapi.zip"
+      classpath="${build_impl_tiny}"
+    >
+      <patternset>
+        <include name="**/midlet/*.java"/>
+      </patternset>
+
+    </javac>
+
+    <copy todir="${build_j2me}/count_midlet_tiny">
+      <fileset dir="${build_impl_tiny}"/>
+      <fileset dir="${build_samples}">
+         <include name="**/count/*.class"/>
+      </fileset>
+
+         <!--exclude name="**/*SmallImpl.class"/-->
+
+    </copy>
+
+    <delete dir="${build_j2me}/count_midlet_tiny_verified" />
+    <mkdir dir="${build_j2me}/count_midlet_tiny_verified"/>
+    <preverify unverified="${build_j2me}/count_midlet_tiny"
+       verified="${build_j2me}/count_midlet_tiny_verified" />
+    <!--copy todir="${build_j2me}/count_midlet_tiny_verified">
+       <fileset dir="${build_j2me}/count_midlet_tiny/" />
+    </copy-->
+    <delete file="${build_j2me}/count_midlet_tiny.jar" />
+    <jar jarfile="${build_j2me}/count_midlet_tiny.jar"
+        basedir="${build_j2me}/count_midlet_tiny_verified" />
+    <copy  todir="${build_j2me}" file="${src_samples.midlet}/count_midlet_tiny.jad"/>
+    <updatejad jad="${build_j2me}/count_midlet_tiny.jad" />
+  </target>
+
+
+  <!-- TODO: full blown SOAP client sample that uses all XPP functionality -->
+  <target name="stockquote_midlet" if="j2mewtk_present" depends="impl">
+
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- PalmOS: producing PRC from Midlet ...                               -->
+  <!-- Using http://www.stampysoft.com/ant/UserManual.html                 -->
+  <!-- =================================================================== -->
+
+  <target name="palm" depends="count_palm"/>
+
+  <target name="count_palm" depends="count_midlet">
+    <makePRC jar="${build_j2me}/count_midlet.jar"
+             jad="${build_j2me}/count_midlet.jad"
+             prc="${build_j2me}/count_midlet.prc"
+       name="CountXPP" />
+  </target>
+
+  <target name="count_palm_tiny" depends="count_midlet_tiny">
+    <makePRC jar="${build_j2me}/count_midlet_tiny.jar"
+             jad="${build_j2me}/count_midlet_tiny.jad"
+             prc="${build_j2me}/count_midlet_tiny.prc"
+       name="CountXPP" />
+  </target>
+
+  <target name="tiny" depends="count_palm_tiny, tiny_tests"/>
+
+  <target name="soap_palm" depends="compile">
+    <makePRC jar="sample.jar" mainclass="sample.MainClass" networking="true"
+       name="Sample SOAP StockQuote MIDlet (minimal parser)"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- JUnit automatic tests                                               -->
+  <!-- =================================================================== -->
+
+  <path id="test_classpath">
+    <!-- build_dir for test classes and build_dest for classes to test -->
+    <pathelement location="${build_intf}" />
+    <pathelement path="${java.class.path}" />
+  </path>
+
+  <target name="check_junit" unless="junit.present" depends="prepare">
+    <echo message="Warning: JUnit dependencies were not resolved."/>
+  </target>
+
+  <target name="tests" if="junit.present" depends="intf,check_junit">
+    <mkdir dir="${build_tests}"/>
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}"
+       srcdir="${src_tests}" destdir="${build_tests}">
+      <classpath refid="test_classpath" />
+    </javac>
+  </target>
+
+  <target name="tiny_tests" if="junit.present" depends="impl_tiny,check_junit">
+    <mkdir dir="${build_tiny_tests}"/>
+    <javac target="${target}" debug="${debug}" deprecation="${deprecation}"
+      srcdir="${src_tests}" destdir="${build_tiny_tests}" classpath="${build_impl_tiny}:${java.class.path}">
+      <patternset>
+         <exclude name="All**"/>
+         <exclude name="format/**"/>
+         <exclude name="node/**"/>
+      </patternset>
+    </javac>
+  </target>
+
+  <target name="junit" if="junit.present" depends="tests,impl">
+    <java classname="AllTests" fork="yes">
+      <!--arg value="foo_argument_1" /-->
+      <!--arg value="samples/list.xml" /-->
+      <classpath>
+        <path refid="test_classpath" />
+        <pathelement location="${build_tests}" />
+        <fileset dir="${build_lib}">
+           <include name="*.jar"/>
+        </fileset>
+      </classpath>
+    </java>
+
+    <!--junit haltonfailure="yes" fork="yes">
+      <classpath>
+        <pathelement location="${build_tests}" />
+        <pathelement location="${jar}" />
+        <path refid="test_classpath" />
+      </classpath>
+      <formatter type="plain" usefile="false" />
+      <test name="AllTests" />
+
+    </junit-->
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Creates the API documentation                                       -->
+  <!-- =================================================================== -->
+  <target name="api" depends="intf">
+    <javadoc packagenames="${apidoc_packages}"
+             sourcepath="${src_intf}"
+             destdir="${build_apidoc}"
+             author="true"
+             version="true"
+             use="true"
+             windowtitle="${name} ${version} API"
+             doctitle='${name}. &lt;br&gt; &lt;br&gt;  &lt;strong&gt;Note this package is deprecated&lt;/strong&gt; by &lt;a  target="_top" href="http://www.extreme.indiana.edu/xgws/xsoap/xpp/mxp1/"&gt;XPP3&lt;/a&gt; that implements &lt;a target="_top" href="http://www.xmlpull.org/"&gt;XmlPull API&lt;/a&gt;'
+             bottom='${copyright} &lt;br&gt; &lt;br&gt;  &lt;strong&gt;Note this package is deprecated&lt;/strong&gt; by &lt;a  target="_top" href="http://www.extreme.indiana.edu/xgws/xsoap/xpp/mxp1/"&gt;XPP3&lt;/a&gt; that implements &lt;a target="_top" href="http://www.xmlpull.org/"&gt;XmlPull API&lt;/a&gt;'
+    />
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the JAVADOC documentation                                   -->
+  <!-- =================================================================== -->
+  <target name="api.impl" depends="impl">
+    <javadoc packagenames="${javadoc_packages}"
+             sourcepath="${src_intf}:${src_impl_factory}:${src_impl_small}:${src_impl_tag}:${src_impl_pp}:${src_impl_node}:${src_impl_format}:${src_x2impl}:${src_x2impl_factory}:${src_x2impl_pp}"
+             destdir="${build_javadoc}"
+             author="true"
+             version="true"
+             use="true"
+             windowtitle='Implementation ${name} ${version} API'
+             doctitle='Implementation ${name} &lt;br&gt; &lt;br&gt;  &lt;strong&gt;Note this package is deprecated&lt;/strong&gt; by &lt;a target="_top" href="http://www.extreme.indiana.edu/xgws/xsoap/xpp/mxp1/"&gt;XPP3&lt;/a&gt; that implements &lt;a target="_top" href="http://www.xmlpull.org/"&gt;XmlPull API&lt;/a&gt;'
+             bottom='${copyright} &lt;br&gt; &lt;br&gt;  &lt;strong&gt;Note this package is deprecated&lt;/strong&gt; by &lt;a  target="_top" href="http://www.extreme.indiana.edu/xgws/xsoap/xpp/mxp1/"&gt;XPP3&lt;/a&gt; that implements &lt;a target="_top" href="http://www.xmlpull.org/"&gt;XmlPull API&lt;/a&gt;'
+    />
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Creates the XML Pull Parser distribution                            -->
+  <!-- =================================================================== -->
+  <target name="dist" depends="compile, j2me, api">
+    <delete dir="${dist}"/>
+    <!--delete file="${dist_zip}"/-->
+    <delete file="${dist_tgz}"/>
+
+    <mkdir dir="${dist}"/>
+    <mkdir dir="${dist}/${doc}"/>
+    <mkdir dir="${dist}/lib"/>
+    <mkdir dir="${dist}/${src}"/>
+    <mkdir dir="${dist}/${src_intf}"/>
+    <mkdir dir="${dist}/${src}/impl"/>
+    <mkdir dir="${dist}/${src_x2impl}"/>
+    <mkdir dir="${dist}/${src_api_jaxp11}"/>
+    <mkdir dir="${dist}/${src_api_sax2}"/>
+    <mkdir dir="${dist}/${src_driver_jaxp11}"/>
+    <mkdir dir="${dist}/${src_driver_sax2}"/>
+    <mkdir dir="${dist}/${src_samples}"/>
+    <mkdir dir="${dist}/${src_tests}"/>
+    <mkdir dir="${dist}/${src_etc}"/>
+    <mkdir dir="${dist}/${build}"/>
+
+    <copy todir="${dist}/lib">
+      <fileset dir="lib"/>
+    </copy>
+
+    <copy todir="${dist}/${build}">
+      <fileset dir="${build}">
+        <include name="lib/PullParser${version}*.jar"/>
+        <include name="j2me/*.jar"/>
+        <include name="j2me/*.jad"/>
+        <include name="j2me/*.prc"/>
+        <include name="samples/**"/>
+        <include name="tests/**"/>
+        <include name="intf/**"/>
+        <include name="impl/**"/>
+        <include name="x2impl/**"/>
+        <include name="apis/**"/>
+        <include name="drivers/**"/>
+      </fileset>
+    </copy>
+
+    <!-- sources should be copied after build to make it newer -->
+    <copy todir="${dist}/${src_samples}">
+      <fileset dir="${src_samples}">
+        <!--include name="**"/-->
+        <exclude name="**/soap/**"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${dist}/${src_intf}">
+      <fileset dir="${src_intf}">
+         <patternset refid="all.source.files"/>
+      </fileset>
+    </copy>
+    <copy todir="${dist}/${src}/impl">
+      <fileset dir="${src}/impl">
+         <patternset refid="all.source.files"/>
+      </fileset>
+    </copy>
+    <copy todir="${dist}/${src_x2impl}">
+      <fileset dir="${src_x2impl}">
+         <patternset refid="all.source.files"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${dist}/${src_api_jaxp11}">
+      <fileset dir="${src_api_jaxp11}">
+         <patternset refid="all.source.files"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${dist}/${src_api_sax2}">
+      <fileset dir="${src_api_sax2}">
+         <patternset refid="all.source.files"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${dist}/${src_driver_jaxp11}">
+      <fileset dir="${src_driver_jaxp11}">
+         <patternset refid="all.source.files"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${dist}/${src_driver_sax2}">
+      <fileset dir="${src_driver_sax2}">
+         <patternset refid="all.source.files"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${dist}/${src_tests}">
+      <fileset dir="${src_tests}">
+         <patternset refid="all.source.files"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${dist}/${src_etc}">
+      <fileset dir="${src_etc}" includes="*"/>
+    </copy>
+
+    <copy todir="${dist}/${doc}">
+      <fileset dir="${doc}"/>
+    </copy>
+
+    <copy todir="${dist}/${build_apidoc}">
+      <fileset dir="${build_apidoc}"/>
+    </copy>
+
+
+    <copy file="LICENSE.txt" tofile="${dist}/LICENSE.txt"/>
+    <copy file="README.html" tofile="${dist}/README.html"/>
+    <copy file="build.xml" tofile="${dist}/build.xml"/>
+
+    <fixcrlf srcdir="${dist}"
+       eol="lf" eof="remove"
+       includes="**/*.html,**/*.txt,**/*.sh"
+     />
+
+    <fixcrlf srcdir="${dist}"
+       eol="crlf"
+       includes="**/*.bat"
+     />
+
+    <tar tarfile="${dist_tar}"
+      basedir="${build}/dist/"
+       includes="PullParser${version}/**">
+    </tar>
+    <gzip zipfile="${dist_tgz}" src="${dist_tar}"/>
+    <delete file="${dist_tar}"/>
+
+  </target>
+
+  <target name="xx">
+
+    <!--zip zipfile="${dist_zip}" basedir="${build}/dist/"
+      includes="PullParser${version}/**"/
+      username="aslom" group="ewww"
+      longfile="gnu"
+    <tar tarfile="${dist_tar}">
+      <tarfileset dir="${build}/dist" >
+       <include name="PullParser${version}/**"/>
+      </tarfileset>
+    </tar>
+
+    <delete file="${dist_tar}"/>
+    <tar tarfile="${dist_tar}">
+      <tarfileset dir="${dist}/.." >
+         <include name="PullParser${version}/**"/>
+      </tarfileset>
+
+      -->
+
+    <delete file="test.tar"/>
+    <tar tarfile="test.tar">
+      <tarfileset dir="${build}/dist/" >
+         <include name="PullParser${version}/**"/>
+      </tarfileset>
+        </tar>
+    <gzip zipfile="test.tgz" src="test.tar"/>
+
+  </target>
+
+  <target name="run">
+    <java classname="standard.XppCountMain" fork="yes">
+      <arg value="-v" />
+      <arg value="samples/list.xml" />
+      <classpath>
+        <path refid="test_classpath" />
+        <pathelement location="${build_samples}" />
+      </classpath>
+    </java>
+  </target>
+
+
+</project>
+

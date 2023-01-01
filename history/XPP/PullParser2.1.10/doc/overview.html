@@ -1,0 +1,50 @@
+<HTML>
+<HEAD>
+<TITLE>Pull Parser 2 Overview
+</TITLE>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Aleksander Slominski [aslom@extreme.indiana.edu]">
+</HEAD>
+<BODY BGCOLOR="white">
+
+<H1>Pull Parser 2 Overview</H2><P>
+
+<H2>New features since previous version</H2>
+
+<P>It is a major revision of previous 1.1 version.
+
+<ul>
+<li>
+clean separation between interfaces and implementation - alternative
+implementations of  XPP2 interfaces are now possible and can be easily
+integrated thanks to JAXP-like pluggablity
+(user source code won't need to change at all!)
+<li>
+contains two ultra lightweight Java XML tree representation:
+XmlNode must be constructed before used
+but XmlPullNode allows for combined pull parsing and incremental tree
+construction with ability to skip parts of tree and dynamically modify
+its content (allow to store _any_ object).
+<li>
+J2ME MIDP support and samples (standard XppCount sample with the same
+implementation shared between J2ME Midlet and command line J2SE version)
+<li>
+sample that shows XML node tree of XML file in SWING tree
+<li>
+allow users to access underlying buffer parser
+(to avoid creating String to represent element content)
+<li>
+added interfaces to record and format XML output
+<li>it is faster by 10% than previous Pull Parser 1.1
+<li>
+whole jar archive containing interfaces and implementation is just 40K
+(including tree node handling)
+<li>
+some small bug fixes and improvements to tokenizer and parser
+</ul>
+
+<p>[<a href="../README.html">Back To Pull Parser 2 Documentation</a>]
+<HR>
+<address><a href="aslom@extreme.indiana.edu">Aleksander Slominski</a><address>
+</BODY>
+</HTML>

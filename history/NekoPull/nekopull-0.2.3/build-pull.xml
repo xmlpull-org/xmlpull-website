@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- $Id$ -->
+<project default='all' basedir='.'>
+
+ <!-- PROPERTIES -->
+ <property name='version'   value='0.2.3'/>
+ <property name='name'      value='nekopull'/>
+ <property name='fullname'  value='${name}-${version}'/>
+ <property name='Name'      value='NekoPull ${version}'/>
+ <property name='copyright' value='(C) Copyright 2002-2003, Andy Clark. All rights reserved.'/>
+  
+ <property name='jarfile'        value='${name}.jar'/>
+ <property name='jarfileSamples' value='${name}Samples.jar'/>
+
+ <property name='zipfile' value='${name}-${version}.zip'/>
+ <property name='tarfile' value='${name}-${version}.tar'/>
+ <property name='tgzfile' value='${name}-${version}.tar.gz'/>
+
+ <property name='contents.misc'   value='LICENSE,README_pull,TODO_pull,build.bat,build-pull.xml'/>
+ <property name='contents.jars'   value='${jarfile},${jarfileSamples}'/>
+ <property name='contents.source' value='src/pull/**/*.java,src/pull/**/*.properties'/>
+ <property name='contents.docs'   value='doc/style.css,doc/pull/**,data/pull/**'/>
+ <property name='contents.libs'   value='lib/xerces2.3.0-patch.jar'/>
+ <property name='contents' 
+           value='${contents.misc},${contents.jars},${contents.source},${contents.docs},${contents.libs}'/>
+
+ <property name='package' value='org.cyberneko.pull'/>
+
+ <!-- TARGETS --> 
+ <target name='universe' depends='full,all'/>
+
+ <target name='all' depends='zip,tgz'/>
+
+ <target name='full'>
+  <property name='contents.full' value='lib/**'/>
+ </target>
+
+ <target name='compile'>
+  <mkdir dir='bin/pull'/>
+  <javac srcdir='src/pull' destdir='bin/pull' includes='org/**,sample/**'/>
+ </target>
+
+ <target name='jar' depends='compile'>
+  <copy todir='bin/pull'>
+   <fileset dir='src/pull' includes='**/*.properties'/>
+  </copy>
+  <jar jarfile='${jarfile}' basedir='bin/pull' 
+       includes='org/**/*.class,org/**/*.properties'/>
+  <jar jarfile='${jarfileSamples}' basedir='bin/pull'
+       includes='sample/**'/>
+ </target> 
+
+ <target name='package' depends='jar,doc'>
+  <mkdir dir='bin/package/${fullname}'/>
+  <copy todir='bin/package/${fullname}'>
+   <fileset dir='.' includes='${contents},${contents.full}'/>
+   <fileset dir='bin' includes='${contents.jars}'/>
+  </copy>
+ </target>
+
+ <target name='package-nodir'>
+  <mkdir dir='bin/package-${name}'/>
+  <copy todir='bin/package-${name}'>
+   <fileset dir='bin/package/${fullname}' includes='**'/>
+  </copy>
+ </target>
+
+ <target name='zip' depends='package'>
+  <zip zipfile='${zipfile}' basedir='bin/package' includes='${fullname}/**'/>
+ </target>
+
+ <target name='tgz' depends='package'>
+  <tar tarfile='${tarfile}' basedir='bin/package' includes='${fullname}/**'/>
+  <gzip zipfile='${tgzfile}' src='${tarfile}'/>
+  <delete file='${tarfile}'/>
+ </target>
+
+ <target name='doc' unless='docs.done'>
+  <mkdir dir='doc/pull/javadoc'/>
+  <javadoc packagenames='${package},${package}.event,${package}.parsers,${package}.util'
+           sourcepath='src/pull' destdir='doc/pull/javadoc'
+           author='true' version='true' use='true'
+           windowtitle="${Name} Implementation"
+           doctitle="${Name}"
+           bottom="${copyright}" 
+           />
+  <property name='docs.done' value='true'/>
+ </target>
+ 
+ <target name='clean'>
+  <delete dir='bin/pull' quiet='true'/>
+  <delete dir='doc/pull/javadoc' quiet='true'/>
+  <delete quiet='true'>
+   <fileset dir='.' includes='${name}*.jar,${name}*.zip,${name}*.tar.gz'/>
+  </delete>
+  <delete dir='bin/package' quiet='true'/>
+  <delete dir='bin/package-${name}' quiet='true'/>
+ </target>
+
+</project>

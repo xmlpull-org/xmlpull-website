@@ -1,0 +1,370 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><title>Streaming API for XML (StAX)</title>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="Content-Language" content="en-us"><!--link rel="stylesheet" href="/images/styles.css" -->
+
+<style type="text/css" media="all">@import "http://dev2dev.bea.com/homepage/fonts.css";</style>
+<script language="javascript" src="index.jsp_files/mainlib.js"></script>
+
+<meta name="decorator" content="dev2dev">
+<meta name="breadcrumb" content="stax">
+<meta name="notPrintable" content="true">
+<meta name="noCommentsEmail" content="true"></head> 
+
+
+
+
+
+
+
+
+<body bgcolor="#ffffff">                 
+<div class="hide"><a href="#wrap" title="Skip navigation" accesskey="2">Skip navigation</a>.</div>
+<div id="header">
+<form name="gs" method="get" action="http://google.bea.com/search">
+	<div class="unb" tabindex="1">
+		<img src="index.jsp_files/slogan.gif" class="slogan" alt="By Developers, For Developers">
+		
+		<div class="buttons">
+			<a href="http://commerce.bea.com/"><img src="index.jsp_files/button_download.gif" alt="Download" width="80" height="20" border="0"></a>
+			<a href="http://edocs.bea.com/"><img src="index.jsp_files/button_documentation.gif" alt="Documentation" width="108" height="20" border="0"></a>
+			<a href="http://support.bea.com/"><img src="index.jsp_files/button_support.gif" alt="Support" width="74" height="20" border="0"></a>
+			 <a href="http://dev2dev.bea.com/administration/login.jsp?dest=http%3A%2F%2Fdev2dev.bea.com%3A80%2Ftechnologies%2Fstax%2Findex.jsp"><img src="index.jsp_files/button_login.gif" alt="Log In" width="55" height="20" border="0"></a>
+                        
+                        
+			<a href="http://dev2dev.bea.com/administration/registration.jsp?dest=http%3A%2F%2Fdev2dev.bea.com%3A80%2Ftechnologies%2Fstax%2Findex.jsp"><img src="index.jsp_files/button_register.gif" alt="Register" width="79" height="20" border="0"></a>
+                        
+		</div>
+	</div>
+	
+	<div class="headergraphics">
+		<a href="http://dev2dev.bea.com/"><img src="index.jsp_files/header_d2d.gif" alt="BEA dev2dev" width="596" height="57" border="0" class="graphicdev2dev"></a>
+		<a href="http://www.bea.com/"><img src="index.jsp_files/head_bea.gif" alt="BEA.com" width="204" height="57" border="0" class="graphicbea"></a>
+	</div>
+	
+	<div class="redline"><img src="index.jsp_files/line_red.gif" width="800" alt="" height="6" border="0"></div>
+	<div class="graybar">
+		<div class="topnav">
+			<a href="http://dev2dev.bea.com/index.jsp">Home</a>
+			 | 
+			<a href="http://dev2dev.bea.com/products/all.jsp">Dev Centers</a>
+			 | 
+			<a href="http://dev2dev.bea.com/code/">Code Library</a>
+			 | 
+			<a href="http://newsgroups2.bea.com/cgi-bin/dnewsweb">Newsgroups</a>
+			 | 
+			<a href="http://dev2dev.bea.com/subscriptions/">Subscriptions</a>
+		</div>
+		
+		<div class="searchbox">
+                    <input type="text" name="q" value="" class="formclass" size="25">
+                    <input type="image" name="bntg" img="" src="index.jsp_files/button_search.gif" style="padding-left: 3px;">
+		</div>
+	</div>
+	<div class="twodots">
+        </div>
+           <input type="hidden" name="ie" value="latin1">
+           <input type="hidden" name="site" value="bea">
+           <input type="hidden" name="output" value="xml_no_dtd">
+           <input type="hidden" name="client" value="bea">
+           <input type="hidden" name="lr" value="">
+           <input type="hidden" name="proxystylesheet" value="http://dev2dev.bea.com/images/dev2dev.xsl">
+           <input type="hidden" name="oe" value="latin1">
+           <input type="hidden" name="restrict" value="lang_en">
+     </form>
+</div>		
+<div id="wrap">
+
+
+
+         
+	
+    <div class="breadcrumb">
+
+<a href="http://dev2dev.bea.com/index.jsp">dev2dev Home</a> &gt; <a href="http://dev2dev.bea.com/products/all.jsp">Dev Centers</a> &gt; StAX<br>
+</div>
+    
+  	
+
+    <div id="summary">
+		<img src="index.jsp_files/h1_stax.gif" alt="StAX">
+		<div class="title_line"></div>
+		</div>
+		<div id="content">
+<h3>Streaming API for XML (StAX)</h3><br>
+The Streaming API for XML (StAX) is a groundbreaking new Java API for
+parsing and writing XML easily and efficiently. Spearheaded by BEA,
+StAX has passed the final approval ballot of the Java Community Process
+(see <a href="http://jcp.org/en/jsr/detail?id=173">JSR-173</a>).<br><br>
+Processing XML is a standard task in most computing environments. Until
+now, developers have typically used two approaches: the Simple API for
+XML processing (SAX) and the Document Object Model (DOM). Although both
+methods have their advantages, both also have significant
+disadvantages, such as a lack of iterative processing (SAX) and a
+potential performance loss resulting from reading the entire XML
+document into memory (DOM).<br><br>
+StAX solves these problems by providing more control of XML parsing to
+the programmer, in particular by exposing a simple iterator-based API
+and an underlying stream of events. Methods such as <code>next()</code> and <code>hasNext()</code>
+allow an application developer to ask for the next event, or pull the
+event, rather than handle the event in a callback. StAX also enables
+the programmer to stop processing the document at any time, skip ahead
+to sections of the document, and get subsections of the document.<br><br>
+
+StAX helps you process XML faster and easier in these typical use cases:
+<br><br>
+
+<ul>
+<li>Data binding, a two-way process that reads and writes XML
+(unmarshaling and marshaling) to and from a programming language data
+structure</li>
+<li>SOAP message processing (SOAP is an XML message transport format used predominantly by Web services)</li>
+<li>Parsing a specific XML vocabulary</li>
+<li>Processing pipelined XML</li>
+</ul>
+<br>
+
+Download <a href="http://ftpna2.bea.com/pub/downloads/wls_stax.jar">WebLogic's StAX Implementation</a>.<br><br>
+
+<h3>Resources</h3><br>
+
+<ul>
+<li>Download the <a href="http://ftpna2.bea.com/pub/downloads/jsr173.jar">reference implementation of the StAX API</a>,
+with code examples that illustrate how to use the API and Javadoc
+documentation that describes the classes, interfaces, and methods that
+make up the API.</li>
+<li><a href="http://ftpna2.bea.com/pub/downloads/jsr173_1.0.pdf">Specification</a></li>
+<li><a href="http://jcp.org/en/jsr/detail?id=173">The Java Community Process Page</a></li>
+<li><a href="http://www.xml.com/pub/a/2003/09/17/stax.html">An Introduction to StAX</a></li>
+<li><a href="http://dev2dev.bea.com/technologies/stax/pullparsing.jsp">Examples of Pull Parsing XML</a></li>
+</ul>
+
+</div> 
+    
+	
+	
+
+</div>
+<div id="footer">
+	<a href="http://www.bea.com/contact/index.shtml">Contact BEA</a>   
+	<a href="http://dev2dev.bea.com/sitemap/index.jsp">Site Map</a>   
+	<a href="http://dev2dev.bea.com/index.xml">RSS</a>   
+	<a href="http://dev2dev.bea.com/surveys/">Feedback</a>   
+	<a href="http://www.bea.com/framework.jsp?CNT=privacy.htm&amp;FP=/content/legal/">Privacy</a>   
+	© 2004 BEA Systems   
+	<a href="http://dev2dev.bea.com.cn/"><img src="index.jsp_files/intl_cn.gif" alt="dev2dev China"></a>   
+	<a href="http://www.beasys.co.jp/dev2dev/"><img src="index.jsp_files/intl_jp.gif" alt="dev2dev Japan"></a>
+	
+	<div class="twodots"><img src="index.jsp_files/_.gif" width="300" height="4" alt=""></div>
+	<div class="redline"><img src="index.jsp_files/_.htm" width="200" height="4" alt=""></div>
+</div>
+
+
+<!-- START OF Data Collection Server TAG -->
+
+<!-- Copyright 2002 NetIQ Corporation -->
+
+<!-- V2.1 -->
+
+<script language="JavaScript">
+
+<!--
+
+var dcs_imgarray = new Array;
+
+var dcs_ptr = 0;
+
+var dCurrent = new Date();
+
+var DCS=new Object();
+
+var WT=new Object();
+
+var DCSext=new Object();
+
+
+
+var dcsADDR = "63.96.161.95";
+
+var dcsID = "";
+
+
+
+if (dcsID == ""){
+
+	var TagPath = dcsADDR;
+
+} else {
+
+	var TagPath = dcsADDR+"/"+dcsID;
+
+}
+
+
+
+function dcs_var(){
+
+	WT.tz = dCurrent.getTimezoneOffset();
+
+	WT.ul = navigator.appName=="Netscape" ? navigator.language : navigator.userLanguage;
+
+//	WT.cd = screen.colorDepth;
+
+//	WT.sr = screen.width+"x"+screen.height;
+
+	WT.jo = navigator.javaEnabled() ? "Yes" : "No";
+
+	WT.ti   = document.title;
+
+	DCS.dcsdat = dCurrent.getTime();
+
+	if ((window.document.referrer != "") && (window.document.referrer != "-")){
+
+		if (!(navigator.appName == "Microsoft Internet Explorer" && parseInt(navigator.appVersion) < 4) ){
+
+			DCS.dcsref = window.document.referrer;
+
+		}
+
+	}
+
+
+
+	DCS.dcsuri = window.location.pathname;
+
+	DCS.dcsqry = window.location.search;
+
+	DCS.dcssip = window.location.hostname;
+
+
+
+}
+
+
+
+function A(N,V){
+
+	return "&"+N+"="+escape(V);
+
+}
+
+
+
+function dcs_createImage(dcs_src)
+
+{
+
+	if (document.images){
+
+		dcs_imgarray[dcs_ptr] = new Image;
+
+		dcs_imgarray[dcs_ptr].src = dcs_src;
+
+		dcs_ptr++;
+
+	}
+
+}
+
+
+
+function dcsMeta(){
+
+	var MRV="";
+
+	var F=false;
+
+	var myDocumentElements;
+
+	if (document.all){
+
+		F = true;
+
+		myDocumentElements=document.all.tags("meta");
+
+	}
+
+	if (!F && document.documentElement){
+
+		F = true;
+
+		myDocumentElements=document.getElementsByTagName("meta");
+
+	}
+
+	if (F){
+
+		for (var i=1; i<=myDocumentElements.length;i++){
+
+			myMeta=myDocumentElements.item(i-1);
+
+			if (myMeta.name.indexOf('WT.')==0){
+
+				WT[myMeta.name.substring(3)]=myMeta.content;
+
+			}
+
+			if (myMeta.name.indexOf('DCSext.')==0){
+
+				DCSext[myMeta.name.substring(7)]=myMeta.content;
+
+			}
+
+		}
+
+	}
+
+}
+
+
+
+function dcs_TAG(TagImage){
+
+	var P ="http"+(window.location.protocol.indexOf('https:')==0?'s':'')+"://"+TagImage+"/dcs.gif?";
+
+	for (N in DCS){P+=A( N, DCS[N]);}
+
+	for (N in WT){P+=A( "WT."+N, WT[N]);}
+
+	for (N in DCSext){P+=A( N, DCSext[N]);}
+
+
+
+	dcs_createImage(P);
+
+}
+
+// This is a sample of the function that would be called if you needed to re-run the script.
+
+//function dcs_ReRun(URI,QRY){
+
+//	DCS.dcsuri = URI;
+
+//	DCS.dcsqry = QRY;
+
+//	dcs_TAG();
+
+//}
+
+
+
+dcsMeta();
+
+dcs_var();
+
+dcs_TAG(TagPath);
+
+//-->
+
+</script>
+
+
+
+<noscript>
+
+<IMG BORDER="0" NAME="DCSIMG" WIDTH="1" HEIGHT="1" SRC="http://63.96.161.95/njs.gif?dcsuri=/nojavascript">
+
+</noscript>
+
+</body></html>

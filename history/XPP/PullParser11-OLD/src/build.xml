@@ -1,0 +1,246 @@
+<project name="soaprmi11" default="soaprmi11" basedir="..">
+
+    <property name="project" value="soaprmi11" />
+
+    <property name="source" value="src" />
+    <property name="main" value="${source}/java" />
+    <property name="samples" value="${source}/java" />
+    <property name="tests" value="${source}/java" />
+    <property name="etc" value="${source}/etc" />
+    <property name="webapps" value="${source}/webapps/soaprmi" />
+    <property name="build" value="build" />
+    <property name="classes" value="${build}/classes" />
+    <property name="build-webapps" value="${build}/webapps/soaprmi" />
+    <property name="dist" value="build" />
+    <property name="lib" value="lib" />
+    <property name="doc" value="${source}/doc" />
+
+    <property name="classpath" value="${classpath}:${classes}" />
+    <property name="build.compiler" file="classic" />
+    <property name="deprecation" value="false" />
+    <property file="${etc}/VERSION" />
+    <property name="archive" value="${project}-dist" />
+    <property name="archive.all" value="${project}" />
+    <property name="archive.pullparser" value="PullParser11" />
+    <!--property name="archive.soapenc" value="${project}-soapenc" /-->
+
+
+  <!-- Display all the targets -->
+  <target name="targets">
+    <echo message=""/>
+    <echo message="ANT build for ${project} ${version}"/>
+    <echo message=""/>
+    <echo message="The following targets are available:"/>
+    <echo message="  targets  Lists the build targets"/>
+    <echo message="  clean    Cleans the build classes directories"/>
+    <echo message="  distclean Cleans the build and distribution directories"/>
+    <echo message="  all      Cleans and builds all the packages and examples"/>
+    <echo message="  main     Builds the main packages (including debugging info)"/>
+    <echo message="  samples  Builds the samples (including debugging info)"/>
+    <echo message="  tests    Builds the tests (including debugging info)"/>
+    <echo message="  jar      Builds the binary JAR in the build directory"/>
+    <echo message="  api      Builds the API JavaDocs"/>
+    <echo message="  javadoc  Builds the full JavaDocs"/>
+    <echo message="  webapps  Prepares webapps direcotry"/>
+    <echo message="  xpp      Cleans,builds and jar Xml Pull Parser"/>
+    <echo message="  xpp-api      Builds the Xml Pull Parser API JavaDocs"/>
+    <echo message="  xpp-javadoc  Builds the Xml Pull Parser full JavaDocs"/>
+    <echo message=""/>
+  </target>
+
+
+  <!-- Prepare target directories -->
+  <target name="prepare">
+    <mkdir dir="${build}"/>
+    <mkdir dir="${classes}"/>
+    <!--mkdir dir="${build}/samples"/-->
+    <!--mkdir dir="${dist}"/-->
+  </target>
+
+  <!-- Kill all the directories created in prepare -->
+  <target name="clean">
+    <delete dir="${classes}"/>  
+    <delete dir="${build-webapps}"/>  
+    <!--deltree dir="${classes}"/-->
+    <!--deltree dir="${dist}"/-->
+  </target>
+
+ <target name="distclean" depends="clean">
+    <delete dir="${build-webapps}"/>  
+  </target>
+  
+  <patternset id="javac.source.files">
+    <exclude name="**/SSL*"/>
+    <exclude name="**/package.html"/>
+    <exclude name="**/tests/AllType*"/>
+    <exclude name="**/tests/PingPong*"/>
+ </patternset>
+
+
+  <!-- Build all the sources with debug and deprecation -->
+  <target name="main" depends="prepare">
+    <javac srcdir="${main}" destdir="${classes}" 
+      includes="sxt/**,xpp/**,soaprmi/**"
+           classpath="${classpath}" debug="on" deprecation="${deprecation}">
+      <patternset refid="javac.source.files"/>      
+    </javac>
+  </target>
+
+  <!-- Same as main, but also cleans and additional targets -->
+  <target name="all" depends="clean,soaprmi11"/>
+  <target name="compile" depends="soaprmi11"/>
+
+  <target name="soaprmi11" depends="main,tests,samples"/>
+
+  <!-- Same as main, but optimization, no debug and no deprecation -->
+  <target name="main-opt" depends="prepare">
+    <javac srcdir="${main}" 
+      destdir="${classes}" 
+      includes="sxt/**,xpp/**,soaprmi/**"
+           classpath="${classpath}" debug="off" deprecation="off" optimize="on" >
+      <patternset refid="javac.source.files"/>      
+    </javac>
+
+  </target>
+
+  <target name="samples" depends="main">
+    <javac srcdir="${samples}" destdir="${classes}" 
+           includes="samples/**"
+           excludes="samples/im/**"
+           classpath="${classpath}" debug="on" deprecation="${deprecation}">
+      <patternset refid="javac.source.files"/>      
+    </javac>
+           
+  </target>
+  
+  <target name="im" depends="main">
+    <javac srcdir="${samples}" destdir="${classes}" 
+           includes="samples/im/**"
+           classpath="${classpath}" debug="on" deprecation="${deprecation}" >
+      <patternset refid="javac.source.files"/>      
+    </javac>
+           
+  </target>
+
+  <!-- Build the test packages -->
+  <target name="tests" depends="main">
+    <javac srcdir="${tests}" destdir="${classes}" 
+           includes="tests/**"
+           classpath="${classpath}" debug="on" deprecation="${deprecation}" >
+      <patternset refid="javac.source.files"/>      
+    </javac>
+           
+  </target>
+
+  <!-- Build webapps to be deployed in servlet contianer -->
+  <target name="webapps" depends="jar">
+    <mkdir dir="${build-webapps}"/>
+    <copy todir="${build-webapps}">
+      <fileset dir="${webapps}"/>      
+    </copy>
+    <mkdir dir="${build-webapps}/WEB-INF/lib"/>
+    <copy file="${dist}/${archive.all}.jar" todir="${build-webapps}/WEB-INF/lib"/>
+  </target>
+
+
+
+  <!-- Build the Pull Parser -->
+  <target name="xpp" depends="prepare">
+    <javac srcdir="${main}" destdir="${classes}" 
+           includes="sxt/**,xpp/**,samples/pullparser/**,tests/Xpp*.java"
+           classpath="${classpath}" debug="on" deprecation="${deprecation}" />
+    <delete   file="${dist}/${archive.pullparser}.jar" />
+    <copy  todir="${classes}" file="LICENSE.txt" />
+    <copy  todir="${classes}" file="PullParser-README.txt" />
+    <jar jarfile="${dist}/${archive.pullparser}.jar" basedir="${classes}"  
+      includes="LICENSE.txt,PullParser*.txt,sxt/**,xpp/**" />
+  </target>
+
+  <!-- Build the JAR file using main -->
+  <target name="jar" depends="main,samples,tests">
+    <delete   file="${dist}/${archive}.jar" />
+    <delete   file="${dist}/${archive.all}.jar" />
+    <!--delete   file="${dist}/${archive.soapenc}.jar" /-->
+
+    <!-- <copyfile src="${source}/etc/MANIFEST.MF" dest="${classes}/MANIFEST.MF" /> -->
+    <!-- <replace  file="${classes}/MANIFEST.MF" token="$$VERSION$$" value="${version}" /> -->
+    <!--copydir  src="${source}/etc" dest="${classes}" includes="LICENSE,README,CHANGELOG" /-->
+    <!--copydir src="${build}/samples" dest="${classes}"/-->
+
+    <!-- <jar jarfile="${dist}/${archive}.jar" basedir="${classes}"
+              manifest="${classes}/MANIFEST.MF" includes="soaprmi/**,sxt/**,xpp/**" /> -->
+
+    <copy todir="${classes}" file="LICENSE.txt" />
+    <copy todir="${classes}" file="README.txt" />
+    <jar jarfile="${dist}/${archive}.jar" basedir="${classes}"  
+      includes="*.txt,soaprmi/**,sxt/**,xpp/**" />
+    <jar jarfile="${dist}/${archive.all}.jar" basedir="${classes}"  
+      includes="*.txt,soaprmi/**,sxt/**,xpp/**,samples/**,tests/**" />
+    <!--jar jarfile="${dist}/${archive.soapenc}.jar" basedir="${classes}"  
+      includes="*.txt,sxt/**,xpp/**,soaprmi/struct/**,soaprmi/mapping/**,soaprmi/soapenc/**,soaprmi/soap/**,soaprmi/util/**,soaprmi/server/**,soaprmi/Remote.class" /-->
+
+  </target>
+
+  <!-- Build the JAR file using main-opt -->
+  <target name="jar-opt" depends="main-opt">
+    <delete   file="${dist}/${archive}.jar" />
+
+    <copyfile src="${source}/etc/MANIFEST.MF" dest="${classes}/MANIFEST.MF" />
+    <replace  file="${classes}/MANIFEST.MF" token="$$VERSION$$" value="${version}" />
+    <!--copydir  src="${source}/etc" dest="${classes}" includes="LICENSE,README,CHANGELOG" /-->
+
+    <jar      jarfile="${dist}/${archive}.jar" basedir="${classes}"
+              manifest="${classes}/MANIFEST.MF" includes="" />
+
+  </target>
+
+
+  <!-- Build the full JavaDocs -->
+  <target name="javadoc" depends="prepare">
+    <mkdir    dir="${build}/doc" />
+    <mkdir    dir="${build}/doc/javadoc" />
+    <property name="copyright"
+              value="IU Extreme! Computing Lab  http://www.extreme.indiana.edu/soap" />
+    <javadoc  sourcepath="${main}" destdir="${build}/doc/javadoc"
+              doctitle="SOAP RMI 1.1 JavaDoc" windowtitle="SOAP RMI 1.1 JavaDoc" bottom="${copyright}"
+              package="true" author="true" version="true" noindex="true"
+              packagenames="soaprmi soaprmi.mapping soaprmi.port soaprmi.registry soaprmi.server soaprmi.soap soaprmi.soaprpc soaprmi.struct soaprmi.util xpp sxt" />
+  </target>
+
+  <!-- Build the API JavaDocs -->
+  <target name="api" depends="prepare">
+    <mkdir    dir="${build}/doc" />
+    <mkdir    dir="${build}/doc/api" />
+    <property name="copyright"
+              value="IU Extreme! Computing Lab  http://www.extreme.indiana.edu/soap" />
+    <javadoc  sourcepath="${main}" destdir="${build}/doc/api"
+              doctitle="SOAP RMI 1.1 API" windowtitle="SOAP RMI 1.1 API" bottom="${copyright}"
+              public="true" author="true"
+              packagenames="soaprmi soaprmi.mapping soaprmi.port soaprmi.registry soaprmi.server soaprmi.soap soaprmi.soaprpc soaprmi.struct soaprmi.util xpp" />
+  </target>
+
+  <!-- Build the full JavaDocs -->
+  <target name="xpp-javadoc" depends="prepare">
+    <mkdir    dir="${build}/doc" />
+    <mkdir    dir="${build}/doc/xpp-javadoc" />
+    <property name="copyright"
+              value="IU Extreme! Computing Lab  http://www.extreme.indiana.edu/soap" />
+    <javadoc  sourcepath="${main}" destdir="${build}/doc/xpp-javadoc"
+              doctitle="PullParser 1.1 JavaDoc" windowtitle="PullParser 1.1 JavaDoc" bottom="${copyright}"
+              package="true" author="true" version="true" noindex="true"
+              packagenames="xpp sxt" />
+  </target>
+
+  <!-- Build the API JavaDocs -->
+  <target name="xpp-api" depends="prepare">
+    <mkdir    dir="${build}/doc" />
+    <mkdir    dir="${build}/doc/xpp-api" />
+    <property name="copyright"
+              value="IU Extreme! Computing Lab  http://www.extreme.indiana.edu/soap" />
+    <javadoc  sourcepath="${main}" destdir="${build}/doc/xpp-api"
+              doctitle="PullParser 1.1 API" windowtitle="PullParser 1.1 API" bottom="${copyright}"
+              public="true" author="true"
+              packagenames="xpp" />
+  </target>
+
+</project>

@@ -1,0 +1,49 @@
+<HTML>
+<HEAD>
+<TITLE>Building Pull Parser 2
+</TITLE>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Aleksander Slominski [aslom@extreme.indiana.edu]">
+</HEAD>
+<BODY BGCOLOR="white">
+
+<H1>Building Pull Parser 2</H2><P>
+
+<P><STRONG>NOTE:</STRONG> XPP2 distribution already
+contains JAR files and precompiled samples so building
+is not necessary unless you make changes to XPP2.
+
+<P>First check <a href="reqs.html">requirements</a>
+
+<P>Make sure to have JUnit to compile tests
+- JUnit 3.7 JAR is included in lib directory so just add it to CLASSPATH
+
+<pre>
+set CLASSPATH=lib\junit37.jar
+</pre>
+
+
+
+<p>To build everything from scratch call ant in top level directory
+(build everything except J2ME -
+see <a href="j2me.html">seaprate instructions</a>)
+
+<pre>
+ant all
+</pre>
+
+<p>and to build only modified files
+
+<pre>
+ant
+</pre>
+
+<p>TO build J2ME samples see <a href="j2me.html">a separate document</a>.
+
+<p>[<a href="../README.html">Back To Pull Parser 2 Documentation</a>]
+
+
+<HR>
+<address><a href="aslom@extreme.indiana.edu">Aleksander Slominski</a><address>
+</BODY>
+</HTML>

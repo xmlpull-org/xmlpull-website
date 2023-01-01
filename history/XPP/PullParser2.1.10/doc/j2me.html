@@ -1,0 +1,162 @@
+<HTML>
+<HEAD>
+<TITLE>Pull Parser 2 and J2ME
+</TITLE>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Aleksander Slominski [aslom@extreme.indiana.edu]">
+</HEAD>
+<BODY BGCOLOR="white">
+
+<H1>Pull Parser 2 and J2ME</H2><P>
+
+<h2>J2ME version requirements</h2>
+
+<ul>
+<li><a href="http://java.sun.com/products/j2mewtoolkit/index.html">J2ME
+Wireless Toolkit</a> to build and run midlets in emulator
+
+<li>to run Palm PRC sample: Sun's
+<a href="http://java.sun.com/products/midp/palmOS.html">MIDP
+for PalmOS</a> is needed and Palm with 8MB of RAM and PalmOS 3.5+ or
+<a href="http://www.palmos.com/dev/tech/tools/emulator/">PalmOS Emulator</a>
+with ROM image of such Palm.
+
+<li>ANT 1.3 if rebuilding
+
+<li>to build J2ME required modified
+<a href="http://www.stampysoft.com/">Stampysoft Ant Tasks</a>
+(written by Josh Eckels) [include in lib subdirectory]
+</ul>
+
+
+
+
+<h2>Running samples</h2>
+
+<p>Precompiled midlet JAR/JAD and Palm PRC are in build/j2me directory -
+
+see below for <a href="#demo">some screenshots</a>.
+
+<h3>Running count midlet sample</h3>
+
+<p>It will require to start emulator and pass to it
+location of count mildlet JAD file (that points to JAR file)
+
+
+
+<p>Following command line can be used
+(modify to point to you J2MEWTK location)
+
+<code>c:\jdk1.3.1\bin\java -Dkvem.home=d:\J2mewtk -cp d:\J2mewtk\wtklib\kvem.jar;d:\J2mewtk\wtklib\kenv.zip;d:\J2mewtk\wtklib\lime.jar com.sun.kvem.midp.Main  i85s -descriptor build\j2me\count_midlet.jad</code>
+
+<p>try also to use other emulators instead of i85s skin (like RIMJavaHandheld)
+see few examples below.
+
+
+<h3>Running count midlet in Palm OS Emulator</h3>
+
+
+<p>Following command line can be used to run midlet in Palm OS Emulator (POSE)
+- make sure to modify to point to you J2MEWTK location:
+
+<code>c:\jdk1.3.1\bin\java -Dkvem.home=d:\J2mewtk -cp d:\J2mewtk\wtklib\kvem.jar;d:\J2mewtk\wtklib\kenv.zip;d:\J2mewtk\wtklib\lime.jar com.sun.kvem.midp.Main  PalmOS_Device -descriptor build\j2me\count_midlet.jad
+</code>
+
+
+<p> and when it ask for POSE point it to location where is installed
+<a href="http://www.palmos.com/dev/tech/tools/emulator/">PalmOS Emulator</a>
+that has Java runtime from MIDP4PALM installed.
+
+<p><b>NOTE:</b> Palm must have at least 4MB of RAM but i have only run this sample with 8MB
+(and 2MB is definitely too small...).
+
+
+
+
+
+
+<h2>Building J2ME version</h2>
+
+<P><STRONG>NOTE:</STRONG> XPP2 distribution already
+contains JAR files and precompiled samples so building
+is not necessary unless you make changes to XPP2.
+
+
+<p>I have included slightly modified
+<a href="http://www.stampysoft.com/">Stampysoft Ant Tasks</a>
+(written by Josh Eckels). Make sure to add it to CLASSPATH
+(and have already set as described
+in <a href="build.html">build document</a>).
+
+<pre>
+set CLASSPATH=%CLASSPATH%;lib\StampysoftAntTasks_Alek.jar
+</pre>
+
+
+<h3>Building midlets</h3>
+
+<p>Modify build.xml to include J2MEWTK instalation location
+
+<pre>
+  &lt;property name="j2mewtk.home" value="d:/j2mewtk" />
+</pre>
+
+
+
+<p>Now build can be performed:
+
+<pre>
+ant j2me
+</pre>
+
+
+<h3>Building midlet for Palm OS</h3>
+
+<p>Make sure to build midlet succesfully with J2MEWTK (see above).
+
+<p>Modify build.xml to include MIDP4PALM instalation location
+<pre>
+  &lt;property name="midp4palm.home" value="D:\palm\midp4palm1.0\Converter" />
+</pre>
+
+<p>Then you can start build:
+
+<pre>
+ant palm
+</pre>
+
+
+
+<h2><a name="demo">Demonstration</a></h2>
+
+<p>
+<img src="dump5_palm_xml_input.jpg" align="right">
+<img src="dump1_sample_xml_input.jpg" align="right">
+Example of XML entered into Motorola i85s and Palm m500 emulator:
+<br clear="all">
+<img src="dump2_xml_output.jpg" align="right">
+<img src="dump2_xml_output_on_RIM.jpg" align="right">
+and parsing result displayed on Motorola and RIM Java Handheld:
+
+
+<br clear="all">
+<img src="dump6_palm_xml_output.jpg" align="right">
+and on Palm as well:
+
+<br clear="all">
+
+<p>
+<img src="dump3_input_with_error.jpg" align="right">
+And second example with invalid input
+<br clear="all">
+<img src="dump4_parsing_error.jpg" align="right">
+resulting in parsing error
+<br clear="all">
+
+<p>[<a href="../README.html">Back To Pull Parser 2 Documentation</a>]
+
+<HR>
+
+<address><a href="aslom@extreme.indiana.edu">Aleksander Slominski</a><address>
+</BODY>
+</HTML>

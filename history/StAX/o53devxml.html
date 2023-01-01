@@ -1,0 +1,961 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html dir="ltr"><head>
+
+
+<title>Parsing XML Efficiently - Dev xml</title><link rel="Stylesheet" type="text/css" href="o53devxml_files/WOCPROD.css">
+<meta name="title" content="Parsing XML Efficiently - Dev xml"> <meta name="description" content="Choose the right XML parsing technique for your Java applications. "> <meta name="keywords" content=""> <meta name="author" content=""> 
+<!-- base href="http://otn.oracle.com/oramag/oracle/03-sep/o53devxml.html" -->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="o53devxml_files/otn_new.css" type="text/css">
+
+<style type="text/css"> .WelcomeTab {font-family: Arial, Helvetica, sans-serif; font-size: 10px; color: #999999; text-decoration: none; visited: #999999;}</style><link rel="stylesheet" href="o53devxml_files/oramag.css"></head>
+
+<body leftmargin="0" rightmargin="0" topmargin="0" marginheight="0" marginwidth="0" link="#000000" vlink="#000000" alink="#000000" class="PageBG">
+
+
+<script type="text/javascript">
+<!-- Comment out script for old browsers
+function propertysheet(thingid,masterthingid,cornerid,siteid,settingssetid,settingssiteid) { popupWin = window.open("http://otn.oracle.com/pls/wocprod/WOCPROD.wwv_thinghtml.showpropertysheet?p_thingid="+thingid+"&p_masterthingid="+masterthingid+"&p_cornerid="+cornerid+"&p_siteid="+siteid+"&p_settingssetid="+settingssetid+"&p_settingssiteid="+settingssiteid,"Property_Sheet","statusbar=Y,resizable,scrollbars,width=450,height=450"); popupWin.focus(); }
+//-->
+</script>
+<script type="text/javascript">
+<!-- Comment out script for old browsers
+function folderpropertysheet(cornerid,siteid,settingssetid,settingssiteid) { popupWin = window.open("http://otn.oracle.com/pls/wocprod/WOCPROD.wwpob_page.propertysheet?p_cornerid="+cornerid+"&p_siteid="+siteid+"&p_settingssetid="+settingssetid+"&p_settingssiteid="+settingssiteid,"Property_Sheet","statusbar=Y,resizable,scrollbars,width=450,height=450"); popupWin.focus(); }
+//-->
+</script>
+<script type="text/javascript">
+function show_task_help() {
+   newWindow = window.open("http://otn.oracle.com/wocportal/page?_pageid=5,1&_dad=wocprod&_schema=WOCPROD", "Help", "menubar=1,toolbar=yes,scrollbars=1,resizable=1,width=700,height=500");
+}
+</script>
+<table border="0" cellspacing="0" cellpadding="0" width="100%" background="o53devxml_files/pobtrans.gif" height="5"><tbody><tr align="left">
+<td valign="top" width="100%"><table border="0" width="100%" cellpadding="0" cellspacing="0" class="RegionNoBorder">
+<tbody><tr>
+<td class="RegionHeaderColor" width="100%"><table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody><tr>
+<td valign="top" width="50%">
+<table border="0" cellspacing="0" cellpadding="0" width="100%" background="o53devxml_files/pobtrans.gif"><tbody><tr>
+<td colspan="3" width="100%"><img src="o53devxml_files/pobtrans.gif" border="0" height="4" alt=""></td>
+</tr>
+<tr align="left">
+<td width="4"><img src="o53devxml_files/pobtrans.gif" border="0" height="1" width="4" alt=""></td><td valign="top" width="100%"><a href="http://otn.oracle.com/index.html"><img src="o53devxml_files/431347.gif" border="0" align="bottom" alt="OTN Logo Banner"></a></td><td width="4"><img src="o53devxml_files/pobtrans.gif" border="0" height="1" width="4" alt=""></td></tr>
+<tr>
+<td colspan="3" width="100%"><img src="o53devxml_files/pobtrans.gif" border="0" height="4" alt=""></td>
+</tr>
+</tbody></table></td>
+<td valign="top" width="50%">
+<table border="0" cellspacing="0" cellpadding="0" width="100%" background="o53devxml_files/pobtrans.gif"><tbody><tr>
+<td colspan="3" width="100%"><img src="o53devxml_files/pobtrans.gif" border="0" height="4" alt=""></td>
+</tr>
+<tr align="right">
+<td width="4"><img src="o53devxml_files/pobtrans.gif" border="0" height="1" width="4" alt=""></td><td valign="top" width="100%"><img border="0" src="o53devxml_files/431345.gif" usemap="#navigation"><map name="navigation"><area shape="rect" coords="2,1,52,44" href="http://www.oracle.com/" target="_top" alt="oracle" title="oracle"><area shape="rect" coords="55,2,105,46" href="http://oraclepartnernetwork.oracle.com/" target="_top" alt="OPN" title="OPN"><area shape="rect" coords="108,2,166,49" href="http://otn.oracle.com/discussionforums/forumshome.html" target="_top" alt="forums" title="forums"><area shape="rect" coords="165,0,223,47" href="http://otn.oracle.com/sample_code/index.html" target="_top" alt="sample_code" title="sample_code"><area shape="rect" coords="225,1,299,49" href="http://otn.oracle.com/documentation/index.html" target="_top" alt="documentation" title="documentation"><area shape="rect" coords="302,2,358,50" href="http://otn.oracle.com/software/index.html" target="_top" alt="software" title="software"><area shape="rect" coords="340,2,423,50" href="http://profile.oracle.com/jsp/reg/register.jsp?src=1180585&amp;act=5" target="_top" alt="register" title="register"><area shape="rect" coords="420,2,466,46" href="http://otn.oracle.com/software/store/discount.html" target="_top" alt="buy" title="buy"><area shape="rect" coords="466,0,520,52" href="http://otn.oracle.com/ultrasearch/wwws_otn/searchotn.jsp" target="_top" alt="search" title="search"></map>
+</td><td width="4"><img src="o53devxml_files/pobtrans.gif" border="0" height="1" width="4" alt=""></td></tr>
+<tr>
+<td colspan="3" width="100%"><img src="o53devxml_files/pobtrans.gif" border="0" height="4" alt=""></td>
+</tr>
+</tbody></table></td>
+</tr>
+</tbody></table>
+</td></tr>
+</tbody></table>
+</td></tr>
+</tbody></table><div align="right" class="Bodyid1siteid0"><table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr>
+<td align="left" width="100%" nowrap="nowrap">
+ 
+<script language="JavaScript" src="o53devxml_files/portal_lib"></script>
+<script language="JavaScript" type="text/javascript">printWelcome()</script><font class="WelcomeTab"><a href="http://otn.oracle.com/membership">(Register for a free Oracle Web account)</a></font>
+</td>
+<td><table border="0" height="100%" width="100%" cellpadding="0" cellspacing="0">
+<tbody><tr>
+<td>
+<a href="http://otn.oracle.com/content/otn/news"><img src="o53devxml_files/122810.gif" align="top" alt="News" name="i122809" border="0"></a>
+</td>
+</tr>
+</tbody></table>
+</td><td><table border="0" height="100%" width="100%" cellpadding="0" cellspacing="0">
+<tbody><tr>
+<td>
+<a href="http://otn.oracle.com/content/otn/techcenters"><img src="o53devxml_files/122812.gif" align="top" alt="Technology Centers" name="i122811" border="0"></a>
+</td>
+</tr>
+</tbody></table>
+</td><td><table border="0" height="100%" width="100%" cellpadding="0" cellspacing="0">
+<tbody><tr>
+<td>
+<a href="http://otn.oracle.com/content/otn/products"><img src="o53devxml_files/167904.gif" align="top" alt="Products" name="i167903" border="0"></a>
+</td>
+</tr>
+</tbody></table>
+</td><td><table border="0" height="100%" width="100%" cellpadding="0" cellspacing="0">
+<tbody><tr>
+<td nowrap="nowrap">
+<img src="o53devxml_files/122815.gif" align="top" alt="Services" border="0">
+</td>
+<td>  </td></tr>
+</tbody></table>
+</td></tr>
+</tbody></table>
+</div><script type="text/javascript">
+<!-- Comment out script for old browsers
+function propertysheet(thingid,masterthingid,cornerid,siteid,settingssetid,settingssiteid) { popupWin = window.open("http://otn.oracle.com/pls/wocprod/WOCPROD.wwv_thinghtml.showpropertysheet?p_thingid="+thingid+"&p_masterthingid="+masterthingid+"&p_cornerid="+cornerid+"&p_siteid="+siteid+"&p_settingssetid="+settingssetid+"&p_settingssiteid="+settingssiteid,"Property_Sheet","statusbar=Y,resizable,scrollbars,width=450,height=450"); popupWin.focus(); }
+//-->
+</script>
+<script type="text/javascript">
+<!-- Comment out script for old browsers
+function folderpropertysheet(cornerid,siteid,settingssetid,settingssiteid) { popupWin = window.open("http://otn.oracle.com/pls/wocprod/WOCPROD.wwpob_page.propertysheet?p_cornerid="+cornerid+"&p_siteid="+siteid+"&p_settingssetid="+settingssetid+"&p_settingssiteid="+settingssiteid,"Property_Sheet","statusbar=Y,resizable,scrollbars,width=450,height=450"); popupWin.focus(); }
+//-->
+</script>
+<script type="text/javascript">
+function show_task_help() {
+   newWindow = window.open("http://otn.oracle.com/wocportal/page?_pageid=5,1&_dad=wocprod&_schema=WOCPROD", "Help", "menubar=1,toolbar=yes,scrollbars=1,resizable=1,width=700,height=500");
+}
+</script>
+<table border="0" cellspacing="0" cellpadding="0" width="100%" background="o53devxml_files/pobtrans.gif"><tbody><tr align="left">
+<td valign="top" width="100%"><table border="0" width="100%" cellpadding="0" cellspacing="0" class="RegionNoBorder">
+<tbody><tr>
+<td class="RegionHeaderColor" width="100%"><table border="0" cellspacing="0" cellpadding="0" width="100%" class="Bodyid1siteid0"><tbody><tr align="left">
+<td valign="top" width="100%"><font class="inplacedisplayid1siteid0"><table cellspacing="0" cellpadding="0" width="100%" border="0" summary="">
+<tbody><tr valign="top" align="left"> 
+<td rowspan="3"><img height="34" src="o53devxml_files/topnavleft.gif" alt="header image" width="13"></td>
+<td><img height="6" src="o53devxml_files/topnavbevel.gif" alt="header image" width="150"></td>
+<td><img height="6" src="o53devxml_files/topnavbevel.gif" alt="header image" width="25"></td>
+<td> 
+<table height="6" cellspacing="0" cellpadding="0" width="100%" background="o53devxml_files/topnavbevel.gif" alt="header image" border="0" summary="">
+<tbody><tr> 
+<td width="100%"><img height="5" src="o53devxml_files/spacer.gif" alt="header image" width="23"></td>
+</tr>
+</tbody></table>
+</td>
+<td rowspan="3"><img height="34" src="o53devxml_files/topnavright.gif" alt="header image" width="12"></td>
+</tr>
+<tr valign="top" align="left"> 
+<td bgcolor="#6c936c"><img height="5" src="o53devxml_files/spacer.gif" alt="header image" width="150"></td>
+<td bgcolor="#6c936c"><img height="5" src="o53devxml_files/spacer.gif" alt="header image" width="25"></td>
+<td width="100%" bgcolor="#6c936c"><img height="5" src="o53devxml_files/spacer.gif" alt="header image" width="23"></td>
+</tr>
+<tr valign="top" align="left"> 
+<td background="o53devxml_files/leftsidenavshadow.gif" alt="header image">    </td>
+<td><img height="23" src="o53devxml_files/midcurve.gif" alt="header image" width="25"></td>
+<td> 
+<table height="23" cellspacing="0" cellpadding="0" width="100%" background="o53devxml_files/topnavshadow.gif" alt="header image" border="0">
+<tbody><tr> 
+<td width="100%">  </td>
+</tr>
+</tbody></table>
+</td>
+</tr>
+</tbody></table></font>
+</td></tr>
+</tbody></table></td></tr>
+</tbody></table>
+</td></tr>
+</tbody></table><table border="0" cellspacing="0" cellpadding="0" width="100%">
+<tbody><tr>
+<td valign="top" class="Bodyid1siteid0" width="10">
+<table border="0" cellspacing="0" cellpadding="0" width="100%" class="Bodyid1siteid0"><tbody><tr align="left">
+<td valign="top" width="100%"><font class="inplacedisplayid1siteid0"><img src="o53devxml_files/pobtrans.gif" border="0" width="10"></font>
+</td></tr>
+</tbody></table></td>
+<td valign="top" width="188">
+<table border="0" cellspacing="0" cellpadding="0" width="100%" background="o53devxml_files/pobtrans.gif"><tbody><tr align="left">
+<td valign="top" width="100%"><table border="0" width="100%" cellpadding="0" cellspacing="0" class="RegionNoBorder">
+<tbody><tr>
+<td class="RegionHeaderColor" width="100%"><table border="0" cellspacing="0" cellpadding="0" width="100%" class="Bodyid271569siteid33"><tbody><tr>
+<td colspan="3" width="100%"><img src="o53devxml_files/pobtrans.gif" border="0" height="10" alt=""></td>
+</tr>
+<tr align="left">
+<td width="10"><img src="o53devxml_files/pobtrans.gif" border="0" height="1" width="10" alt=""></td><td valign="top" width="100%"><a href="http://otn.oracle.com/contact/index.html"><img src="o53devxml_files/122545.gif" border="0" align="bottom" alt="Concierge Banner"></a></td><td width="10"><img src="o53devxml_files/pobtrans.gif" border="0" height="1" width="10" alt=""></td></tr>
+<tr>
+<td colspan="3" width="100%"><img src="o53devxml_files/pobtrans.gif" border="0" height="10" alt=""></td>
+</tr>
+</tbody></table></td></tr>
+</tbody></table>
+</td></tr>
+<tr align="left">
+<td valign="top" width="100%"><table border="0" width="100%" cellpadding="0" cellspacing="0" class="RegionNoBorder">
+<tbody><tr>
+<td class="RegionHeaderColor" width="100%"><table border="0" cellspacing="0" cellpadding="0" width="100%" class="Bodyid271569siteid33"><tbody><tr align="left">
+<td valign="top" width="100%"><font class="inplacedisplayid271569siteid33"></font></td></tr><tr summary="" valign="top" align="left">
+<td width="146" bgcolor="#e6e7e8"> 
+<table summary="" cellspacing="0" cellpadding="0" width="188" border="0">
+<tbody><tr summary="" valign="top" align="left">
+<td bgcolor="#e6e7e8">
+<table summary="" cellspacing="0" cellpadding="0" width="188" border="0">
+<tbody><tr summary="" valign="top" align="left">
+<td bgcolor="#e6e7e8">
+<table summary="" cellspacing="5" cellpadding="0" border="0" hspace="0" vspace="0">
+<tbody><tr summary="" style="" onclick="window.location='/tech/index.html'" bgcolor="#e6e7e8">
+                    <td><b><font class="navheader">Technology Centers</font></b></td>
+                  </tr>
+<tr summary="" style="" onclick="window.location='/tech/grid/'" bgcolor="#e6e7e8">
+<td><a class="navlink" href="http://otn.oracle.com/tech/grid/index.html">Grid</a></td></tr>
+<tr summary="" style="" onclick="window.location='/tech/java/'" bgcolor="#e6e7e8">
+<td><a class="navlink" href="http://otn.oracle.com/tech/java/index.html">Java</a></td></tr>
+<tr summary="" style="" onclick="window.location='/tech/linux/index.html'" bgcolor="#e6e7e8">
+<td><a class="navlink" href="http://otn.oracle.com/tech/linux/index.html">Linux</a></td></tr>
+<tr summary="" style="" onclick="window.location='/tech/webservices/index.html'" bgcolor="#e6e7e8">
+<td><a class="navlink" href="http://otn.oracle.com/tech/webservices/index.html">Web Services</a></td></tr>
+<tr summary="" style="" onclick="window.location='/tech/windows/index.html'" bgcolor="#e6e7e8">
+<td><a class="navlink" href="http://otn.oracle.com/tech/windows/index.html">Windows</a></td></tr>
+<tr summary="" style="" onclick="window.location='/tech/xml/index.html'" bgcolor="#e6e7e8">
+<td><a class="navlink" href="http://otn.oracle.com/tech/xml/index.html">XML</a></td></tr>
+
+<tr summary="" bgcolor="#e6e7e8">
+<td valign="top" height="21">
+
+<form onsubmit="return dropdown(this.gourl)" method="post">
+<label for="gourl_combo"></label>
+  <select name="gourl" id="gourl_combo"><option value="" selected="selected">More...</option><option value="/tech/integration/">Integration</option><option value="/tech/manageability/">Manageability</option><option value="/migration/">Migration</option><option value="/mobile/">Mobile</option><option value="/tech/opensource/">Open Source</option><option value="/tech/pl_sql/">PL/SQL</option><option value="http://portalcenter.oracle.com/">Portal</option><option value="/deploy/security/">Security</option></select>
+  <input type="image" border="0" src="o53devxml_files/otn_go.gif" alt="go_navigation" align="center" name="image2">
+</form></td></tr>
+ </tbody></table>
+<table summary="" cellspacing="5" cellpadding="0" width="168" bgcolor="#e6e7e8" border="0" hspace="0" vspace="0">
+
+<tbody><tr summary="" style="" onclick="window.location='/products/index.html'" bgcolor="#e6e7e8">
+<td colspan="2"><b><font class="navheader">Products</font></b></td></tr>
+
+<tr style="" onclick="window.location='/products/database/index.html'" bgcolor="#e6e7e8" height="2">
+<td colspan="2"><a class="navlink" href="http://otn.oracle.com/products/database/index.html">Oracle Database</a></td>
+</tr>
+
+
+<tr style="" onclick="window.location='/products/ias/index.html'" bgcolor="#e6e7e8" height="2">
+<td colspan="2"><a class="navlink" href="http://otn.oracle.com/products/ias/index.html">Oracle Application Server</a></td>
+</tr>
+
+<tr style="" onclick="window.location='/products/ias/index.html'" bgcolor="#e6e7e8" height="2">
+<td colspan="2"><a class="navlink" href="http://otn.oracle.com/products/oem/index.html">Oracle Enterprise Manager</a></td>
+</tr>
+
+<tr summary="" style="" onclick="window.location='/products/ids/index.html'" bgcolor="#e6e7e8" height="2">
+<td colspan="2"><a class="navlink" href="http://otn.oracle.com/products/ids/index.html">Oracle Developer Suite</a></td>
+</tr>
+
+<tr summary="" style="" onclick="window.location='/products/jdev/index.html'" bgcolor="#e6e7e8" height="2">
+<td colspan="2"><a class="navlink" href="http://otn.oracle.com/products/jdev/index.html">Oracle JDeveloper</a></td>
+</tr>
+
+<tr summary="" style="" onclick="window.location='/products/cs/index.html'" bgcolor="#e6e7e8" height="2">
+<td height="2" colspan="2"><a class="navlink" href="http://otn.oracle.com/products/cs/index.html">Oracle Collaboration Suite</a></td>
+</tr>
+
+<tr summary="" bgcolor="#e6e7e8">
+<td colspan="2"></td></tr>
+<tr style="" onclick="window.location='/services/index.html'" bgcolor="#e6e7e8">
+<td colspan="2"><b><font class="navheader">Services</font></b></td></tr>
+
+<tr style="" onclick="window.location='/deploy/security/alerts.htm'" bgcolor="#e6e7e8">
+<td summary="" colspan="2"><a class="navlink" href="http://otn.oracle.com/deploy/security/alerts.htm">Security Alerts</a></td>
+</tr>
+
+<tr summary="" style="" onclick="window.location='/hosted_dev/index.html'" bgcolor="#e6e7e8">
+<td colspan="2"><a class="navlink" href="http://otn.oracle.com/hosted_dev/index.html">Hosted Development</a></td>
+</tr>
+
+<tr summary="" style="" onclick="window.location='/support/index.html'" bgcolor="#e6e7e8" height="2">
+<td height="2"><a class="navlink" onmouseover="popUp('HM_Menu5',event)" onmouseout="popDown('HM_Menu5')" href="http://otn.oracle.com/support/index.html">Get Support</a></td>
+<td height="2"><a class="navlink" onmouseover="popUp('HM_Menu5',event)" onmouseout="popDown('HM_Menu5')" href="http://otn.oracle.com/support/index.html"><img height="10" src="o53devxml_files/r_arrow_blue.gif" alt="arrow" width="10" border="0"></a></td>
+</tr>
+
+<tr summary="" style="" onclick="window.location='/contact/otn_submit.html'" bgcolor="#e6e7e8">
+<td colspan="2"><a class="navlink" href="http://otn.oracle.com/contact/otn_submit.html">Submit Articles</a></td>
+</tr>
+
+<tr summary="" style="" onclick="window.location='/events/index.html'" bgcolor="#e6e7e8">
+<td colspan="2"><a class="navlink" href="http://otn.oracle.com/events/index.html">Events</a></td>
+</tr>
+
+<tr summary="" style="" onclick="window.location='/training/index.html'" bgcolor="#e6e7e8">
+<td colspan="2"><a class="navlink" href="http://otn.oracle.com/training/index.html">Oracle University</a></td>
+</tr>
+
+<tr summary="" style="" onclick="window.location='http://www.oracle.com/oramag/'" bgcolor="#e6e7e8" height="2">
+<td height="2"><a class="navlink" onmouseover="popUp('HM_Menu6',event)" onmouseout="popDown('HM_Menu6')" href="http://www.oracle.com/oramag/">Oracle Magazine</a></td>
+<td height="2"><a class="navlink" onmouseover="popUp('HM_Menu6',event)" onmouseout="popDown('HM_Menu6')" href="http://www.oracle.com/oramag/"><img height="10" src="o53devxml_files/r_arrow_blue.gif" alt="arrow" width="10" border="0"></a></td>
+</tr>
+
+<tr summary="" style="" onclick="window.location='/techblast/index.html'" bgcolor="#e6e7e8">
+<td colspan="2"><a class="navlink" href="http://otn.oracle.com/techblast/index.html">TechBlast</a></td>
+</tr>
+
+<tr summary="" style="" onclick="window.location='http://www.amazon.com/exec/obidos/tg/browse/-/4092/002-7966543-9772003'" bgcolor="#e6e7e8">
+<td colspan="2"><a class="navlink" href="http://www.amazon.com/exec/obidos/tg/browse/-/4092/002-7966543-9772003">Buy 
+
+Books</a></td>
+</tr>
+<tr summary="" style="" bgcolor="#e6e7e8">
+<td colspan="2"></td></tr>
+</tbody></table></td></tr></tbody></table></td></tr>
+<tr summary="" valign="top" align="left">
+<td align="right" width="207" bgcolor="#e6e7e8">
+<noscript>
+<TABLE SUMMARY="" cellSpacing=0 cellPadding=0 border=0>
+<TR  SUMMARY="" bgColor=#e6e7e8>
+<TD vAlign=bottom></td>
+<TD align=right></td></tr></table>
+</noscript>
+</td></tr></tbody></table>
+</td></tr></tbody></table>
+
+<table cellspacing="0" cellpadding="0" width="146" border="0" summary="">
+<script language="JavaScript" src="o53devxml_files/HM_Loader.js" type="text/javascript"></script><script language="JavaScript1.2" src="o53devxml_files/HM_Arrays" type="text/javascript"></script><script language="JavaScript1.2" src="o53devxml_files/HM_ScriptDOM.js" type="text/javascript"></script>
+
+</table></td></tr>
+</tbody></table>
+</td></tr>
+<tr align="left">
+<td valign="top" width="100%"><table border="0" width="100%" cellpadding="0" cellspacing="0" class="RegionNoBorder">
+<tbody><tr>
+<td class="RegionHeaderColor" width="100%"><table border="0" cellspacing="0" cellpadding="0" width="100%" background="o53devxml_files/pobtrans.gif"><tbody><tr align="left">
+<td valign="top" width="100%"><font class="inplacedisplayid1siteid0"><script type="text/javascript">
+function printerFriendly(template) {
+    top.location = location.protocol 
+      + '//' + location.host 
+      + location.pathname 
+      + '?_template=' + template;
+}
+</script>
+
+<table border="0" cellpadding="4" cellspacing="0" width="189">
+<tbody><tr summary="" bgcolor="#e6e7e8"><td><br>
+<a href="javascript: printerFriendly('/otn/content/print')" target=""><img src="o53devxml_files/print_17x15.gif" border="0" width="17" height="15" alt="Printer View"></a>
+<a class="navlink" href="javascript: printerFriendly('/otn/content/print')" target="">Printer View</a>
+</td>
+</tr>
+</tbody></table></font>
+</td></tr>
+<tr align="left">
+<td valign="top" width="100%"><img src="o53devxml_files/122541.gif" border="0" alt="left bottom curve">
+</td></tr>
+</tbody></table></td></tr>
+</tbody></table>
+</td></tr>
+</tbody></table></td>
+<td valign="top" width="100%">
+<table border="0" cellspacing="0" cellpadding="0" width="100%" background="o53devxml_files/pobtrans.gif"><tbody><tr>
+<td colspan="3" width="100%"><img src="o53devxml_files/pobtrans.gif" border="0" height="10" alt=""></td>
+</tr>
+<tr align="left">
+<td width="10"><img src="o53devxml_files/pobtrans.gif" border="0" height="1" width="10" alt=""></td><td valign="top" width="100%">
+
+
+
+
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+
+<tbody><tr><td>
+
+<center>
+
+<span class="bodycopy">Developer<span class="boldbodycopy"> XML</span>
+<p>
+<span class="topstoryhead">Parsing XML Efficiently</span>
+</p>
+
+<p>
+<span class="italicbodycopy">By Ping Guo, Julie Basu, Mark Scardina, and K. Karun
+</span>
+</p></span></center>
+<p></p>
+
+<p>
+<span class="boldbodycopy"><i>Choose the right XML parsing technique for your Java applications.</i></span>
+</p>
+<p>
+<span class="bodycopy">Efficient parsing of XML documents is more and
+more critical as XML gets adopted more widely. It is very important to
+have an efficient way to parse XML data, especially in applications
+that are intended to handle large volumes. Improper parsing can result
+in excessive memory usage and processing times that can hurt
+scalability. </span>
+
+</p>
+<p>
+<span class="bodycopy">Several types of XML parsers are available. Which one is right for your 
+situation? This article examines three popular XML parsing techniques for 
+Java and shows you how to choose the correct method, based on the requirements of your application.</span>
+</p>
+<p>
+
+<span class="bodycopy">An XML parser takes as input a raw serialized
+string and performs certain operations on it. First it checks the
+syntactic well-formedness of the XML data, making sure that the start
+tags have matching end tags and that there are no overlapping elements.
+Most parsers also implement validation against the Document Type
+Definition (DTD) or the XML Schema to verify that the structure and
+content are as you specified. Finally, the parsing output provides
+access to the content of the XML document via programmatic APIs. </span>
+</p>
+<p>
+<span class="bodycopy">There are three popular XML parsing techniques for Java: </span>
+</p><ul>
+<li><span class="bulletbodycopy">	Document Object Model (DOM), a mature standard from W3C</span></li>
+<p></p>
+<p>
+
+</p><li><span class="bulletbodycopy">	Simple API for XML (SAX), the first widely adopted API for XML in Java and a de facto standard </span></li>
+<p></p>
+<p>
+</p><li><span class="bulletbodycopy">	Streaming API for XML (StAX), a promising new parsing model introduced in JSR-173 </span></li>
+</ul>
+<p></p>
+<p>
+<span class="bodycopy">Each of these techniques has benefits and drawbacks. </span>
+</p>
+
+<p>
+<span class="bodycopy">The following XML document, books.xml, describes a book catalog and is used in the examples in this article:</span>
+</p>
+<p>
+</p><pre>&lt;catalog&gt;
+&lt;!—Sample —&gt;
+  &lt;book id="101"&gt;
+    &lt;title&gt;XML in a Nutshell&lt;/title&gt;
+    &lt;author&gt;Elliotte Rusty Harold, W. Scott Means&lt;/author&gt;
+
+    &lt;price&gt;39.95&lt;/price&gt;
+  &lt;/book&gt;
+  &lt;book id="121"&gt;
+    &lt;title&gt;Who Moved My Cheese&lt;/title&gt;
+    &lt;author&gt;Spencer, M.D. Johnson, Kenneth H. Blanchard&lt;/author&gt;
+    &lt;price&gt;19.95&lt;/price&gt;
+  &lt;/book&gt;
+&lt;/catalog&gt;
+</pre>
+<p></p>
+<p>
+
+<span class="parahead1">DOM Parsing</span>
+</p>
+<p>
+<span class="bodycopy">DOM is a tree-based parsing technique that
+builds up an entire parse tree in memory. It allows complete, dynamic
+access to a whole XML document.</span>
+</p>
+<p>
+<span class="bodycopy"><a href="#f1"><span class="bodylink">Figure 1</span></a>shows
+the treelike structure of the DOM parsing model. Document is the root
+for all the DOM trees, and the root has at least one child node, the
+root element, which is the catalog element in the sample code. Another
+node is DocumentType, for the DTD declaration, which is not defined in
+our sample. The catalog element has child nodes, and so do its child
+nodes. Child nodes can be elements, text, comments, processing
+instructions, and the like. </span>
+</p>
+<p>
+<a name="f1"></a><table width="100%" align="center">
+<tbody><tr><td align="center">
+
+<img src="o53devxml_files/o53xml_f1.gif" width="427" height="298" border="0" alt="A DOM tree">
+</td></tr>
+<tr><td align="center"><span class="bodycopy">Figure 1: A DOM tree</span></td></tr></tbody></table>
+</p>
+<p>
+<span class="bodycopy">The following example illustrates how the DOM
+API works. This sample code prints out the titles of all the books from
+the previous XML document for a catalog.</span>
+</p>
+<p>
+</p><pre>DOMParser parser = new DOMParser();
+parser.parse("books.xml");
+Document document = parser.getDocument();
+NodeList nodes = 
+
+  document.getElementsByTagName("title");
+while(int i = 0; 
+  i &lt; nodes.length(); i ++) {
+ 	Element titleElem =
+   (Element)nodes.item(i);
+	Node childNode = 
+   titleElem.getFirstChild();
+	if (childNode instanceof Text) {
+	  System.out.println("Book title is: " 
++ childNode.getNodeValue());
+	}
+}
+</pre>
+<p></p>
+
+<p>
+<span class="bodycopy">This program takes the XML filename, creates the
+DOM tree, and finds all the DOM element nodes for the title elements by
+using the </span><tt>getElementsByTagName()</tt><span class="bodycopy">
+method. Finally, it prints the text information associated with each of
+the title elements, by iterating over the list of title elements and
+examining the first child that has the text contained between the start
+and end tags of the element, by using the </span><tt>getFirstChild()</tt><span class="bodycopy"> method. </span>
+</p>
+<p>
+<span class="bodycopy">As you see, using DOM is straightforward. You
+can access the XML document randomly because the entire tree is built
+in memory. The DOM APIs allow modification of the nodes, such as
+appending a child or updating or deleting a node. </span>
+</p>
+<p>
+<span class="bodycopy">Although the memory tree structure provides good
+navigation support, there are parsing strategy issues to consider.
+First, the entire XML document has to be parsed at one time—partial
+parsing is not possible. Second, loading the whole document and
+building the entire tree structure in memory can be expensive,
+especially when the document is large. Typically, the DOM tree is an
+order of magnitude larger than the document, so it can consume a lot of
+memory. Third, the generic DOM node type is an interoperability
+advantage but may not be the best when you do object type binding.</span>
+</p>
+<p>
+<span class="bodycopy">Certain kinds of applications are better suited
+for DOM parsing than others. DOM parsing is appropriate when the
+application needs to have random access to the XML document. A good
+example is an XSL processor that needs to navigate through an entire
+file repeatedly as it processes templates. Because DOM enables you to
+update the document, it is also convenient for applications, such as
+XML editors, that need to modify data. </span>
+</p>
+<p>
+
+<span class="parahead1">SAX Parsing</span>
+</p>
+<p>
+<span class="bodycopy">SAX is an event-driven push model for processing
+XML. It is not a W3C standard, but it is a very well-recognized API
+that most SAX parsers implement in a compliant way. Rather than
+building a tree representation of an entire document as DOM does, a SAX
+parser fires off a series of events as it reads through the document.
+These events are pushed to event handlers, which provide access to the
+contents of the document. There are three basic types of event handlers:</span>
+</p><ul>
+<li><tt>	DTDHandler</tt><span class="bulletbodycopy">, for accessing the contents of XML DTDs</span></li>
+<p></p>
+<p>
+</p><li><tt>	ErrorHandler</tt><span class="bulletbodycopy">, for low-level access to parsing errors</span></li>
+<p></p>
+<p>
+</p><li><tt>	ContentHandler</tt><span class="bulletbodycopy">, the prevalent type, for accessing the contents of the document </span></li>
+</ul>
+<p></p>
+<p>
+<span class="bodycopy"><a href="#f2"><span class="bodylink">Figure 2</span></a> shows how the SAX
+
+parser reports events through a callback mechanism. The parser reads the input document and pushes each event to </span><tt>MyContentHandler</tt><span class="bodycopy"> while processing the document.</span>
+</p>
+<p>
+<a name="f2"></a><table width="100%" align="center">
+<tbody><tr><td align="center">
+<img src="o53devxml_files/o53xml_f2.gif" width="443" height="170" border="0" alt="SAX reports a document to an application">
+</td></tr>
+<tr><td align="center"><span class="bodycopy">Figure 2: SAX reports a document to an application as a series of events.</span></td></tr></tbody></table>
+</p>
+<p>
+<span class="bodycopy">The following sample does the same thing as the previous DOM example: It prints out a book's title information.</span>
+</p>
+<p>
+<span class="bodycopy">First, write a </span><tt>ContentHandler</tt><span class="bodycopy"> implementation class, which is based on the </span><tt>DefaultHandler</tt><span class="bodycopy"> class and replaces the methods for the type of events in which you are interested. The code throws 
+away any remaining events from the </span><tt>DefaultHandler</tt><span class="bodycopy"> class. The customized </span><tt>ContentHandler</tt><span class="bodycopy">
+class provides the callback methods and must handle state management,
+dealing with start element events, end element events, and character
+events—for all the elements, not only for the title element.</span>
+</p>
+<p>
+
+</p><pre>public class MyContentHandler extends DefaultHandler {
+	 boolean isTitle;
+	 public void startElement(String uri, String localName, 
+String qName, Attributes atts) {
+    if (localName.equals("title")) 
+		              isTitle = true; 
+	 }
+	 public void endElement(String uri, String localName, 
+String qName) {
+	   if(localName.equals("title")) 
+                       isTitle = false;
+	 }
+	 public void characters(char[ ] chars, int start, int length) {
+     if(isTitle) 
+
+     System.out.println(new String(chars, start, length));
+	 }
+
+}
+</pre>
+<p></p>
+<p>
+<span class="bodycopy">Second, set your customized </span><tt>ContentHandler</tt><span class="bodycopy">
+to the SAX parser, and then the parser begins to process the XML
+document. The parser generates the events and pushes them into the </span><tt>ContentHandler</tt><span class="bodycopy"> while reading the documents from beginning to end.</span>
+</p>
+<p>  
+</p><pre>SAXParser saxParser = new SAXParser();
+MyContentHandler myHandler = new
+  MyContentHandler();
+saxParser.setContentHandler(myHandler);
+saxParser.parse(new File("books.xml"));
+</pre>
+<p></p>
+<p>
+<span class="bodycopy">In comparison to DOM, the SAX parser offers a
+great performance benefit. It provides efficient low-level access to
+the content of the XML document. The SAX model has the major advantage
+of low memory consumption, because the entire document does not need to
+be loaded into memory at one time, which enables a SAX parser to parse
+a document larger than the system memory. Additionally, you do not have
+to create objects for all the nodes, as you need to do in DOM. Finally,
+the SAX "push" model can be used in a broadcast context, where multiple
+</span><tt>ContentHandlers</tt><span class="bodycopy"> can be registered and receive events in parallel, instead of in a pipeline, where one hands off to another. </span>
+</p>
+<p>
+
+<span class="bodycopy">The disadvantage of SAX is that you have to
+implement the event handlers to handle all incoming events. You must
+maintain this event state in your application code. Because the SAX
+parser does not communicate meta-information such as DOM's parent/child
+support, you have to keep track of where the parser is in the document
+hierarchy. Thus, the more complex your documents are, the more complex
+your application logic becomes. Even though there is no need to load
+the entire document into memory at one time, a SAX parser still needs
+to parse the whole document, as with DOM. </span>
+</p>
+<p>
+<span class="bodycopy">Probably the biggest problem facing SAX is that
+it does not have built-in document navigation support such as that
+provided by XPath. This, coupled with its one-pass parsing, means there
+is no random access support. This limitation also shows up in
+namespaces: Elements that have inherited namespaces will not be
+annotated. These limitations make SAX a poor choice for manipulating or
+modifying a document. </span>
+<table align="right" cellpadding="5" vspace="5" hspace="5" border="1" bgcolor="#f7f7e7" width="35%">
+<tbody><tr><td>
+<center>
+<span class="parahead1">Oracle and XML</span>
+</center>
+<p>
+<span class="bodycopy">The Oracle XML Developer's Kit provides XML
+parsers for Java, C, and C++ development. Each of these provides DOM
+and SAX interfaces implemented for the enterprise. A technology preview
+of the StAX parser for Java is also available. These components can be
+downloaded from the Oracle Technology Network's XML Technology Center,
+at <a href="http://otn.oracle.com/tech/xml" target="_top"><span class="bodylink">/tech/xml</span></a>.</span>
+</p></td></tr></tbody></table>
+</p>
+<p>
+<span class="bodycopy">Applications that need only to read the content
+in a single pass can benefit greatly from SAX parsing. Many B2B and EAI
+applications use XML just as an encapsulation format in which the
+receiving end simply retrieves all the data. This is where SAX has the
+clear advantage over DOM, due to the former's efficiency and resulting
+high throughput. SAX 2.0 has a built-in filtering mechanism that makes
+it easy to output a document subset or do simple document
+transformation. Finally, SAX parsing is very useful for validation
+against DTDs and XML schemas. In fact, Oracle uses the SAX parser
+internally to do this validation, gaining greater efficiency while
+using less memory than using DOM.</span>
+</p>
+<p>
+<span class="parahead1">StAX Parsing</span>
+</p>
+
+<p>
+<span class="bodycopy">StAX is an exciting new parsing technique that,
+like SAX, uses an event-driven model. However, instead of using SAX's
+push model, StAX uses a pull model for event processing. Instead of
+using a callback mechanism, a StAX parser returns events as requested
+by the application. StAX also provides user-friendly APIs for read-in
+and write-out.</span>
+</p>
+<p>
+<span class="bodycopy">Whereas SAX returns different types of events to the </span><tt>ContentHandler</tt><span class="bodycopy">, StAX returns its events to the application and can even provide the events as objects. </span>
+</p>
+<p>
+<span class="bodycopy"><a href="#f3"><span class="bodylink">Figure 3</span></a>
+shows that when an application requests an event, a StAX parser reads
+on demand from the XML document and returns the event to the
+application.</span>
+</p>
+<p>
+<a name="f3"></a><table width="100%" align="center">
+<tbody><tr><td align="center">
+<img src="o53devxml_files/o53xml_f3.gif" width="442" height="170" border="0" alt="An application requests StAX to report an event">
+</td></tr>
+<tr><td align="center"><span class="bodycopy">Figure 3: An application requests StAX to report an event</span></td></tr></tbody></table>
+</p>
+<p>
+<span class="bodycopy">StAX includes factories for creating the StAX
+reader and writer, so applications can use the StAX interfaces without
+reference to the details of a particular implementation.</span>
+</p>
+<p> 
+<span class="bodycopy">Unlike DOM and SAX, StAX specifies two parsing
+models: The cursor model, like SAX, simply returns events. The iterator
+model returns events as objects, which provides a more natural
+interface but has the additional overhead of object creation. The
+following illustrations of StAX parsing APIs give examples of each
+model. </span>
+
+</p>
+<p>
+<span class="bodycopy">The following example prints the book title information from the XML book catalog above, using the cursor model. </span>
+</p>
+<p>
+</p><pre> 
+XMLStreamReader reader = XMLInputFactory
+  .newInstance().createXMLStreamReader(
+    new FileInputStream("books.xml"));
+while(reader.hasNext()) {
+	 int eventType = reader.next();
+	 if (eventType == XMLEvent
+.START_ELEMENT &amp;&amp; reader.getLocalName()
+.equals("title")) {
+    reader.next();
+    System.out.println(reader.getText());
+	 }
+} 
+</pre>
+<p></p>
+<p>
+<span class="bodycopy">In this example, after the reader has been set up, the application requests the next event, using the </span><tt>reader.next()</tt><span class="bodycopy">
+method call. This makes the StAX parser move the cursor to the next
+event position. If this event indicates the start of an element named
+"title", the application code will call </span><tt>reader.next()</tt><span class="bodycopy"> one more time, to advance the cursor, and will then obtain the text for the title element, using the </span><tt>reader.getText()</tt><span class="bodycopy"> method call. </span>
+
+</p>
+<p>
+<span class="bodycopy">The following example uses the iterator model, in which the events are returned as objects.</span>
+</p>
+<p>
+</p><pre> 
+XMLEventReader eventReader =
+  XMLInputFactory.newInstance()
+    .createXMLEventReader(
+       new FileInputStream("books.xml"));
+while(eventReader.hasNext()) {
+	 XMLEvent event = eventReader.next();
+	 if (event instanceof StartElement &amp;&amp; 	 
+  ((StartElement)event).getLocalName()
+.equals("title")) 
+  {
+  System.out.println( ((Characters)eventReader.next())
+  .getData());
+	}
+}
+</pre>
+<p></p>
+<p>
+
+<span class="bodycopy">In this example, the application requests the
+next event, which makes the StAX parser advance to the next event
+position and return the corresponding event object. The application can
+access the contents through the event object, using the </span><tt>getData()</tt><span class="bodycopy"> method, which returns the book 
+title information.</span>
+<table align="right" cellpadding="5" vspace="5" hspace="5" border="1" bgcolor="#f7f7e7" width="35%">
+<tbody><tr><td>
+<center>
+<span class="parahead1"><a name="next">Next Steps</a></span>
+</center>
+<p>
+<span class="boldbodycopy">VISIT the XML Center on OTN</span><br>
+<a href="http://otn.oracle.com/tech/xml" target="_top"><span class="bodylink">/tech/xml</span></a>
+</p>
+<p>
+
+<span class="boldbodycopy">DOWNLOAD the Oracle XDK</span><br>
+<a href="http://otn.oracle.com/tech/xml" target="_top"><span class="bodylink">/tech/xml</span>
+</a></p>
+<p>
+
+<span class="boldbodycopy"><a href="http://otn.oracle.com/tech/xml" target="_top">LEARN about XML from Oracle University</a></span><a href="http://otn.oracle.com/tech/xml" target="_top"><br>
+</a><a href="http://education.oracle.com/web_prod-plq-dad/plsql/show_desc.redirect?redir_type=18" target="_top"><span class="bodylink">oracle.com/education/om Keyword: XML</span></a>
+
+</p></td></tr></tbody></table>
+</p>
+
+<p>
+<span class="bodycopy">The performance of the StAX cursor model is
+comparable to that of SAX parsing. However, with StAX, the application
+has control of the parsing, which makes the code easier to write and
+maintain. StAX also provides the iterator model for ease of use, but in
+this case, creating event objects has a performance cost. Unlike SAX,
+which requires the application to keep track of where it is in the
+document, StAX—by virtue of its ability to return only requested
+events—frees the application of that task. What the examples do not
+show is the filtering capabilities of StAX, which are much more
+powerful than SAX's. </span>
+</p>
+<p>
+<span class="bodycopy">In comparison to DOM, StAX has the same
+disadvantage as SAX in terms of lack of full navigational support.
+Forward navigation through a document is easier with StAX than with
+SAX, in that the application has control over which events it gets and
+when.</span>
+</p>
+<p>
+<span class="bodycopy">StAX's ability to modify a document is similar
+to SAX's, in that a new document is created. Write-out APIs are
+provided in both the cursor and iterator models of StAX, but document
+modification is still quite difficult if you want to do anything beyond
+simple one-pass transformations. </span>
+</p>
+<p>
+<span class="bodycopy">StAX parsing satisfies the majority of a SAX
+application's requirements, so if an application is well suited for SAX
+parsing, it can also benefit from the use of StAX. In addition, when
+applications need to take advantage of the streaming model for
+performance while maintaining full support for namespaces, StAX parsing
+is the optimum choice. Finally, for processing multiple inputs, as in a
+set of imported schemas, an application can easily request events from
+multiple StAX parsers and put them into a single context, without the
+need for the complexity of multiple threads. StAX is especially useful
+in the new areas of Web services and JAX-RPC, in which all of these
+features are required.</span>
+</p>
+<p>
+<span class="parahead1">Select the Correct Parsing Model</span>
+</p>
+<p>
+<span class="bodycopy">This article has presented the three standard
+parsing techniques for Java, describing how they work and their
+individual advantages, disadvantages, and appropriate applications. The
+points of this article can be distilled into a few simple rules:</span>
+</p><ul>
+<li><span class="bulletbodycopy"> Use DOM parsing only when your
+application needs to recursively navigate, alter, or have random access
+to an entire document at one time.</span></li>
+<p></p>
+<p>
+</p><li><span class="bulletbodycopy">	Use SAX parsing when you need simple read-only streaming and want a robust implementation that reflects a mature standard.</span></li>
+<p></p>
+<p>
+
+</p><li><span class="bulletbodycopy">	Use StAX for streaming applications when you require full namespace or multiple-document support or need an object interface.</span></li>
+</ul>
+<p></p>
+<p>
+<span class="bodycopy">The various parsing modes exist for a reason,
+and as distributed-service-based applications proliferate, optimized
+performance will become an essential ingredient for success.</span>
+</p>
+<p>
+<span class="italicbodycopy"><b>Ping Guo</b> (<a href="mailto:ping.guo@oracle.com"><span class="bodylink">ping.guo@oracle.com</span></a>) and <b>Julie Basu</b> (<a href="mailto:julie.basu@oracle.com"><span class="bodylink">julie.basu@oracle.com</span></a>) are members of the Oracle Java and XML technology group. <b>Mark Scardina</b> (<a href="mailto:mark.scardina@oracle.com"><span class="bodylink">mark.scardina@oracle.com</span></a>) and <b>K. Karun</b> (<a href="mailto:k.karun@oracle.com"><span class="bodylink">k.karun@oracle.com</span></a>) are members of the Oracle CORE and XML Development group.
+</span>
+</p>
+<p>
+<span class="parahead1">XML Parsing Techniques at a Glance</span>
+<table align="center" cellpadding="5" vspace="5" hspace="5" border="1" bgcolor="#f7f7e7" width="100%">
+<tbody><tr><td><span class="boldbodycopy">TECHNIQUE</span></td><td><span class="boldbodycopy">PROS</span></td><td><span class="boldbodycopy">CONS</span></td><td><span class="boldbodycopy">BEST FOR...</span></td></tr>
+
+<tr bgcolor="#ffffff"><td><span class="bodycopy">DOM Parsing</span></td><td valign="top"><ul><li><span class="bulletbodycopy">	Easy to use</span></li>
+<li><span class="bulletbodycopy">	Rich set of APIs for easy navigation</span></li>
+<li><span class="bulletbodycopy">	Entire tree loaded into memory, allowing random access to XML document</span></li></ul></td><td valign="top"><ul><li><span class="bulletbodycopy">	Entire XML document must be parsed at one time</span></li>
+<li><span class="bulletbodycopy">	Expensive to load entire tree into memory</span></li>
+<li><span class="bulletbodycopy">	Generic DOM node not ideal for object-type bindingÑmust create objects for all nodes </span></li></ul></td><td valign="top"><ul><li><span class="bulletbodycopy">Applications that need to modify XML documents or for XSLT (don't use for read-only XML applications) </span></li></ul></td></tr>
+
+<tr><td><span class="bodycopy">SAX Parsing</span></td><td valign="top"><ul><li><span class="bulletbodycopy">	Entire document not loaded into memory, resulting in low memory consumption</span></li>
+<li><span class="bulletbodycopy">	Push model allows for registration of multiple ContentHandlers</span></li></ul></td><td valign="top"><ul><li><span class="bulletbodycopy">	No built-in document navigation support</span></li>
+<li><span class="bulletbodycopy">	No random access to XML document</span></li>
+<li><span class="bulletbodycopy">	No support for modifying XML in place</span></li>
+
+<li><span class="bulletbodycopy">	No support for namespace scoping </span></li></ul></td><td valign="top"><ul><li><span class="bulletbodycopy">	Applications that only read from XML (don't use for manipulating or modifying an XML document) </span></li></ul></td></tr>
+
+
+<tr bgcolor="#ffffff"><td><span class="bodycopy">StAX Parsing</span></td><td valign="top"><ul><li><span class="bulletbodycopy">	Contains two parsing models, for ease or performance</span></li>
+<li><span class="bulletbodycopy">	Application controls parsing, easily supporting multiple inputs</span></li>
+<li><span class="bulletbodycopy">	Powerful filtering capabilities provide efficient data retrieval</span></li></ul></td><td valign="top"><ul><li><span class="bulletbodycopy">	No built-in document navigation support</span></li>
+<li><span class="bulletbodycopy">	No random access to XML document</span></li>
+<li><span class="bulletbodycopy">	No support for modifying XML in place</span></li></ul></td><td valign="top"><ul><li><span class="bulletbodycopy">	Applications that need a streaming model and support for namespaces (don't use for manipulating or modifying an XML document)</span></li></ul></td></tr></tbody></table>
+
+
+
+
+
+
+
+</p></td></tr>
+</tbody></table>
+
+
+
+
+
+
+<!-- Elogger Pixel Follows ->
+
+<!-- Elogger Pixel Preceeds ->
+</TD><TD WIDTH="10"><IMG SRC="/portalimages/pobtrans.gif" BORDER="0" HEIGHT="1" WIDTH="10" ALT=""></TD></TR>
+<TR>
+<TD COLSPAN="3" WIDTH="100%"><IMG SRC="/portalimages/pobtrans.gif" BORDER="0" HEIGHT="10" ALT=""></TD>
+</TR>
+</TABLE></TD>
+</TR>
+</TABLE>
+<TABLE  BORDER="0" CELLSPACING="0" CELLPADDING="0" WIDTH="100%" background="/portalimages/pobtrans.gif" ><TR ALIGN="LEFT">
+<TD vAlign="top" width="100%"><TABLE  BORDER="0" WIDTH="100%" CELLPADDING="0" CELLSPACING="0" class="RegionNoBorder">
+<TR>
+<TD class="RegionHeaderColor" WIDTH="100%"><TABLE  BORDER="0" CELLSPACING="0" CELLPADDING="0" WIDTH="100%" background="/portalimages/pobtrans.gif" ><TR>
+<TD COLSPAN="3" WIDTH="100%"><IMG SRC="/portalimages/pobtrans.gif" BORDER="0" HEIGHT="4" ALT=""></TD>
+</TR>
+<TR ALIGN="LEFT">
+<TD WIDTH="4"><IMG SRC="/portalimages/pobtrans.gif" BORDER="0" HEIGHT="1" WIDTH="4" ALT=""></TD><TD vAlign="top" width="100%"><font class="inplacedisplayid1siteid0"><!-- SiteCatalyst code version: G.4.
+Copyright 1997-2003 Omniture, Inc. More info available at
+http://www.omniture.com --><script language="JavaScript"><!--
+/* You may give each page an identifying name, server, and channel on
+the next lines. */
+var s_pageName=""
+var s_server=""
+var s_channel=""
+var s_pageType=""
+var s_prop1=""
+var s_prop2=""
+var s_prop3=""
+var s_prop4=""
+var s_prop5=""
+/********* INSERT THE DOMAIN AND PATH TO YOUR CODE BELOW ************/
+/********** DO NOT ALTER ANYTHING ELSE BELOW THIS LINE! *************/
+var s_code=' '//--></script>
+<script language="JavaScript" src="o53devxml_files/sitecat.js"></script>
+<script language="JavaScript"><!--
+var s_wd=window,s_tm=new Date;if(s_code!=' '){s_code=s_dc(
+'oracleglobal,oracleotnlive');if(s_code)document.write(s_code)}else
+document.write('<im'+'g src="http://oracleotnlive.112.2O7.net/b/ss/oracleglobal,oracleotnlive/1/G.4--FB/s'+s_tm.getTime()+'?[AQB]'
++'&j=1.0&[AQE]" height="1" width="1" border="0" alt="" />')
+//--></script><img src="o53devxml_files/s38777130689353.gif" name="s_i_oracleglobal" height="1" width="1" border="0" alt=""><script language="JavaScript"><!--
+if(navigator.appVersion.indexOf('MSIE')>=0)document.write(unescape('%3C')+'\!-'+'-')
+//--></script><noscript><img
+src="http://oracleotnlive.112.2O7.net/b/ss/oracleglobal,oracleotnlive/1/G.4--NS/0"
+height="1" width="1" border="0" alt="" /></noscript><!--/DO NOT REMOVE/-->
+<!-- End SiteCatalyst code version: G.4. -->
+<table cellspacing="0" cellpadding="0" width="100%" border="0">
+  <tbody><tr> 
+    <td width="100%" colspan="2"> 
+      <hr color="#dddddd" size="1" style="border: 0pt none ; height: 1px; color: rgb(221, 221, 221); background-color: rgb(221, 221, 221);">
+    </td>
+  </tr>
+  <tr> 
+    <td width="50%"><font face="Arial" size="-2">Copyright © 2004, Oracle Corporation. 
+      All Rights Reserved.</font></td>
+    <td width="50%"><font face="Arial" size="-2"> 
+      <p align="right"><a href="http://otn.oracle.com/contact/welcome.html"><font face="Arial, Helvetica, sans-serif" size="-2" font="font" color="#000000">About 
+        OTN</font></a> I <a href="http://otn.oracle.com/contact/"><font face="Arial, Helvetica, sans-serif" size="-2" font="font" color="#000000">Contact 
+        Us</font></a> I <a href="http://oracle.com/" target="_blank"><font face="Arial, Helvetica, sans-serif" size="-2" font="font" color="#000000">About 
+        Oracle</font></a><font face="Arial, Helvetica, sans-serif" size="-2"> 
+        I <a href="http://www.oracle.com/html/copyright.html" target="_blank"><font font="" color="#000000" size="-2">Legal Notices and Terms of Use</font></a> I <a href="http://www.oracle.com/html/privacy.html" target="_blank"><font font="" color="#000000" size="-2">Privacy 
+        Statement</font></a></font></p>
+      </font></td>
+  </tr>
+  <tr> 
+    <td width="50%"></td>
+    <td width="50%"><font face="Arial" size="-2" font="undefined" color="#000000"> 
+      <p align="right">Powered by Oracle Application Server Portal</p>
+      </font></td>
+  </tr>
+</tbody></table>
+
+</td><td width="4"><img src="o53devxml_files/pobtrans.gif" border="0" height="1" width="4" alt=""></td></tr>
+<tr>
+<td colspan="3" width="100%"><img src="o53devxml_files/pobtrans.gif" border="0" height="4" alt=""></td>
+</tr>
+</tbody></table></td></tr>
+</tbody></table>
+
+<!----- show footer template = 1021417590 ----->
+
+
+<!-- Page Metadata Cached On: 12-MAR-2004:10:39:54pm for User:   Time Taken: 260 msecs --><div style="border: 1px solid rgb(128, 128, 128); position: absolute; visibility: hidden; left: -500px; top: -2000px; width: 178px; overflow: hidden; cursor: default; height: 167px;" id="HM_Menu5"><div style="border-bottom: 1px solid rgb(238, 238, 238); padding: 3px; position: absolute; visibility: inherit; cursor: pointer; background-color: rgb(238, 238, 238); color: black; font-family: Arial,Helvetica,sans-serif; font-variant: normal; font-weight: normal; font-size: 9pt; line-height: normal; font-size-adjust: none; font-stretch: normal; font-style: normal; left: 0px; width: 172px; top: 0px;" id="HM_Item5_1">Forums</div><div style="border-bottom: 1px solid rgb(238, 238, 238); padding: 3px; position: absolute; visibility: inherit; cursor: pointer; background-color: rgb(238, 238, 238); color: black; font-family: Arial,Helvetica,sans-serif; font-variant: normal; font-weight: normal; font-size: 9pt; line-height: normal; font-size-adjust: none; font-stretch: normal; font-style: normal; left: 0px; width: 172px; top: 35px;" id="HM_Item5_2">MetaLink</div><div style="border-bottom: 1px solid rgb(238, 238, 238); padding: 3px; position: absolute; visibility: inherit; cursor: pointer; background-color: rgb(238, 238, 238); color: black; font-family: Arial,Helvetica,sans-serif; font-variant: normal; font-weight: normal; font-size: 9pt; line-height: normal; font-size-adjust: none; font-stretch: normal; font-style: normal; left: 0px; width: 172px; top: 70px;" id="HM_Item5_3">Product Certifications</div><div style="padding: 3px; position: absolute; visibility: inherit; cursor: pointer; background-color: rgb(238, 238, 238); color: black; font-family: Arial,Helvetica,sans-serif; font-variant: normal; font-weight: normal; font-size: 9pt; line-height: normal; font-size-adjust: none; font-stretch: normal; font-style: normal; left: 0px; width: 172px; top: 133px;" id="HM_Item5_4">Consulting</div></div><div style="border: 1px solid rgb(128, 128, 128); position: absolute; visibility: hidden; left: -500px; top: -2000px; width: 178px; overflow: hidden; cursor: default; height: 321px;" id="HM_Menu6"><div style="border-bottom: 1px solid rgb(238, 238, 238); padding: 3px; position: absolute; visibility: inherit; cursor: pointer; background-color: rgb(238, 238, 238); color: black; font-family: Arial,Helvetica,sans-serif; font-variant: normal; font-weight: normal; font-size: 9pt; line-height: normal; font-size-adjust: none; font-stretch: normal; font-style: normal; left: 0px; width: 172px; top: 0px;" id="HM_Item6_1">Current TOC</div><div style="border-bottom: 1px solid rgb(238, 238, 238); padding: 3px; position: absolute; visibility: inherit; cursor: pointer; background-color: rgb(238, 238, 238); color: black; font-family: Arial,Helvetica,sans-serif; font-variant: normal; font-weight: normal; font-size: 9pt; line-height: normal; font-size-adjust: none; font-stretch: normal; font-style: normal; left: 0px; width: 172px; top: 35px;" id="HM_Item6_2">Technical Articles</div><div style="border-bottom: 1px solid rgb(238, 238, 238); padding: 3px; position: absolute; visibility: inherit; cursor: pointer; background-color: rgb(238, 238, 238); color: black; font-family: Arial,Helvetica,sans-serif; font-variant: normal; font-weight: normal; font-size: 9pt; line-height: normal; font-size-adjust: none; font-stretch: normal; font-style: normal; left: 0px; width: 172px; top: 98px;" id="HM_Item6_3">Write the Editor</div><div style="border-bottom: 1px solid rgb(238, 238, 238); padding: 3px; position: absolute; visibility: inherit; cursor: pointer; background-color: rgb(238, 238, 238); color: black; font-family: Arial,Helvetica,sans-serif; font-variant: normal; font-weight: normal; font-size: 9pt; line-height: normal; font-size-adjust: none; font-stretch: normal; font-style: normal; left: 0px; width: 172px; top: 133px;" id="HM_Item6_4">Subscribe</div><div style="border-bottom: 1px solid rgb(238, 238, 238); padding: 3px; position: absolute; visibility: inherit; cursor: pointer; background-color: rgb(238, 238, 238); color: black; font-family: Arial,Helvetica,sans-serif; font-variant: normal; font-weight: normal; font-size: 9pt; line-height: normal; font-size-adjust: none; font-stretch: normal; font-style: normal; left: 0px; width: 172px; top: 168px;" id="HM_Item6_5">Partner Spotlight &amp; Supplements</div><div style="padding: 3px; position: absolute; visibility: inherit; cursor: pointer; background-color: rgb(238, 238, 238); color: black; font-family: Arial,Helvetica,sans-serif; font-variant: normal; font-weight: normal; font-size: 9pt; line-height: normal; font-size-adjust: none; font-stretch: normal; font-style: normal; left: 0px; width: 172px; top: 259px;" id="HM_Item6_6">Advertising Information</div></div></body></html>

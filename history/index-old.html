@@ -1,0 +1,580 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<title>On Using XML Pull Parsing Java APIs</title>
+
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0in;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman";}
+h1
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	page-break-after:avoid;
+	font-size:16.0pt;
+	font-family:Arial;}
+h2
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	page-break-after:avoid;
+	font-size:14.0pt;
+	font-family:Arial;
+	font-style:italic;}
+p.MsoBodyText, li.MsoBodyText, div.MsoBodyText
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	font-size:12.0pt;
+	font-family:"Times New Roman";}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;}
+code
+	{font-family:"Courier New";}
+pre
+	{margin:0in;
+	margin-bottom:.0001pt;
+	font-size:8.0pt;
+	font-family:"Courier New";}
+samp
+	{font-family:"Courier New";}
+span.Char
+	{font-family:Arial;
+	font-weight:bold;}
+span.CharChar1
+	{font-family:Arial;
+	font-weight:bold;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+
+</head>
+
+<body lang=EN-US link=blue vlink=purple>
+
+<div class=Section1>
+
+<h1 align=center style='text-align:center'>On Using XML Pull Parsing Java APIs</h1>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal align=center style='text-align:center'>15 March 2004</p>
+
+<p class=MsoNormal align=center style='text-align:center'>&nbsp;</p>
+
+<p class=MsoNormal align=center style='text-align:center'>Aleksander Slomiski</p>
+
+<p class=MsoNormal align=center style='text-align:center'>Department of
+Computer Science</p>
+
+<p class=MsoNormal align=center style='text-align:center'>Indiana University</p>
+
+<p class=MsoNormal align=center style='text-align:center'>www.extreme.indiana.edu</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1>Abstract</h1>
+
+<p class=MsoBodyText>&nbsp;</p>
+<p class=MsoBodyText>This paper provides an overview of XML Pull Parsing Java APIs.
+We first briefly describe how pull parsing is different from other approaches.
+Then we introduce and guide through myriad of existing APIs: BEA, kXML1, NekoPull,
+XNI2XmlPull, XPP1, XPP2, kXML2, XPP3, and JSR-173 StAX and compare them. Finally
+we look on performance implications of APIs design and future directions.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span class=CharChar1><span style='font-size:16.0pt'>Introduction</span></span>
+</p>
+
+<p class=MsoNormal>&nbsp;</p>
+<p class=MsoNormal>XML Pull Parsing is touted as a high performance alternative
+to DOM for XML parsing that is easier to use than SAX. SAX is push API and
+enjoys wide spread adoption virtually removing any other push API in Java. This
+is not the case for pull parsing where many APIs were created and only recently
+JSR 172 StAX (Streaming API for XML) promises to provide one standard. However
+even if StAX will become the APi for pull parsing it is important to understand
+choices made in API, especially dual nature of StAX API. Additionally when choosing
+XML processing API between tree oriented (such as DOM), streaming push (SAX) and
+pull (StAX) it is crucial to understand limitations of each approach and in
+particular trade-off between easiness of use and memory
+utilization/performance.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>We will use a simple example task to compare APIs. We have
+some data - a simple set  of records – address book containing list of persons,
+each represented as XML. Each record has following structure (name is required,
+home_address and work_address are optional):</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<pre>&lt;person&gt;</pre><pre>&lt;name&gt;Joe Doe&lt;/name&gt;</pre><pre>&lt;home_address&gt;</pre><pre>&lt;street&gt;101 Sweet Home&lt;/street&gt;</pre><pre>&lt;phone&gt;333-3333&lt;/phone&gt;</pre><pre>&lt;/home_address&gt;</pre><pre>&lt;work_address&gt;</pre><pre>&lt;street&gt;303 Office Street&lt;/street&gt;</pre><pre>&lt;phone&gt;444-4444&lt;/phone&gt;</pre><pre>&lt;/work_address&gt;</pre><pre>&lt;/person&gt;</pre>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>In this example we want to read XML in streaming manner and
+extract information into Java specific data types, for example:</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<pre>class Person {</pre><pre>        String name;</pre><pre>        Address homeAddress;</pre><pre>        Address workAddress;</pre><pre>}</pre><pre>&nbsp;</pre><pre>class Address {</pre><pre>        String street;</pre><pre>        String phone;</pre><pre>}</pre>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>There is also related work in C [libxml], C++ and C# but in
+this paper we will concentrate only on Java APIs.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1>Push based APIs</h1>
+
+<p class=MsoNormal>Before we go into description of pull based APIs first let
+take a look on the only streaming alternative to pulling: push. In type of APIs
+parser reads XML and notifies application about interesting event by calling
+set of methods (or passing events). The application has no control to request
+events instead they are passed by parser when available.  </p>
+
+<p class=MsoNormal>The most popular push based API is The Simple API for XML
+[SAX2].</p>
+
+<p class=MsoNormal>Unfortunately the API is not simple to work (this is
+majority opinion some developers may find required state machines and dealing
+with stacks of handlers easy and natural) with deeply nested XML structures. As
+an example see SAX code in appendix [A.SAX1] to parse the example XML that will
+not be able to detect incorrect input:</p>
+
+<p class=MsoNormal>The sample code looks simple but unfortunately is incorrect
+as it will happily accept XML input that does not follow our example structure.
+For example:</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<pre>&lt;person&gt;</pre><pre>&lt;name&gt;Joe&lt;/name&gt;</pre><pre>&lt;home_address&gt;</pre><pre>&lt;phone&gt;333-3333&lt;/phone&gt;</pre><pre>&lt;/home_address&gt;</pre><pre>&lt;phone&gt;666-6666&lt;/phone&gt;</pre><pre>&lt;/person&gt;</pre>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The last phone element is in incorrect position but it will
+be not detected and even worse it will override correct home address phone
+value.</p>
+
+<p class=MsoNormal>The solution is to add state variables that will be
+maintained between pushed events however that requires more complicated code or
+more sophisticated approach with nested SAX handlers (we will not explore it
+here). [TODO: reference articles describing those techniques]</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1>Pull based APIs</h1>
+
+<p class=MsoNormal>With pull API the application is in control and requires
+next XML event from the parser when it is ready to process it. That means that
+structure of code that is doing parsing <i>reflects</i> structure of XML
+documents. This is fundamental pattern visible in all applications using pull
+based APIs and leads to easier to understand code. We have described this
+pattern and similar XML pull parsing patterns [PullPatterns] and encourage
+reader to review them as they help to write cleaner and easier to maintain code
+that uses any pull parsing API. </p>
+
+<p class=MsoNormal>As the application maintains control over parsing therefore
+the parser instance must be made available to all places in code that need to
+access XML. Typical pull parsing application instantiates parser and then call
+a method that corresponds to outermost structure of XML, here in pseudo-code:</p>
+
+<p class=MsoNormal><span style='font-size:8.0pt'>&nbsp;</span></p>
+
+<pre>        parser = new PullParser(input)</pre><pre>        Person person = parsePerson(parser);</pre>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The parsePerson() method needs to follow expected XML
+structure: </p>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal>Only XML elements are allowed as content of &lt;person&gt;
+     (nextTag() does this check)</li>
+ <li class=MsoNormal>Name is required field with text only content (nextText())
+     and must happen exactly once (the check at the end of the method)</li>
+ <li class=MsoNormal>Home address and work address are optional but they can
+     happen at most one time (the check before calling readAddress())</li>
+ <li class=MsoNormal>Any other XML element or non white space content is not
+     allowed</li>
+</ul>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<pre>        public Person parsePerson(XmlPullParser parser) </pre><pre>         throws ValidationException, XmlPullParserException </pre><pre>        {</pre><pre>                Person person = new Person();</pre><pre>                while(true) {</pre><pre>                   int eventType = parser.nextTag();</pre><pre>                   if(eventType == XmlPullParser.START_TAG) {</pre><pre>                      String tag = parser.getStartTagName();</pre><pre>                      if(&quot;name&quot;.equals(tag)) {</pre><pre>                        if(person.name != null) {</pre><pre>                          throw new ValidationException(</pre><pre>                            &quot;only one person name is allowed &quot;);</pre><pre>                        }</pre><pre>                        person.name = parser.nextText();                </pre><pre>                      } else if(&quot;home_address&quot;.equals(tag)) {</pre><pre>                        if(person.homeAddress != null) {</pre><pre>                          throw new ValidationException(</pre><pre>                            &quot;only one home address is allowed &quot;);</pre><pre>                        }</pre><pre>                        person.homeAddress = <b>parseAddress</b>(parser);</pre><pre>                      } else if(&quot;work_address&quot;.equals(tag)) {</pre><pre>                        if(person.workAddress != null) {</pre><pre>                          throw new ValidationException(</pre><pre>                            &quot;only one work address is allowed &quot;);</pre><pre>                        }</pre><pre>                        person.workAddress = <b>parseAddress</b>(parser);</pre><pre>                      } else {</pre><pre>                        throw new ValidationException(</pre><pre>                          &quot;unknown field &quot;+tag+&quot; in person record&quot;);</pre><pre>                      }</pre><pre>                   } else if(eventType == XmlPullParser.END_TAG) {</pre><pre>                     break;</pre><pre>                   }</pre><pre>                }</pre><pre>                if(person.name == null) {</pre><pre>                  throw new ValidationException(</pre><pre>                       &quot;person name is required&quot;);</pre><pre>                }</pre><pre>                return person;</pre><pre>        }</pre>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>What is important to notice about this code is that parsing
+of home or work address is delegated to another method (so code is modular) and
+that method is shared as structure of both work address and home address is
+identical.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<pre>        public Address parseAddress(XmlPullParser parser) <br>
+          throws ValidationException, XmlPullParserException </pre><pre>        {</pre><pre>                Address address = new Address();</pre><pre>                while(true) {</pre><pre>                   int eventTyppe = parser.nextTag();</pre><pre>                   if(eventType = XmlPullParser.START_TAG) {</pre><pre>                      String tag = XmlPullParser.getStartTagName();</pre><pre>                      if(&quot;street&quot;.equals(tag)) {</pre><pre>                        address.street = parser.nextText();                </pre><pre>                      } else if(&quot;phone&quot;.equals(tag)) {</pre><pre>                        address.phone = parser.nextText();                </pre><pre>                      } else {</pre><pre>                        throw new ValidationException(</pre><pre>                          &quot;unknown field &quot;+tag+&quot; in person record&quot;);</pre><pre>                      }</pre><pre>                   } else if(eventType == XmlPullParser.END_TAG) {</pre><pre>                     break;</pre><pre>                   } else {</pre><pre>                     throw new ValidationException(&quot;unexpected XML&quot;);</pre><pre>                   }</pre><pre>                }</pre><pre>               return address;</pre><pre>        }</pre>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>What is important to notice about this code is that parsing
+of home or work address is delegated to another method (so code is modular) and
+that method is shared as structure of both work address and home address is
+identical.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>More in-depth comparison of how XML push and pull APIs compare
+and what are fundamental features of pull approach is in technical repost
+“Design of a Pull and Push Parser System for Streaming” [TR550]</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1>Comparison of pull based APIs</h1>
+
+<h2>kXML1</h2>
+
+<p class=MsoNormal>kXML1 was designed to be easy to use and to work in small
+devices. kXML1 represents XML event in a straightforward method as objects (XML
+attributes are not separate events but are accessible from StartElement event).
+However that turned out to be problem when parsing larger XML documents as
+memory requirements were higher because of many objects created which is
+concern for small devices that run J2ME version of Java. </p>
+
+<p class=MsoNormal>kXML1 is no longer under development and is replaced by
+kXML2 and XmlPull API.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Example Appendix A.kXML1</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h2>BEA </h2>
+
+<p class=MsoNormal><span lang=EN-GB>WebLogic XML Streaming API</span>
+[BEAXmlStreaming] is similar to kXML1 and is very strongly modeled after SAX
+callbacks (includes event to reproduce prefix mapping …). There is no example
+provided as we had no access to BEA WebLogic 7.0.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h2>NekoPull</h2>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>As Xerces2 Native Interface (XNI) is designed around push
+approach. Even though there is pull configuration [XniPull] that allows parsing
+only chunk of XML after which parser is returning control to the caller.
+However the chunk can contain more than one event and events are still
+delivered through callbacks. Therefore NekoPull (and XNI2XmlPull, see XmlPull
+below) needs to buffer those events to be able to return exactly one event when
+providing pull interface on top of XNI.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Example Appendix A.NekoPull</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h2>XPP1</h2>
+
+<p class=MsoNormal>This API was created in two layers: tokenizer and parser.
+Tokenizer is responsible to breaking XML stream into set of tokens
+corresponding directly to productions in XML 1.0 grammar [XML]. The tokens were
+assembled into XML events by second layer: parser. XPP1 was implemented both in
+Java and C++ with identical API. However the API did not provide enough
+flexibility to use different parser engines. </p>
+
+<p class=MsoNormal>The main distinctive feature of XPP1 API is how it allowed reusing
+XML events objects. XPP1 is no loner under development and is replaced by XPP3
+and XmlPull.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Example Appendix A.XPP1</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h2>XPP2</h2>
+
+<p class=MsoNormal>XPP2 API is refactored XPP1 into set of interfaces that
+allows multiple implementations. As proof of concept XPP2 has Xerces2 based
+implementation and another based on code from XPP1. XPP2 had a unique tree API
+built on top of pull API that allowed to incrementally load XML tree and
+provide direct access to XML stream to bypass tree creations for selected parts
+of XML.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>XPP2 is only available in Java. XPP2 is no loner under
+development and is replaced by XPP3 and XmlPull.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Example Appendix A.XPP2</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h2>XmlPull: kXML2, XNI2XmlPull, and XPP3</h2>
+
+<p class=MsoNormal>Needs for very low level API that has very small memory
+footprint (good for J2ME) and that can be used as a building block for higher
+level APIs. In this sense XmlPull API sits just on top of XML tokenizer and
+allows to expose all XML tokens; nextToken() method is specifically designed
+for it and coupled with optional feature that when implemented by XmlPull
+parser allow full round trip of XML.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>XmlPull API was created by authors of kXML and XPP to avoid
+a confusion of multiple Java APIs for pull parsing. Common features of both
+APIs were extracted and then distilled into one core set of API operations that
+can be implemented and used from J2ME (low memory footprint), though J2SE and
+J2EE environments (flexible factory and support for selection of class loaders).</p>
+
+<p class=MsoNormal>Additionally there is an implementation of XmlPull on top of
+Xerces2. </p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>To meet requirements of small footprint XmlPull defines only
+one interface to represent XML pull parser and one exception. Additional
+interface is provided for writing XML output but it is optional in J2ME to keep
+memory footprint low.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Appendix [A.XmlPul]</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h2>StAX</h2>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>It is easy to see that generally there are two types of pull
+APIs: pure streaming with fast cursor and another that creates XML event
+objects. StAX does not force developer to use one type of API instead StAX is two
+APIs in one: StAX Cursor and StAX Iterator modes. StAX API is influenced by XmlPull,
+XPP1/2/3, kXML1/2, and BEA’s XML Streaming API.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>There is a reference implementation from BEA [BEAStAXPreview]
+and a preview implementation from Oracle [OracleStAXPreview]. The Reference
+Implementation (RI) is now hosted in codehaus.org and available under Apache
+License [StAXCodehaus]</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Appendix [A.StAXCursor]</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Similar to kXML1 and BEA’s event model</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Appendix [A.StAXEvent]</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<h1>Analysis</h1>
+
+<p class=MsoNormal>We can draw following picture to illustrate how XML APIs
+relate to each other. XML APIs generally fall into two different categories:
+stream oriented and tree oriented. There are APIs that can be both stream and
+tree oriented, such as XPP2 but it is rare. In domain of streaming API we have
+push (SAX) and pull oriented. They are different enough to require writing
+programs that are not easily convertible event though both deal with streams of
+XML events. </p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal align=center style='text-align:center'>
+<img width=575
+height=432 src="diagram.gif"></p>
+
+<p class=MsoNormal>&nbsp;</p>
+<p class=MsoNormal>The main differentiator for pull parsing is in how XML
+events are propagated and we can distinguish three groups:</p>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal>Cursor approach: events are directly available from parser
+     as properties and no object is created to represent an XML event (XmlPull,
+     XPP3, kXML2, StAX Cursor mode)</li>
+ <li class=MsoNormal>Iterator approach: each XML event is represented as a new
+     (and typically immutable) object (kXML1, StAX Iterator). </li>
+ <li class=MsoNormal>Mixed (Event reuse) approach: event objects are used but
+     their creation can be avoided as event objects can be reused (NekoPull,
+     XPP1, XPP2). The main difference between NekoPull and XPP1/2 is that
+     NekoPull returns pointer to internal event that is invalid when parser
+     moves to next event but XPP1/2 allows user to pass pointer to event
+     structure that is safe to use until it is passed again to parser and is
+     overwritten.</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<h1><a name="OLE_LINK1">Conclusions</a></h1>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>There is no such thing as a perfect API. Instead one should
+use the API that is best suited to its task. Even though SAX is very popular
+for streaming XML processing the alternatives such as pull parsing APIs are
+important to provide the choice of the best tools.</p>
+
+<p class=MsoNormal>The choice is not only of aesthetical type bus is also
+affecting performance [XmlPerf] and leads to different programming approaches,
+for example should event have unique identifier or if it is object should it be
+compared by using <code><span style='font-size:10.0pt'>instanceof</span></code>
+operator? There is no one answer especially as Just-In-Time (JIT) runtime
+optimization technologies advance for example decreasing performance cost of
+short lived objects. The important development in XML pull APIs will be seeing
+if StAX dual API is accepted and there is high quality open source
+implementation that will help to establish StAX API popularity.</p>
+
+<b><span style='font-size:16.0pt;font-family:Arial'><br clear=all
+style='page-break-before:always'>
+</span></b>
+
+<h1>References</h1>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>[BEAStAXPreview]
+BEA Streaming API for XML (StAX) Preview </p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>      
+<a href="http://dev2dev.bea.com/technologies/stax/">http://dev2dev.bea.com/technologies/stax/</a> </p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>[BEAXmlStreaming]
+BEA <span lang=EN-GB>WebLogic XML Streaming API <br>
+<a href="http://e-docs.bea.com/wls/docs70/xml/xml_stream.html">http://e-docs.bea.com/wls/docs70/xml/xml_stream.html</a> </span></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'><span lang=DE>[kXML1]
+Stefan Haustein “kXML Project“ 
+<a href="http://kxml.enhydra.org/software/downloads/index.html">http://kxml.enhydra.org/software/downloads/index.html</a> </span></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>[kXML2] Stefan
+Haustein “kXML 2“ <a href="http://www.kxml.org/">http://www.kxml.org/</a> </p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>[libxml] Daniel
+Veillard “The XML C library for Gnome (libxml)” <a href="http://xmlsoft.org/">http://xmlsoft.org/</a> </p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>[NekoPull] Andy
+Clark “CyberNeko Pull Parser” 
+<a href="http://www.apache.org/~andyc/neko/doc/pull/">http://www.apache.org/~andyc/neko/doc/pull/</a> </p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>[OracleStAXPreview]
+Oracle StAX Pull Parser Preview 
+<a href="http://otn.oracle.com/tech/xml/xdk/staxpreview.html">http://otn.oracle.com/tech/xml/xdk/staxpreview.html</a> </p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'> [PullPatterns]
+Aleksander Slominski “XML pull parsing patterns”
+<a href="http://www.extreme.indiana.edu/~aslom/xmlpull/patterns.html">http://www.extreme.indiana.edu/~aslom/xmlpull/patterns.html</a> </p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'> <span lang=FR>[SAX2]
+David Megginson et al. </span>Sax 2.0: The Simple API for XML,
+<a href="http://www.saxproject.org/">http://www.saxproject.org/</a>. </p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>[StAX] JSR-173 “Streaming
+API for XML (StAX)” <a href="http://jcp.org/en/jsr/detail?id=173">http://jcp.org/en/jsr/detail?id=173</a> </p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'><span lang=DE>[StAXCodehaus]
+StAX RI at codehaus <a href="http://stax.codehaus.org/">http://stax.codehaus.org/</a>&nbsp; </span></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>[TR550]
+Aleksander Slominski “TR550: Design of a Pull and Push Parser System for Streaming
+XML” <br>
+http://www.cs.indiana.edu/cgi-bin/techreports/ TRNNN.cgi?trnum=TR550&nbsp; </p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'><span lang=FR>[Xerces2]
+Apache Foundation. “Xerces Java Parser 2” 
+<a href="http://xml.apache.org/xerces2-j/">http://xml.apache.org/xerces2-j/</a> </span></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>[XML] Tim Bray
+et al. “Extensible Markup Language (XML) 1.0 (second edition 6 October 2000)”
+<a href="http://www.w3.org/TR/2000/REC-xml">http://www.w3.org/TR/2000/REC-xml</a> .</p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>[XML-NS] World
+Wide Web Consortium “Namespaces in XML”
+<a href="http://www.w3.org/TR/REC-xml-names/">http://www.w3.org/TR/REC-xml-names/</a> .</p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>[XmlPerf]
+Aleksander Slominski “On Performance of Java XML Parsers” 
+<a href="http://www.cs.indiana.edu/˜aslom/exxp/">http://www.cs.indiana.edu/˜aslom/exxp/</a>&nbsp; .</p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>[XniPull]
+XMLPullParserConfiguration described in
+<a href="http://xml.apache.org/xerces2-j/xni-config.html">http://xml.apache.org/xerces2-j/xni-config.html</a> </p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'>[XPP1] Aleksander
+Slominski “XML Pull Parser Version 1 (XPP1)“ 
+<a href="http://www.extreme.indiana.edu/xgws/xsoap/xpp/xpp1/">http://www.extreme.indiana.edu/xgws/xsoap/xpp/xpp1/</a> </p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'><span lang=DE>[XPP2]
+Aleksander Slominski “XML Pull Parser Version 2 (XPP2)“ 
+<a href="http://www.extreme.indiana.edu/xgws/xsoap/xpp/xpp2/">http://www.extreme.indiana.edu/xgws/xsoap/xpp/xpp2/</a> </span></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'><span lang=DE>[XPP3]
+Aleksander Slominski “ MXP1: Xml Pull Parser 3rd Edition (XPP3)“ 
+<a href="http://www.extreme.indiana.edu/xgws/xsoap/xpp/mxp1/">http://www.extreme.indiana.edu/xgws/xsoap/xpp/mxp1/</a> </span></p>
+
+<p class=MsoNormal><span lang=DE>&nbsp;</span><b><span style='font-size:16.0pt;font-family:Arial'><br clear=all
+style='page-break-before:always'>
+</span></b>
+
+</p>
+
+<h1>Appendixes</h1>
+
+<p class=MsoNormal>&nbsp;</p>
+<p class=MsoNormal>Content available online in <a href="samples/">samples subdirectory</a>. </p>
+
+</div>
+<p class="MsoNormal">&nbsp;</p>
+
+</body>
+
+</html>
