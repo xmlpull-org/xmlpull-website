@@ -1,0 +1,7 @@
+<question text='Is it round?'>
+ <question text='Is it bright?'>
+  <answer>It is the Sun!</answer>
+  <answer>It is a ball!</answer>
+ </question>
+ <answer>I do not know!</answer>
+</question>

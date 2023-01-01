@@ -1,0 +1,444 @@
+<HTML>
+
+<h1>XML pull parsing</h1>
+
+<p><b><font size="1">Version: $Id: index.html,v 1.6 2002/10/16 20:32:19 aslom Exp $</font></b></p>
+
+
+<p><b>Draft article for ISUG interChange (http://www.isgmlug.org/newsletter.html)</b></p>
+
+<address>&nbsp;</address>
+
+<address>Aleksander Slominski </address>
+
+<address><a href="http://www.extreme.indiana.edu/~aslom/">
+  http://www.extreme.indiana.edu/~aslom/</a></address>
+
+<address>Extreme! Lab, Indiana University, </address>
+
+<address>Bloomington IN 47405-7104 US</address>
+
+<address>&nbsp;</address>
+
+<address>Stefan Haustein</address>
+
+<address><a href="http://www-ai.cs.uni-dortmund.de/PERSONAL/haustein.eng.html">
+  http://www-ai.cs.uni-dortmund.de/PERSONAL/haustein.eng.html</a></address>
+
+<address>stefan.haustein@udo.edu</address>
+
+<address>University of Dortmund, Computer Science VIII / X, </address>
+
+<address>Baroper Str. 301, D-44221 Dortmund, Germany<br>
+&nbsp;</address>
+
+<blockquote>
+<p>
+<b>Abstract</b>: in this article, we will introduce XML pull parsing,
+show  examples and discuss the background including the relation
+between XML pull and  push parsing.
+</p>
+</blockquote>
+
+
+<h2>Introduction</h2>
+
+<p>Today, there are basically two major libraries for accessing XML documents
+in Java: SAX and DOM. If an application needs to process 
+XML documents quickly and with little memory overhead, SAX is the popular 
+choice. SAX is suited for streaming parsing since, in 
+contrast to DOM, it does not need build and keep a whole XML tree in memory. 
+However there are other alternatives to DOM and SAX such as JDOM and DOM4J that 
+are more lightweight versions of DOM that in contrast to DOM are specialized to 
+Java only (DOM is programming language independent and has bindings to many 
+languages). However in this article we will concentrate on streaming parsing and 
+ignore document object model APIs (such as DOM, JDOM and DOM4J).<p>During streaming 
+parsing events corresponding to XML Infoset are reported to the application when
+observed, and then "forgotten" by the parser. When using SAX it is up to the
+application to register callback methods for the different event
+types (such as start 
+tag and text content), and if needed to build a custom in-memory representation of processed XML 
+input. This kind of parsing, where events are delivered to the application through 
+callback methods is called <b>push parsing</b>. 
+
+<p>However there exist another way to  communicate XML events to 
+application: <b>pull parsing</b>. The crucial difference between push 
+parsing and pull parsing is how events are delivered to the application. The processing model 
+in pull parsing is  similar to using classes from the java.io package. For example, FileReader or DataInputStream provide methods to 
+read input, and the methods block until the desired input is available. Typical 
+methods such as FileReader.read() and DataInputStream.readBoolean() read a few 
+bytes of input and return them to application.<p>We believe that the same 
+approach should be applied to XML parsing and hence we both have created our own 
+pull parser implementations (kXML1 and XPP1/2), which we recently integrated 
+into a <i>Common API for XML Pull Parsing</i> (in short XmlPull API). The motivation 
+for switching from the push to a pull model was that the callback method 
+registered with a push parser can quickly become a bottleneck. Independent of 
+the parsing state,&nbsp; the same callback methods
+are always called, and the  code inside callback methods tends to look like a giant case statement
+instead of a structured program. We hope to demonstrate advantages of push 
+parsing by using following two examples and asking our readers to consider how 
+equivalent examples would look when programmed using SAX. </p>
+
+<h2>A Simple Example</h2>
+
+<p>We would like to with a simple example to give a flavor of what pull parsing 
+looks like. Imagine a list of phones stored in XML. A sample XML file could look 
+like this:</p>
+<p>&lt;phone-list xmlns=&quot;http://example.com/2002/phone-list&quot;&gt;<br>
+&nbsp; &lt;phone type=&quot;work&quot;&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;phone-number&gt;333.3333&lt;/phone-number&gt;<br>
+&nbsp; &lt;/phone&gt;<br>
+&nbsp; &lt;phone type=&quot;fax&quot;&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;phone-number&gt;444.4444&lt;/phone-number&gt;<br>
+&nbsp; &lt;/phone&gt;<br>
+&lt;/phone-list&gt;<br>
+&nbsp;</p>
+
+<p>Now let us assume that we want to convert this XML into a list of Phone objects,
+where each phone item is represented as a simple Java Bean:</p>
+
+<pre>  public class Phone {
+      private String type;
+      private String phoneNumber;
+
+      public void setType(String type) { this.type = type;}
+      public String getType() { return type; }
+      public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+      public String getPhoneNumber() { return phoneNumber; }
+  }
+</pre>
+
+<p>You will probably agree that the following pseudo code would do the parsing a natural and straightforward 
+task: </p>
+
+<pre>  <b><i>Vector phoneList = new Vector</i></b>();
+  move input to &lt;phone-list> start element
+  while(true) {
+    <b>get next event</b>
+    if (event is end element and has name 'phone-list') break;
+    if (event is not start element) signal error
+    if (start element has name different than "phone") signal error
+    <b><i>Phone phone = new Phone();</i></b>
+    <b><i>phone.setType</i></b>( get value of attribute named 'type' from current element )
+    <b>read next start element skipping any precedent white spaces</b>
+    if( the next event is not start element ) signal an error
+    if( element name is not 'phone-number') signal error
+    <b><i>phone.setPhoneNumber</i></b>( <b>read text content of current element</b> )
+    <b>move to end element</b> 'phone-number'
+    <b>move to end element</b> 'phone'
+    <b><i>phoneList.add</i></b>(phone);
+  }
+  check that input is on &lt;/phone-list> end element
+</pre>
+
+<p>The purpose of this code is to extract enough information from XML to provide 
+arguments for <b><i>setType()</i></b> and <b><i>setPhoneNumber()</i></b> methods. Parts of code that are 
+responsible for creating and managing list of phone numbers are marked in <i><b>
+bold-italic</b></i>.</p>
+
+
+<p>In <b>bold</b>, we have marked operations that we want the parser to perform. 
+These operations essentially move a logical cursor forward through the XML input. 
+Actually, a parser works like a cursor that moves through the XML 
+content, and in this respect it is very similar to iterating the elements  of a JDBC ResultSet. However, in contrast to table rows, the items 
+that are enumerated may have different types (start tags, element content, 
+processing instructions).</p>
+
+
+<p>Now, let's look at an implementation of the above example that uses the
+XmlPull API (available <a href="http://www.xmlpull.org/">http://www.xmlpull.org</a>). 
+The pseudo code from the example is inserted as comments, in order to illustrate 
+what the XmlPull calls are doing. Calls to <b>
+require</b> corresponds to if() checks from pseudo code. If correctness checking 
+is not required then the calls to require() can be removed.</p>
+
+<pre>        final String NS_URI = &quot;http://example.com/2002/phone-list&quot;;
+        Vector phoneList = new Vector();
+        //move input to <phone-list> start element
+        parser.<b>next</b>();
+        parser.require(parser.START_TAG, NS_URI, "phone-list");
+        while(true) {
+            //get the next event and signal an error if the next event is not a start or end tag
+            parser.<b>nextTag</b>();
+
+            //if (event is end element and has name 'phone-list') break;
+            if(parser.<b>getEventType</b>() == parser.END_TAG) break;
+
+            //if (event is not start element) signal error
+            //if (start element has no name "phone") signal error
+            parser.<b>require</b>(parser.START_TAG, NS_URI, "phone");
+
+            Phone phone = new Phone();
+
+            // phone.setType( get value of attribute named 'type' from current element )
+            phone.setType( parser.getAttributeValue("", "type") );
+
+            //read next start element skipping precedent white spaces; 
+            parser.nextTag();
+            			
+            //if (the next event is not start element) </phone-list><phone-list>signal an error   </phone-list><phone-list>
+            //if (element name is not 'phone-number') signal error
+            parser.require(parser.START_TAG, NS_URI, "phone-number");
+
+            // phone.setPhoneNumber( read text content of current element)
+            // move to end element 'phone-number'
+            phone.setPhoneNumber( parser.<b>nextText</b>() );
+
+            // nextText() has already moved the parser to END_TAG
+            parser.require(parser.END_TAG, NS_URI, "phone-number");
+
+            // move to end element 'phone'
+            parser.<b>nextTag</b>();
+
+            parser.require(parser.END_TAG, NS_URI, "phone");
+            phoneList.add(phone);
+        }
+
+        //check that input is on </phone-list> end element
+        parser.require(parser.END_TAG, NS_URI, "phone-list");
+
+        // print the collected list of phone numbers
+        for (int i = 0; i < phoneList.size(); i++) {
+            Phone phone = (Phone) phoneList.get(i);
+            System.out.println("phone number="+phone.getPhoneNumber()+" type="+phone.getType());
+        }
+
+</pre>
+<p>The complete code including sample data  is available online at
+<a href="http://www.xmlpull.org/articles/interChange_newsletter/phone_list/">
+http://www.xmlpull.org/articles/interChange_newsletter/phone_list/</a>. To 
+compile and run example make sure to get the latest <a href="http://www.kxml.org/">kXML2</a> or
+<a href="http://www.extreme.indiana.edu/xgws/xsoap/xpp/mxp1/">XPP3/MXP1</a> and 
+put  jar file with XML parser in your CLASSPATH. Note also that example code must 
+be saved to a subdirectory corresponding to package name - in this case phone_list. </p>
+
+<p>When the example is executed, it produces following output:</p>
+<pre>phone number=333.3333 type=work
+phone number=444.4444 type=fax</pre>
+
+<p>This example could be easily extended to handle an address book. For 
+interested readers we have created such extended sample available at
+<a href="http://www.extreme.indiana.edu/~aslom/xml/databinding/jaxme-xmlpull/">
+http://www.extreme.indiana.edu/~aslom/xml/databinding/jaxme-xmlpull/</a>. We 
+have made available both code generated by JAXME that uses SAX to parse address 
+book XML and equivalent code that uses XmlPull API. This should make easy to 
+compare both push and pull parsing approaches to do more complex tasks. </p>
+
+<h3>Short summary</h3>
+
+<p>The "core" of the XmlPull API is a small set of cursor related operations 
+ 
+derived from analysis of pull parsing use cases such as the one showed above:</p>
+
+<ul>
+  <li><b>next</b>() will return the next available event: END_DOCUMENT to signal 
+  end of input, START_TAG to signal a start element, END_TAG to 
+  signal an end element and TEXT when the parser has read element 
+  content (those are all events that can be returned by next())</li>
+  
+  <li><b>nextTag</b>() will skip any white spaces, then call next() and return 
+  START_TAG or END_TAG. For other event types, it will signal an error</li>
+
+  <li><b>getEventType</b>() returns the type of the current event, 
+  	(START_TAG, TEXT, etc.), as returned by the previous cursor
+  		operation</li>
+
+  <li><b>require(expectedState, expectedNamespace, expectedName)</b> is an 
+  &quot;assert&quot; function that can be used to check whether the parser state 
+  correspond to what is expected by user application</li>
+
+  <li><b>nextText</b>() will read and return text content or throw 
+   an exception if the current element has mixed content</li>
+</ul>
+
+
+<h2>Recursive Parsing</h2>
+
+<p>While our first example shows the simplicity of the
+XmlPull API, the main advantages of XmlPull parsing 
+become visible when parsing recursive structures.</p>
+
+<p>The following XML code shows the input data for a
+simple yes/no game:</p>
+
+<pre>&lt;question text='Is it round?'>
+ &lt;question text='Is it bright?'>
+  &lt;answer>It is the Sun!&lt;/answer>
+  &lt;answer>It is a ball!&lt;/answer>
+ &lt;/question>
+ &lt;answer>I do not know!&lt;/answer>
+&lt;/question>
+</pre>
+
+<p>In order to represent the tree and the
+program logic, we can use the following Java 
+class:</p>
+
+<pre>public class Node {
+    private String text;
+    private Node yes;  // if null, it's an answer
+    private Node no;
+    
+    Node(String answer) {
+        this.text = answer;
+    }
+    
+    Node(String question, Node yes, Node no) {
+        this.text = question;
+        this.yes = yes;
+        this.no = no;        
+    }
+    
+    void run () throws IOException {
+       
+        if (yes == null) 
+            System.out.println ("Answer: "+text);
+        else {
+            System.out.println (text+ " (y/n)");    
+
+            while (true) {
+                int i = System.in.read();
+                if (i == 'y' || i == 'Y') {
+                    yes.run();
+                    break;
+                }
+                else if (i == 'n' || i == 'N') {
+                    no.run();            
+                    break;
+                }
+            }
+        }                
+    }
+}
+</pre>
+
+<p>Now, how do we build the Node tree from the XML input?
+For a conventional SAX parser, we would need to implement
+the startElement(), endElement() and characters() callback methods. In these methods, we would need to look up the
+current parsing state before we could handle the event.
+Thus, we would need an explicit state model, including
+a stack containing information if we are in the 
+"yes" or "no" branch for each level. Further, we need
+to store the finished nodes that are needed to assemble 
+the higher level nodes.</p>
+
+<p>Using the XmlPull API, it is possible to use recursive 
+functions to let the program state exactly reflect the current
+parsing state in a natural way. Thus, a complex 
+explicit state model is not required. Instead, we just
+build two methods, parseAnswer() and
+parseQuestion(), for both node types, and a third method, parseNode(), which calls parseAnswer() or parseQuestion()
+depending on the current start tag:
+
+<ul>
+<li>parseAnswer() reads the answer text and returns a corresponding
+	Node object</li>
+<li>parseQuestion() reads the question text attribute and calls
+	parseNode() twice to obtain the yes and no branches. From this information, 
+a question node is built and returned
+<li>parseNode() calls parseAnswer() or paseQuestion() depending
+    on the current start tag, and returns the corresponding
+    Node object</li>
+</ul>
+
+<p>The following listing shows the complete XmlPull
+based implementation of these tree methods. This is all
+you need to parse the example node  structure with
+the XmlPull API:</p>
+
+<pre>    public static Node parseAnswer(XmlPullParser p) throws IOException, XmlPullParserException {
+        p.require(p.START_TAG, "", "answer");
+        Node result = new Node (p.nextText());
+        p.require(p.END_TAG, "", "answer");
+        return result;
+    }
+
+    public static Node parseQuestion(XmlPullParser p) throws IOException, XmlPullParserException {
+        p.require(p.START_TAG, "", "question");
+        String text = p.getAttributeValue("", "text");
+        Node yes = parseNode (p);
+        Node no = parseNode (p);
+        p.nextTag();
+        p.require(p.END_TAG, "", "question");
+        return new Node (text, yes, no);
+    }
+
+    public static Node parseNode (XmlPullParser p) throws IOException, XmlPullParserException {
+        p.nextTag ();
+        p.require(p.START_TAG, "", null);
+        if (p.getName().equals("question"))
+            return parseQuestion(p);
+        else 
+            return parseAnswer(p);       
+    }
+</pre>
+
+
+<p>The complete code and sample data for this example is available online for 
+download at
+<a href="http://www.xmlpull.org/articles/interChange_newsletter/yesnogame/">
+http://www.xmlpull.org/articles/interChange_newsletter/yesnogame/</a>.</p>
+
+
+<h2>Summary</h2>
+
+
+<p>Pull parsing approach to process XML is gradually gaining popularity. 
+Microsoft .NET already contains set of APIs that are enabling XML pull parsing. 
+However Java does not have such standard API. We have combined our experience to 
+create one <i>Common API for XML Pull Parsing</i> that is currently available with 
+three implementations: very small size and small memory footprint that is best 
+suited for J2ME (kXML2), small size and high performance (XPP3/MXP1) and fully 
+XML standards compliant that uses Xerces 2 parser. We are also working 
+in JSR 173 expert group that was formed to create streaming pull-parsing API 
+for XML for future versions of Java.</p>
+
+
+<p>We hope that we have made a convincing case for XML pull parsing and that the 
+examples served as simple introduction to what can be done with XML pull 
+parsing. Of course, the final decision to use pull parsing must be made separately 
+for each project but knowing about pull parsing will give developers more 
+choices (and essentially more tools in their arsenal to deal with XML).</p>
+
+
+<h2>Helpful links</h2>
+
+<p>To find more about using Common API for XML Pull Parsing (XmlPull API), samples and documentation visit
+<a href="http://www.xmlpull.org">http://www.xmlpull.org</a> and let us know what 
+you think by participating in xmlpull-user mailing list. Currently JSR 173 
+homepage at <a href="http://www.jcp.org/jsr/detail/173.jsp">
+http://www.jcp.org/jsr/detail/173.jsp</a> does not contain much information but 
+basic goals.</p>
+
+<p>To learn more about XML parsing in Java read one of numerous books such as
+<a href="http://www.oreilly.com/catalog/javaxml2/">Java &amp; XML</a> or even books 
+that are posted online such as
+<a href="http://www.ibiblio.org/xml/books/xmljava/">Processing XML with Java</a>. 
+There is multitude of helpful online sites that deal with XML and Java 
+Programming we can recommend for example <a href="http://www.xml.com/">XML.com</a> 
+and <a href="http://www.javaworld.com/">JavaWorld</a> (for example read about 
+streaming parsing and using of SAX and XmlPull in JavaWorld article
+<a href="http://www.javaworld.com/javaworld/jw-04-2002/jw-0426-xmljava3.html">
+XML documents on the run</a>). The main site for SAX is
+<a href="http://www.saxproject.org/">http://www.saxproject.org/</a>, DOM is 
+defined as W3C specification at <a href="http://www.w3.org/DOM/">
+http://www.w3.org/DOM/</a>, and more information about JDOM can be found at
+<a href="http://www.jdom.org/">http://www.jdom.org/</a> and about DOM4J at
+<a href="http://www.dom4j.org/">http://www.dom4j.org/</a>. </p>
+<address ALIGN="LEFT">
+  &nbsp;</address>
+<address ALIGN="LEFT">
+  Aleksander Slominski is a Ph.D. student at Indiana University working as 
+  research assistant in the Extreme! Lab on projects related to <br>
+  distributed scientific computing and use of components based on Common 
+  Component Architecture (CCA) in grid computing, and last but not least the use 
+  of XML to enable and simplify development of scientific components.</address>
+<address ALIGN="LEFT">
+  &nbsp;</address>
+<address ALIGN="LEFT">
+  &nbsp;</address>
+<address ALIGN="LEFT">
+  Stefan Haustein is a Ph.D. student at the University of Dortmund,
+  	working as research assistant in the Artificial Intelligence unit
+  	on projects related to  software agents, the semantic web and 
+  	XML based middleware.</address>

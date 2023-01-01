@@ -1,0 +1,8 @@
+<phone-list xmlns="http://example.com/2002/phone-list">
+  <phone type="work">
+    <phone-number>333.3333</phone-number>
+  </phone>
+  <phone type="fax">
+    <phone-number>444.4444</phone-number>
+  </phone>
+</phone-list>
