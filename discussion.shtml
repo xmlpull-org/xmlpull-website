@@ -1,28 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <link rel="SHORTCUT ICON" href="http://www.xmlpull.org/favicon.ico" />
-
-  <title>Common XML Pull Parsing API</title>
-</head>
-
-<body><!--#include file="header.html" -->
-  <h1 class="title">Discussion</h1>
-
-  <p>We have created two discussions lists:</p>
-
-  <ul>
-    <li><a href="http://groups.yahoo.com/group/xmlpull-user/">xmlpull-user</a> is for users interested in asking
-    questions about XMLPULL API (implementation independent quesitons)</li>
-
-    <li><a href="http://groups.yahoo.com/group/xmlpull-dev/">xmlpull-dev</a> is for developers of XMLPULL API
-    implementations and to exchange related ideas</li>
-  </ul>
-
-  <p>Share your ideas and help to make XMLPULL API better (it is free and your input will be appreciated!)</p>
-
-<!--#include file="footer.html" -->
-</body>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="refresh" content="7; url='discussion.html'" />
+  </head>
+  <body>
+    <p>Please follow <a href="discussion.html">this link</a>.</p>
+  </body>
 </html>
