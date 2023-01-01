@@ -1,0 +1,368 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>XML Pull Parsing
+</title><link rel="SHORTCUT ICON" href="http://www.xmlpull.org/favicon.ico">
+</head>
+<!--#include file="header.html" -->
+
+  <!-- HEADER START -->
+  <table cellpadding="7" summary="sideline">
+    <tr>
+      <td valign="top" bgcolor="#999999">
+        <center>
+          <a href="index.html"><img src="images/xmlpull_grey.gif" alt="[XMLPULL.ORG]" border="0" hspace="4" vspace="4"
+          width="87" height="83" /></a><br />
+        </center>
+
+        <table cellpadding="2" summary="menu">
+          <tr>
+            <td><b class="inv" style="color: rgb(255,255,255);">Common<br />
+            XML Pull API</b></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href="index.html">Home<br /></a></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href="v1/doc/changes.html">Changes<br /></a></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href="v1/doc/faq.html">FAQ<br /></a></td>
+          </tr>
+
+          <tr>
+            <td><span style="color: #FFFFFF"><b>Learn API</b></span></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp;<span style="color: #FFFFFF"><a class="inv" style="color: #FFFFFF" href=
+            "v1/download/unpacked/doc/quick_intro.html">Introduction</a> to<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<a class="inv" style="color: #FFFFFF" href=
+            "v1/download/unpacked/doc/quick_intro.html">parsing</a> and<br />
+            &nbsp;&nbsp;&nbsp;&nbsp;<a class="inv" style="color: #FFFFFF" href=
+            "v1/download/unpacked/doc/quick_write.html">writing</a> XML</span></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href=
+            "v1/doc/api/org/xmlpull/v1/package-summary.html">Java API</a><br /></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href="v1/doc/features.html">Features</a><br /></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href=
+            "v1/doc/properties.html">Properties</a><br /></td>
+          </tr>
+
+          <tr>
+            <td><span style="color: #FFFFFF"><b>Use API</b></span></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href=
+            "https://github.com/xmlpull-org/xmlpull-api-v1/issues">Open issues</a></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href="impls.html">Download<br />
+            implementation</a></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href="v1/doc/addons.html">Addons</a></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href="tests.html">Run tests<br /></a></td>
+          </tr>
+
+          <tr>
+            <td><span style="color: #FFFFFF"><b>API source</b></span></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href=
+            "https://github.com/xmlpull-org/xmlpull-api-v1/">Browse</a></td>
+          </tr>
+
+          <tr>
+            <td>&nbsp;&nbsp; <a class="inv" style="color: #FFFFFF" href="v1/download/">Download</a></td>
+          </tr>
+
+          <tr>
+            <td><a class="inv" style="color: #FFFFFF" href="discussion.html">Discussion<br /></a></td>
+          </tr>
+        </table>
+
+        <center>
+          <br />
+        </center>
+      </td>
+
+
+
+     <td valign="top">
+
+<!-- HEADER END -->
+
+
+
+<h1>XmlPull 2.0 Discussion Page</h1>
+
+<ul>
+ <li>Goal: StAX for J2ME</li>
+ <li>No event object API</li>
+ <li>Leave out some bloat</li>
+ <li>Avoid dependencies from packages not available for CLDC</li>
+ <li>Implemet some methods of the helper interfaces (Location)</li>
+</ul>
+
+
+<h2>Parser API proposal</h2>
+
+<table border="1">
+ <tr>
+  <th>XmlPull 1</th>
+  <th>StAX</th>
+  <th>XmlPull 2</th>
+  <th>Rationale</th>
+ </tr>
+ <tr>
+  <td></td>
+  <td>void close()</td>
+  <td>void close()</td>
+  <td>Should close underlying stream, StAX deviation from general Java behaviour
+      is regarded as specification error.</td>
+ </tr>
+ <tr>
+   <td></td>
+   <td>int getAttributeCount()</td>
+   <td>int getAttributeCount()</td>
+ </tr>
+ <tr>
+   <td></td>
+   <td>String getAttributeLocalName(int index)</td>
+   <td>String getAttributeLocalName(int index)</td>
+ <tr>
+ <tr>
+   <td></td>
+   <td>QName getAttributeName(int index)</td>
+   <td>-</td>
+   <td>QName class is not available</td>
+ <tr>
+ <tr>
+   <td></td>
+   <td>String getAttributePrefix(int index)</td>
+   <td>String getAttributePrefix(int index)</td>
+ <tr>
+ <tr>
+   <td></td>
+   <td>String getAttributeType(int index)</td>
+   <td>String getAttributeType(int index)</td>
+ <tr>
+ <tr>
+   <td></td>
+   <td>String getAttributeValue(int index)</td>
+   <td>String getAttributeValue(int index)</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>String getAttributeValue(String namespaceURI, String localName)</td>
+  <td>String getAttributeValue(String namespaceURI, String localName)</td>
+ </tr>
+ <tr>
+   <td></td>
+   <td>String getAttributeValue(String namespaceURI, String localName);</td>
+   <td>String getAttributeValue(String namespaceURI, String localName);</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>String getCharacterEncoding()</td>
+  <td>String getCharacterEncoding()</td>
+  <td>TBD: What is the difference to getEncoding?!?</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>String getElementText()</td>
+  <td>String getElementText()</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>String getEncoding()</td>
+  <td>String getEncoding()</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>int getEventType()</td>
+  <td>int getEventType()</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>String getLocalName()</td>
+  <td>String getLocalName()</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>Location getLocation()</td>
+  <td>-</td>
+  <td>Avoid location class</td>
+ </tr>
+ <tr>
+   <td></td>
+   <td>NamespaceContext getNamespaceContext()</td>
+   <td>-</td>
+   <td>Avoid class NamespaceContext</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>int getNamespaceCount()</td>
+  <td>int getNamespaceCount()</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>int getNamespaceURI()</td>
+  <td>int getNamespaceURI()</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>String getNamespacePrefix(int i)</td>
+  <td>String getNamespacePrefix(int i)</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>String getNamespaceURI(int i)</td>
+  <td>String getNamespaceURI(int i)</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>String getNamespaceURI(String prefix)</td>
+  <td>String getNamespaceURI(String prefix)</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>int getPrefix()</td>
+  <td>int getPrefix()</td>
+ </tr>
+ <tr>
+   <td></td>
+   <td>Object getPIData()</td>
+   <td>Object getPIData()</td>
+ </tr>
+ <tr>
+   <td></td>
+   <td>Object getPITarget()</td>
+   <td>Object getPITarget()</td>
+ </tr>
+ <tr>
+   <td></td>
+   <td>Object getProperty(String name)</td>
+   <td>Object getProperty(String name)</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>String getText()</td>
+  <td>String getText()</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>char[] getTextCharacters()</td>
+  <td>char[] getTextCharacters()</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>int getTextCharacters(int sourceStart, char[] target, int targetStart, int length) </td>
+  <td>-</td>
+  <td>Can easily be constructed with getTextCharacters(), getTextStart(), getTextLength()</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>int getTextLength()</td>
+  <td>int getTextLength()</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>int getTextStart()</td>
+  <td>int getTextStart()</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>String getVersion()</td>
+  <td>String getVersion()</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>hasText()</td>
+  <td>-</td>
+ </tr>
+ <tr>
+  <td>-</td>
+  <td>boolean is*()</td>
+  <td>-</td>
+  <td>Too expensive for J2ME (no real gain)</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>boolean isAttributeSpecified(int index);
+  <td>-</td>
+  <td>To be discussed</td>
+ </tr>
+ <tr>
+  <td></td>
+  <td>boolean isStandalone()</td>
+  <td>boolean isStandalone()</td>
+  <td>TBD: what is the difference to isStandalone?</td>
+ </tr>
+ <tr>
+   <td>next()</td>
+   <td>-</td>
+   <td>-</td>
+   <td>See <a href="#f1">1</a></td>
+ </tr>
+ <tr>
+  <td>String nextTag()</td>
+  <td>String nextTag()</td>
+  <td>String nextTag()</td>
+ </tr>
+ <tr>
+  <td>nextToken()</td>
+  <td>next()</td>
+  <td>next()</td>
+  <td>See <a href="#f1">1</a></td>
+ </tr>
+ <tr>
+   <td>void require(int type, String namespaceURI, String localName)</td>
+   <td>void require(int type, String namespaceURI, String localName)</td>
+   <td>void require(int type, String namespaceURI, String localName)</td>
+ </tr>
+  <tr>
+  <td>-</td>
+  <td>boolean standaloneSet()</td>
+  <td>boolean standaloneSet()</td>
+  <td>TBD: what is the difference to isStandalone?</td>
+ </tr>
+
+</table>
+<ol>
+ <li><a name="f1" />The XmlPull next() / nextToken distinction
+      is only usefull for element-only and text-only content.
+      In both cases there are better options: nextTag() and
+      nextText().</li>
+</ol>
+
+
+
+<!--#include file="footer.html" -->
+      </td>
+    </tr>
+  </table>
+
+
+</body>
+</html>
